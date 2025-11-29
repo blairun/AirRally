@@ -48,21 +48,15 @@ class GameEngine {
     }
 
     companion object {
-        const val WINDOW_EASY = 700L
-        const val WINDOW_MEDIUM = 500L
-        const val WINDOW_HARD = 300L
+        const val BOUNCE_OFFSET_MS = 200L
     }
 
     /**
-     * Returns the hit window in milliseconds based on difficulty AND incoming swing type.
+     * Returns the hit window in milliseconds based on difficulty (which is now the window size in ms) AND incoming swing type.
      */
     fun getHitWindow(): Long {
-        val baseWindow = when (_gameState.value.difficulty) {
-            0 -> WINDOW_EASY
-            1 -> WINDOW_MEDIUM
-            2 -> WINDOW_HARD
-            else -> WINDOW_MEDIUM
-        }
+        // Difficulty is now the base window size in ms (200-700)
+        val baseWindow = _gameState.value.difficulty.toLong()
         
         // Apply Window Shrink based on the LAST swing type (the incoming shot)
         // If lastSwingType is null (e.g. first serve), no shrink.
@@ -94,11 +88,19 @@ class GameEngine {
         // Note: swingTimestamp is expected to be in the local time domain.
         val arrival = _gameState.value.ballArrivalTimestamp
         val delta = swingTimestamp - arrival
-        val window = getHitWindow()
+        val halfWindow = getHitWindow()
+        
+        // Shift the window so it starts at the bounce (BOUNCE_OFFSET_MS before arrival)
+        // Original Window: [-halfWindow, +halfWindow]
+        // New Window Start: -BOUNCE_OFFSET_MS
+        // New Window End: -BOUNCE_OFFSET_MS + (2 * halfWindow)
+        
+        val startWindow = -BOUNCE_OFFSET_MS
+        val endWindow = startWindow + (2 * halfWindow)
         
         return when {
-            delta < -window -> HitResult.MISS_EARLY
-            abs(delta) <= window -> {
+            delta < startWindow -> HitResult.MISS_EARLY
+            delta <= endWindow -> {
                  // Check for "Too Early" relative to launch (prevent hitting instantly after opponent)
                  val flightTime = _gameState.value.flightTime
                  val timeSinceLaunch = flightTime + delta 
@@ -152,12 +154,11 @@ class GameEngine {
                  return null 
              }
 
-             // Serves are always safe (no risk logic applied to serves for now, or maybe apply it?)
-             // Let's apply risk to serves too! Why not?
+             // Risk logic applied to serves too
              val riskResult = checkRisk(swingType)
              if (riskResult != HitResult.HIT) {
                  // Fault on serve!
-                 val reason = if (riskResult == HitResult.MISS_NET) "Fault (Net)" else "Fault (Out)"
+                 val reason = if (riskResult == HitResult.MISS_NET) "✖️ Fault (Net) ✖️" else "✖️ Fault (Out) ✖️"
                  _gameState.update {
                      it.copy(eventLog = (it.eventLog + reason).takeLast(5))
                  }
@@ -203,9 +204,9 @@ class GameEngine {
             } else {
                 // Failed Risk Check (Net or Out)
                 val reason = if (riskResult == HitResult.MISS_NET) 
-                    "You Hit Net! (${swingType.name.replace("_", " ")})" 
+                    "✖️ You Hit Net! (${swingType.name.replace("_", " ")}) ✖️" 
                 else 
-                    "You Hit Out! (${swingType.name.replace("_", " ")})"
+                    "✖️ You Hit Out! (${swingType.name.replace("_", " ")}) ✖️"
                 
                 _gameState.update {
                     it.copy(eventLog = (it.eventLog + reason).takeLast(5))
@@ -215,7 +216,7 @@ class GameEngine {
             }
         } else {
             // Timing Miss
-            val missReason = if (timingResult == HitResult.MISS_EARLY) "You Whiffed (Too Early)" else "You Missed (Too Late)"
+            val missReason = if (timingResult == HitResult.MISS_EARLY) "✖️ You Whiffed (Too Early) ✖️" else "✖️ You Missed (Too Late) ✖️"
             _gameState.update {
                 it.copy(eventLog = (it.eventLog + missReason).takeLast(5))
             }
@@ -291,6 +292,13 @@ class GameEngine {
     }
     
     fun onBounce() {
+        // Only log bounce if we are in a valid phase (Rally or Waiting for Serve)
+        // This prevents "Ball Bounced" from appearing after the point has ended.
+        val phase = _gameState.value.gamePhase
+        if (phase != GamePhase.RALLY && phase != GamePhase.WAITING_FOR_SERVE) {
+            return
+        }
+        
         _gameState.update {
             it.copy(
                 ballState = if (it.isMyTurn) BallState.BOUNCED_MY_SIDE else BallState.BOUNCED_OPP_SIDE,
@@ -304,11 +312,11 @@ class GameEngine {
      */
     fun onOpponentMiss(reason: HitResult = HitResult.MISS_LATE) {
         val logMsg = when (reason) {
-            HitResult.MISS_NET -> "Opponent Hit Net!"
-            HitResult.MISS_OUT -> "Opponent Hit Out!"
-            HitResult.MISS_EARLY, HitResult.MISS_LATE -> "Opponent Whiffed!"
-            HitResult.MISS_TIMEOUT -> "Opponent Missed (No Swing)"
-            else -> "Opponent Missed!"
+            HitResult.MISS_NET -> "✔️ Opponent Hit Net! ✔️"
+            HitResult.MISS_OUT -> "✔️ Opponent Hit Out! ✔️"
+            HitResult.MISS_EARLY, HitResult.MISS_LATE -> "✔️ Opponent Whiffed! ✔️"
+            HitResult.MISS_TIMEOUT -> "✔️ Opponent Missed (No Swing) ✔️"
+            else -> "✔️ Opponent Missed! ✔️"
         }
         
         _gameState.update {
@@ -332,7 +340,7 @@ class GameEngine {
         // If we are past the arrival time + window, it's a miss
         if (currentTime > state.ballArrivalTimestamp + window) {
             _gameState.update {
-                it.copy(eventLog = (it.eventLog + "You Missed (No Swing)").takeLast(5))
+                it.copy(eventLog = (it.eventLog + "✖️ You Missed (No Swing) ✖️").takeLast(5))
             }
             handleMiss(if (isHost) Player.PLAYER_1 else Player.PLAYER_2)
             return true

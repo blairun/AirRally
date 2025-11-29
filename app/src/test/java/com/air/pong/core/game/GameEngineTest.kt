@@ -130,7 +130,7 @@ class GameEngineTest {
     fun `test timing window`() {
         // Explicitly set flight time to avoid relying on default
         val testFlightTime = 1000L
-        gameEngine.updateSettings(testFlightTime, 1, isDebugMode = false, useDebugTones = false) // Difficulty 1 = Medium
+        gameEngine.updateSettings(testFlightTime, 500, isDebugMode = false, useDebugTones = false) // Difficulty 500ms (Medium)
 
         // P1 serves at T=1000. Arrival = 1000 + 1000 = 2000.
         // Note: Must start > 500ms to avoid cooldown check against initial 0
@@ -140,18 +140,27 @@ class GameEngineTest {
         gameEngine.processSwing(serveTime, 10f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f) 
         assertEquals(expectedArrival, gameEngine.gameState.value.ballArrivalTimestamp)
         
-        // Test HIT window (Arrival +/- Window)
-        val window = GameEngine.WINDOW_MEDIUM
+        // Test HIT window (Shifted: Start at -BOUNCE_OFFSET_MS, End at -BOUNCE_OFFSET_MS + 2*Window)
+        val window = 500L
+        val bounceOffset = GameEngine.BOUNCE_OFFSET_MS
         
-        assertEquals(HitResult.HIT, gameEngine.checkHitTiming(expectedArrival - window))
+        val startWindow = -bounceOffset
+        val endWindow = -bounceOffset + (2 * window)
+        
+        // Test Start of Window (Earliest valid hit)
+        assertEquals(HitResult.HIT, gameEngine.checkHitTiming(expectedArrival + startWindow))
+        
+        // Test Middle (Arrival)
         assertEquals(HitResult.HIT, gameEngine.checkHitTiming(expectedArrival))
-        assertEquals(HitResult.HIT, gameEngine.checkHitTiming(expectedArrival + window))
         
-        // Test EARLY (< Arrival - Window)
-        assertEquals(HitResult.MISS_EARLY, gameEngine.checkHitTiming(expectedArrival - window - 1))
+        // Test End of Window (Latest valid hit)
+        assertEquals(HitResult.HIT, gameEngine.checkHitTiming(expectedArrival + endWindow))
         
-        // Test LATE (> Arrival + Window)
-        assertEquals(HitResult.MISS_LATE, gameEngine.checkHitTiming(expectedArrival + window + 1))
+        // Test TOO EARLY (< Start Window)
+        assertEquals(HitResult.MISS_EARLY, gameEngine.checkHitTiming(expectedArrival + startWindow - 1))
+        
+        // Test TOO LATE (> End Window)
+        assertEquals(HitResult.MISS_LATE, gameEngine.checkHitTiming(expectedArrival + endWindow + 1))
     }
 
     @Test
@@ -189,7 +198,7 @@ class GameEngineTest {
     fun `test flight time modifiers`() {
         // Set base flight time to 1000ms explicitly (default is 700ms)
         val baseFlightTime = 1000L
-        gameEngine.updateSettings(baseFlightTime, 1, isDebugMode = false, useDebugTones = false)
+        gameEngine.updateSettings(baseFlightTime, 500, isDebugMode = false, useDebugTones = false)
         
         // 1. MEDIUM_FLAT (1.0x) -> 1000ms
         gameEngine.onOpponentHit(0L, SwingType.MEDIUM_FLAT.ordinal)
@@ -208,8 +217,8 @@ class GameEngineTest {
     fun `test window shrink`() {
         // Base Window (Medium Difficulty)
         val testFlightTime = 1000L
-        gameEngine.updateSettings(testFlightTime, 1, isDebugMode = false, useDebugTones = false) // Difficulty 1 = Medium
-        val baseWindow = GameEngine.WINDOW_MEDIUM
+        gameEngine.updateSettings(testFlightTime, 500, isDebugMode = false, useDebugTones = false) // Difficulty 500ms
+        val baseWindow = 500L
         
         // 1. Incoming SOFT_FLAT (0% shrink) -> 500ms
         gameEngine.onOpponentHit(0L, SwingType.SOFT_FLAT.ordinal)

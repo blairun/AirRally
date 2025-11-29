@@ -164,15 +164,22 @@ Concrete implementation of `SensorProvider`:
 1. **Fix isHost tracking**: Call `setLocalPlayer()` from `startGame()`
 2. **Add timing window logic**:
    ```kotlin
+   ```kotlin
    fun checkHitTiming(swingTimestamp: Long): HitResult {
        val arrival = gameState.value.ballArrivalTimestamp
        val delta = swingTimestamp - arrival
+       // Window is shifted to start at the bounce (BOUNCE_OFFSET_MS before arrival)
+       // to prevent hitting before the bounce sound.
+       val startWindow = -BOUNCE_OFFSET_MS
+       val endWindow = startWindow + (2 * getHitWindow())
+       
        return when {
-           delta in -200..200 -> HitResult.HIT
-           delta < -200 -> HitResult.TOO_EARLY
-           else -> HitResult.TOO_LATE
+           delta < startWindow -> HitResult.MISS_EARLY
+           delta <= endWindow -> HitResult.HIT
+           else -> HitResult.MISS_LATE
        }
    }
+   ```
    ```
 3. **Add network message sender callback**: Pass messages to be sent
 4. **Implement receiver-authoritative logic**: The receiving device determines hit/miss
@@ -369,6 +376,7 @@ Replace placeholder with Compose Navigation:
 - Difficulty: Easy/Medium/Hard (affects hit window ± 300/200/100ms)
 - Debug mode: Toggle debug overlay
 - Sensor sensitivity: Adjust swing threshold
+- About Section: Version, Credits, Links
 
 ### Component 7.2: Safety Warning
 

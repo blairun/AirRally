@@ -16,8 +16,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.air.pong.ui.GameViewModel
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInParent
+import kotlinx.coroutines.launch
+import androidx.compose.ui.graphics.Color
+import androidx.compose.foundation.clickable
 
 import com.air.pong.ui.theme.ThemeMode
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.platform.LocalUriHandler
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -68,11 +78,15 @@ fun SettingsScreen(
         )
     }
 
+    val scrollState = rememberScrollState()
+    val coroutineScope = rememberCoroutineScope()
+    var aboutCardY by remember { mutableIntStateOf(0) }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
-            .verticalScroll(rememberScrollState()),
+            .verticalScroll(scrollState),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
     ) {
@@ -136,19 +150,42 @@ fun SettingsScreen(
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
-                Text(
-                    "Game Parameters",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(bottom = 16.dp)
-                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        "Game Parameters",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                    TextButton(onClick = { 
+                        viewModel.resetGameSettings()
+                        // Local state update handled by LaunchedEffect observing gameState
+                    }) {
+                        Text("Defaults")
+                    }
+                }
+                
+                Spacer(modifier = Modifier.height(8.dp))
 
                 // Flight Time
+                val flightTimeLabel = when {
+                    flightTime <= 600 -> "Hard"
+                    flightTime <= 900 -> "Medium"
+                    else -> "Easy"
+                }
+                
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text("Flight Time: ${flightTime.toLong()} ms", style = MaterialTheme.typography.bodyLarge)
+                    Text("Flight Time: ${flightTime.toLong()} ms ($flightTimeLabel)", style = MaterialTheme.typography.bodyLarge)
                     IconButton(onClick = {
                         infoTitle = "Flight Time"
-                        infoText = "Controls how long the ball stays in the air. Higher values mean a slower game, giving you more time to react.\n\n(Synced with opponent)"
+                        infoText = "Controls how long the ball stays in the air.\n\n" +
+                                "500-600ms: Hard (Fast)\n" +
+                                "700-900ms: Medium\n" +
+                                "1000-1200ms: Easy (Slow)\n\n" +
+                                "(Synced with opponent)"
                         showInfoDialog = true
                     }) {
                         Icon(Icons.Default.Info, contentDescription = "Info", modifier = Modifier.size(20.dp))
@@ -156,9 +193,12 @@ fun SettingsScreen(
                 }
                 Slider(
                     value = flightTime,
-                    onValueChange = { flightTime = it },
+                    onValueChange = { 
+                        // Snap to 100ms
+                        flightTime = (it / 100).toInt() * 100f
+                    },
                     valueRange = 500f..1200f,
-                    steps = 6,
+                    steps = 6, // (1200-500)/100 = 7 intervals -> 6 steps
                     onValueChangeFinished = {
                         viewModel.updateSettings(flightTime.toLong(), difficulty, isDebugMode, gameState.useDebugTones)
                     }
@@ -166,35 +206,39 @@ fun SettingsScreen(
                 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Difficulty
+                // Difficulty (Hit Window)
+                val difficultyLabel = when {
+                    difficulty <= 300 -> "Hard"
+                    difficulty <= 500 -> "Medium"
+                    else -> "Easy"
+                }
+                
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text("Difficulty", style = MaterialTheme.typography.bodyLarge)
+                    Text("Hit Window: $difficulty ms ($difficultyLabel)", style = MaterialTheme.typography.bodyLarge)
                     IconButton(onClick = {
-                        infoTitle = "Difficulty"
-                        infoText = "Determines the 'Hit Window' - the margin of error for your swing timing.\n\n" +
-                                "Easy: ±${com.air.pong.core.game.GameEngine.WINDOW_EASY}ms\n" +
-                                "Medium: ±${com.air.pong.core.game.GameEngine.WINDOW_MEDIUM}ms\n" +
-                                "Hard: ±${com.air.pong.core.game.GameEngine.WINDOW_HARD}ms\n\n(Synced with opponent)"
+                        infoTitle = "Hit Window (Difficulty)"
+                        infoText = "Determines the margin of error for your swing timing.\n\n" +
+                                "Larger Window = Easier to hit.\n" +
+                                "Smaller Window = Harder to hit.\n\n" +
+                                "Range: 200ms (Hard) to 700ms (Easy)\n\n(Synced with opponent)"
                         showInfoDialog = true
                     }) {
                         Icon(Icons.Default.Info, contentDescription = "Info", modifier = Modifier.size(20.dp))
                     }
                 }
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceEvenly
-                ) {
-                    listOf("Easy" to 0, "Medium" to 1, "Hard" to 2).forEach { (label, value) ->
-                        FilterChip(
-                            selected = difficulty == value,
-                            onClick = { 
-                                difficulty = value
-                                viewModel.updateSettings(flightTime.toLong(), difficulty, isDebugMode, gameState.useDebugTones)
-                            },
-                            label = { Text(label) }
-                        )
+                Slider(
+                    value = difficulty.toFloat(),
+                    onValueChange = { 
+                        // Snap to 50ms
+                        val snapped = (it / 50).toInt() * 50
+                        difficulty = snapped
+                    },
+                    valueRange = 200f..700f,
+                    steps = 9, // (700-200)/50 = 10 intervals -> 9 steps
+                    onValueChangeFinished = {
+                        viewModel.updateSettings(flightTime.toLong(), difficulty, isDebugMode, gameState.useDebugTones)
                     }
-                }
+                )
             }
         }
         
@@ -202,11 +246,25 @@ fun SettingsScreen(
 
         // Help & Guide Card
         var isHelpExpanded by remember { mutableStateOf(false) }
+        var helpCardY by remember { mutableIntStateOf(0) }
         
         Card(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .onGloballyPositioned { coordinates ->
+                    helpCardY = coordinates.positionInParent().y.toInt()
+                },
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
-            onClick = { isHelpExpanded = !isHelpExpanded }
+            onClick = { 
+                isHelpExpanded = !isHelpExpanded
+                if (isHelpExpanded) {
+                    coroutineScope.launch {
+                        // Small delay to allow layout to update
+                        kotlinx.coroutines.delay(100) 
+                        scrollState.animateScrollTo(helpCardY)
+                    }
+                }
+            }
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
                 Row(
@@ -286,8 +344,14 @@ fun SettingsScreen(
         Spacer(modifier = Modifier.height(16.dp))
 
         // Debug & Testing Card
+        var debugCardY by remember { mutableIntStateOf(0) }
+
         Card(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .onGloballyPositioned { coordinates ->
+                    debugCardY = coordinates.positionInParent().y.toInt()
+                },
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
@@ -334,6 +398,14 @@ fun SettingsScreen(
                         onCheckedChange = { 
                             isDebugMode = it
                             viewModel.updateSettings(flightTime.toLong(), difficulty, isDebugMode, gameState.useDebugTones)
+                            
+                            if (isDebugMode) {
+                                coroutineScope.launch {
+                                    // Small delay to allow layout to update
+                                    kotlinx.coroutines.delay(100) 
+                                    scrollState.animateScrollTo(debugCardY)
+                                }
+                            }
                         }
                     )
                 }
@@ -383,6 +455,152 @@ fun SettingsScreen(
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
+                    }
+                }
+            }
+        }
+        
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // About Card
+        var isAboutExpanded by remember { mutableStateOf(false) }
+        val uriHandler = LocalUriHandler.current
+        val linkColor = Color(0xFF448AFF)
+
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .onGloballyPositioned { coordinates ->
+                    aboutCardY = coordinates.positionInParent().y.toInt()
+                },
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+            onClick = { 
+                isAboutExpanded = !isAboutExpanded
+                if (isAboutExpanded) {
+                    coroutineScope.launch {
+                        // Small delay to allow layout to update
+                        kotlinx.coroutines.delay(100) 
+                        scrollState.animateScrollTo(aboutCardY)
+                    }
+                }
+            }
+        ) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        "About AirRally",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Icon(
+                        if (isAboutExpanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                        contentDescription = "Expand"
+                    )
+                }
+
+                if (isAboutExpanded) {
+                    Spacer(modifier = Modifier.height(16.dp))
+                    HorizontalDivider()
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    // Version
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text("Version", style = MaterialTheme.typography.bodyMedium)
+                        Text(
+                            "1.0.2", 
+                            style = MaterialTheme.typography.bodyMedium, 
+                            fontWeight = FontWeight.Bold,
+                            color = linkColor,
+                            modifier = Modifier.clickable { uriHandler.openUri("https://github.com/blairun/AirRally/releases") }
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    // Credits
+                    val creditsText = buildAnnotatedString {
+                        append("Created by bl")
+                        withStyle(style = SpanStyle(textDecoration = TextDecoration.Underline)) {
+                            append("AI")
+                        }
+                        append("r")
+                    }
+                    
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text("Credits", style = MaterialTheme.typography.bodyMedium)
+                        Text(
+                            text = creditsText, 
+                            style = MaterialTheme.typography.bodyMedium, 
+                            fontWeight = FontWeight.Bold,
+                            color = linkColor,
+                            modifier = Modifier.clickable { uriHandler.openUri("https://blai.run") }
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(12.dp))
+                    
+                    // License
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text("License", style = MaterialTheme.typography.bodyMedium)
+                        Text(
+                            "MIT License", 
+                            style = MaterialTheme.typography.bodyMedium, 
+                            fontWeight = FontWeight.Bold,
+                            color = linkColor,
+                            modifier = Modifier.clickable { uriHandler.openUri("https://github.com/blairun/AirRally/blob/main/LICENSE") }
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    // Source Code
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text("Source Code", style = MaterialTheme.typography.bodyMedium)
+                        Text(
+                            "View GitHub Repo", 
+                            style = MaterialTheme.typography.bodyMedium, 
+                            fontWeight = FontWeight.Bold,
+                            color = linkColor,
+                            modifier = Modifier.clickable { uriHandler.openUri("https://github.com/blairun/AirRally") }
+                        )
+                    }
+                    
+                    Spacer(modifier = Modifier.height(12.dp))
+                    
+                    // Problems?
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text("Problems?", style = MaterialTheme.typography.bodyMedium)
+                        Text(
+                            "Report a Bug", 
+                            style = MaterialTheme.typography.bodyMedium, 
+                            fontWeight = FontWeight.Bold,
+                            color = linkColor,
+                            modifier = Modifier.clickable { uriHandler.openUri("https://github.com/blairun/AirRally/issues") }
+                        )
                     }
                 }
             }

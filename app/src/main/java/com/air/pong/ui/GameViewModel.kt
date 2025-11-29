@@ -49,13 +49,24 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
     init {
         // Load saved settings
         val savedFlightTime = sharedPrefs.getLong("flight_time", 700L)
-        val savedDifficulty = sharedPrefs.getInt("difficulty", 1)
+        var savedDifficulty = sharedPrefs.getInt("difficulty", 400)
+        
+        // Migration: If difficulty is small (legacy index), convert to ms
+        if (savedDifficulty < 10) {
+            savedDifficulty = when (savedDifficulty) {
+                0 -> 700 // Easy
+                1 -> 500 // Medium
+                2 -> 300 // Hard
+                else -> 400
+            }
+        }
+        
         val savedDebugMode = sharedPrefs.getBoolean("debug_mode", false)
         val savedDebugTones = sharedPrefs.getBoolean("debug_tones", false)
         val savedPlayerName = sharedPrefs.getString("player_name", android.os.Build.MODEL) ?: android.os.Build.MODEL
-        
+
         _playerName.value = savedPlayerName
-        
+
         gameEngine.updateSettings(savedFlightTime, savedDifficulty, savedDebugMode, savedDebugTones)
 
         // Observe Network Messages
@@ -64,7 +75,6 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
                 handleMessage(msg)
             }
         }
-        
         // Observe Sensor Events
         viewModelScope.launch {
             sensorProvider.swingEvents.collect { event ->
@@ -102,6 +112,18 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
                     gameEngine.startNextServe()
                 }
             }
+        }
+    }
+    
+    fun resetGameSettings() {
+        gameEngine.updateSettings(700L, 400, false, false)
+        // Also update shared prefs so it persists
+        with(sharedPrefs.edit()) {
+            putLong("flight_time", 700L)
+            putInt("difficulty", 400)
+            putBoolean("debug_mode", false)
+            putBoolean("debug_tones", false)
+            apply()
         }
     }
     
@@ -222,7 +244,7 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
                 
                 // Schedule Bounce on My Side (Receiver)
                 val timeToArrival = gameEngine.gameState.value.ballArrivalTimestamp - System.currentTimeMillis()
-                val bounceDelay = timeToArrival - 200
+                val bounceDelay = timeToArrival - GameEngine.BOUNCE_OFFSET_MS
                 
                 if (bounceDelay > 0) {
                     viewModelScope.launch {
