@@ -19,6 +19,8 @@ out/
 # Gradle files
 .gradle/
 build/
+debug/
+release/
 
 # Local configuration file (sdk path, etc)
 local.properties
@@ -56,10 +58,14 @@ captures/
 
 # Keystore files
 # Uncomment the following lines if you do not want to check in your keystores
-# *.jks
-# *.keystore
-# *.p12
-# *.key
+*.jks
+*.keystore
+*.p12
+*.key
+# Keystore
+release.keystore
+keystore.properties
+*.dm
 
 # External native build folder generated in Android Studio 2.2 and later
 .externalNativeBuild
@@ -81,3 +87,4 @@ Thumbs.db
 *.hprof
 
 scratchpad.md
+release.ps1
