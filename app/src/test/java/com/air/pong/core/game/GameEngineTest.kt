@@ -78,7 +78,11 @@ class GameEngineTest {
     @Test
     fun `test win condition`() {
         // 10-0
-        repeat(10) { gameEngine.handleMiss(Player.PLAYER_2) }
+        // 10-0
+        repeat(10) { 
+            gameEngine.handleMiss(Player.PLAYER_2)
+            gameEngine.startNextServe() // Skip cooldown
+        }
         assertEquals(GamePhase.WAITING_FOR_SERVE, gameEngine.gameState.value.gamePhase)
 
         // 11-0, Game Over
@@ -90,19 +94,31 @@ class GameEngineTest {
     @Test
     fun `test win by two`() {
         // 10-10
-        repeat(10) { gameEngine.handleMiss(Player.PLAYER_2) }
-        repeat(10) { gameEngine.handleMiss(Player.PLAYER_1) }
+        repeat(10) { 
+            gameEngine.handleMiss(Player.PLAYER_2)
+            gameEngine.startNextServe()
+        }
+        repeat(10) { 
+            gameEngine.handleMiss(Player.PLAYER_1)
+            gameEngine.startNextServe()
+        }
 
         // 11-10, Not Game Over
         gameEngine.handleMiss(Player.PLAYER_2)
+        assertEquals(GamePhase.POINT_SCORED, gameEngine.gameState.value.gamePhase)
+        gameEngine.startNextServe()
         assertEquals(GamePhase.WAITING_FOR_SERVE, gameEngine.gameState.value.gamePhase)
 
         // 11-11, Not Game Over
         gameEngine.handleMiss(Player.PLAYER_1)
+        assertEquals(GamePhase.POINT_SCORED, gameEngine.gameState.value.gamePhase)
+        gameEngine.startNextServe()
         assertEquals(GamePhase.WAITING_FOR_SERVE, gameEngine.gameState.value.gamePhase)
 
         // 12-11, Not Game Over
         gameEngine.handleMiss(Player.PLAYER_2)
+        assertEquals(GamePhase.POINT_SCORED, gameEngine.gameState.value.gamePhase)
+        gameEngine.startNextServe()
         assertEquals(GamePhase.WAITING_FOR_SERVE, gameEngine.gameState.value.gamePhase)
 
         // 13-11, Game Over
@@ -250,5 +266,47 @@ class GameEngineTest {
         // It's technically possible (though unlikely) to have 0 failures, but for a unit test 
         // we might want to be careful. However, 0.6^100 is astronomically small.
         assertTrue("Expected some failures due to risk, but got $failures", failures > 0)
+    }
+    @Test
+    fun `test risk probabilities`() {
+        // Run a large number of simulations to verify probabilities
+        val iterations = 10000
+        
+        // 1. MEDIUM_FLAT: 0% Net, 5% Out
+        var mediumFlatNet = 0
+        var mediumFlatOut = 0
+        
+        repeat(iterations) {
+            val engine = GameEngine()
+            engine.setLocalPlayer(true)
+            engine.startGame()
+            // Force=18 (Medium), GravZ=0 (Flat)
+            val result = engine.processSwing(1000L, 18f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f)
+            if (result == HitResult.MISS_NET) mediumFlatNet++
+            if (result == HitResult.MISS_OUT) mediumFlatOut++
+        }
+        
+        assertEquals("MEDIUM_FLAT should never hit net", 0, mediumFlatNet)
+        // Expected ~500 (5%). Allow margin of error (400-600)
+        assertTrue("MEDIUM_FLAT Out Rate should be ~5% (actual: $mediumFlatOut)", mediumFlatOut in 400..600)
+        
+        // 2. HARD_FLAT: 5% Net, 15% Out
+        var hardFlatNet = 0
+        var hardFlatOut = 0
+        
+        repeat(iterations) {
+            val engine = GameEngine()
+            engine.setLocalPlayer(true)
+            engine.startGame()
+            // Force=25 (Hard), GravZ=0 (Flat)
+            val result = engine.processSwing(1000L, 25f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f)
+            if (result == HitResult.MISS_NET) hardFlatNet++
+            if (result == HitResult.MISS_OUT) hardFlatOut++
+        }
+        
+        // Expected Net ~500 (5%). Allow 400-600
+        assertTrue("HARD_FLAT Net Rate should be ~5% (actual: $hardFlatNet)", hardFlatNet in 400..600)
+        // Expected Out ~1500 (15%). Allow 1350-1650
+        assertTrue("HARD_FLAT Out Rate should be ~15% (actual: $hardFlatOut)", hardFlatOut in 1350..1650)
     }
 }

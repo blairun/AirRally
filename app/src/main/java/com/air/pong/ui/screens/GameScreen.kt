@@ -254,9 +254,18 @@ fun GameScreen(
                         Text("Delta: ${gameState.ballArrivalTimestamp - System.currentTimeMillis()}ms", color = Color.White, style = MaterialTheme.typography.bodySmall)
                         Text("Difficulty: ${gameState.difficulty}", color = Color.White, style = MaterialTheme.typography.bodySmall)
                         Text("FlightTime: ${gameState.flightTime}", color = Color.White, style = MaterialTheme.typography.bodySmall)
-                    }
+                        
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text("LAST SWING:", color = Color.Yellow, style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold)
+                        gameState.lastSwingType?.let {
+                             Text("Type: $it", color = Color.White, style = MaterialTheme.typography.bodySmall)
+                        }
+                        gameState.lastSwingData?.let {
+                             Text("Force: ${"%.2f".format(it.force)}", color = Color.White, style = MaterialTheme.typography.bodySmall)
+                             Text("GravZ: ${"%.2f".format(it.gravZ)}", color = Color.White, style = MaterialTheme.typography.bodySmall)
+                        }
                 }
             }
         }
     }
-}
+}}
