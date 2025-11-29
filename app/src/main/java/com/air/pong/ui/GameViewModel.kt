@@ -63,7 +63,7 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
         
         val savedDebugMode = sharedPrefs.getBoolean("debug_mode", false)
         val savedDebugTones = sharedPrefs.getBoolean("debug_tones", false)
-        val savedPlayerName = sharedPrefs.getString("player_name", android.os.Build.MODEL) ?: android.os.Build.MODEL
+        val savedPlayerName = sharedPrefs.getString("player_name", null) ?: fetchDeviceName()
 
         _playerName.value = savedPlayerName
 
@@ -445,5 +445,34 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
 
     fun playTestSound(event: com.air.pong.audio.AudioManager.SoundEvent) {
         audioManager.play(event, gameState.value.useDebugTones)
+    }
+
+    private fun fetchDeviceName(): String {
+        val context = getApplication<Application>().applicationContext
+        
+        // 1. Try Settings.Global.DEVICE_NAME (API 25+)
+        try {
+            val deviceName = android.provider.Settings.Global.getString(
+                context.contentResolver,
+                android.provider.Settings.Global.DEVICE_NAME
+            )
+            if (!deviceName.isNullOrBlank()) return deviceName
+        } catch (e: Exception) {
+            // Ignore
+        }
+
+        // 2. Try Bluetooth Adapter Name (requires permission, but we might have it or it might be cached)
+        try {
+            val bluetoothManager = context.getSystemService(android.content.Context.BLUETOOTH_SERVICE) as? android.bluetooth.BluetoothManager
+            val adapter = bluetoothManager?.adapter
+            if (adapter != null && !adapter.name.isNullOrBlank()) {
+                return adapter.name
+            }
+        } catch (e: SecurityException) {
+            // Ignore if we don't have permission yet
+        }
+
+        // 3. Fallback to Model
+        return android.os.Build.MODEL
     }
 }

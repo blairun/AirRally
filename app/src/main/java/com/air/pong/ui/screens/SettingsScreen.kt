@@ -181,7 +181,7 @@ fun SettingsScreen(
                     Text("Flight Time: ${flightTime.toLong()} ms ($flightTimeLabel)", style = MaterialTheme.typography.bodyLarge)
                     IconButton(onClick = {
                         infoTitle = "Flight Time"
-                        infoText = "Controls how long the ball stays in the air.\n\n" +
+                        infoText = "Controls the default time the ball stays in the air. (Swing force and phone tilt will increase or decrease this time.)\n\n" +
                                 "500-600ms: Hard (Fast)\n" +
                                 "700-900ms: Medium\n" +
                                 "1000-1200ms: Easy (Slow)\n\n" +
@@ -217,7 +217,7 @@ fun SettingsScreen(
                     Text("Hit Window: $difficulty ms ($difficultyLabel)", style = MaterialTheme.typography.bodyLarge)
                     IconButton(onClick = {
                         infoTitle = "Hit Window (Difficulty)"
-                        infoText = "Determines the margin of error for your swing timing.\n\n" +
+                        infoText = "Changes the margin of error for your swing timing.\n\n" +
                                 "Larger Window = Easier to hit.\n" +
                                 "Smaller Window = Harder to hit.\n\n" +
                                 "Range: 200ms (Hard) to 700ms (Easy)\n\n(Synced with opponent)"
@@ -293,8 +293,17 @@ fun SettingsScreen(
                     Spacer(modifier = Modifier.height(4.dp))
                     Text("• Use a wrist strap.", style = MaterialTheme.typography.bodyMedium)
                     Text("• Clear your play area.", style = MaterialTheme.typography.bodyMedium)
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    // Gameplay
+                    Text("Gameplay", style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
                     Text("• Hold phone with screen facing OUT (away from palm).", style = MaterialTheme.typography.bodyMedium)
                     // Text("• Hold phone with screen facing OUT (away from palm).", style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text("• YELLOW means Incoming (Get Ready).", style = MaterialTheme.typography.bodyMedium)
+                    Text("• GREEN means Swing (After Bounce).", style = MaterialTheme.typography.bodyMedium)
+                    Text("• RED means Opponent's Turn.", style = MaterialTheme.typography.bodyMedium)
 
                     Spacer(modifier = Modifier.height(16.dp))
 
@@ -303,22 +312,23 @@ fun SettingsScreen(
                     Spacer(modifier = Modifier.height(4.dp))
                     Text("Swing force and phone tilt change your shot:", style = MaterialTheme.typography.bodyMedium)
                     Spacer(modifier = Modifier.height(4.dp))
-                    Text("• Vertical = FLAT", style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)
+                    Text("• Screen Vertical = FLAT HIT", style = MaterialTheme.typography.bodyMedium)
                     Text("  Standard shot. Safe and reliable.", style = MaterialTheme.typography.bodyMedium)
                     
                     Spacer(modifier = Modifier.height(4.dp))
-                    Text("• Screen Up = LOB", style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)
-                    Text("  Slow, high arc. Safe, gives you time to recover.", style = MaterialTheme.typography.bodyMedium)
+                    Text("• Screen Up = LOB", style = MaterialTheme.typography.bodyMedium)
+                    Text("  Slow, high arc.", style = MaterialTheme.typography.bodyMedium)
+                    Text("  Safe, gives you time to recover.", style = MaterialTheme.typography.bodyMedium)
                     
                     Spacer(modifier = Modifier.height(4.dp))
-                    Text("• Screen Down = SPIKE", style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)
+                    Text("• Screen Down = SPIKE", style = MaterialTheme.typography.bodyMedium)
                     Text("  Fast & Aggressive!", style = MaterialTheme.typography.bodyMedium)
                     Text("  Makes opponent's hit window shorter, but", style = MaterialTheme.typography.bodyMedium)
-                    Text("  Higher chance to hit Net or go Out.", style = MaterialTheme.typography.bodyMedium)
+                    Text("  Higher chance to hit net or off table.", style = MaterialTheme.typography.bodyMedium)
                     // Text("  High Risk: Chance to hit Net or go Out.", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.error)
                     // Text("  Reward: Makes opponent's hit window smaller!", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.tertiary)
 
-                    Spacer(modifier = Modifier.height(16.dp))
+                    // Spacer(modifier = Modifier.height(16.dp))
                     
                     // Audio Feedback
                     // Text("🔊 Audio Feedback", style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
@@ -329,14 +339,6 @@ fun SettingsScreen(
                     // Text("• Hit Out? You won't hear it land (it's far away!), but your opponent will.", style = MaterialTheme.typography.bodyMedium)
                     // Text("• Whiff? You hear the whoosh.", style = MaterialTheme.typography.bodyMedium)
 
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    // Gameplay
-                    Text("Gameplay", style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text("• YELLOW means Incoming (Get Ready).", style = MaterialTheme.typography.bodyMedium)
-                    Text("• Swing when GREEN (After Bounce).", style = MaterialTheme.typography.bodyMedium)
-                    Text("• RED means Opponent's Turn.", style = MaterialTheme.typography.bodyMedium)
                 }
             }
         }
