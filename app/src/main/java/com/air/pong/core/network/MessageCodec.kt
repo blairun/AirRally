@@ -1,0 +1,161 @@
+package com.air.pong.core.network
+
+import com.air.pong.core.game.GamePhase
+import com.air.pong.core.game.Player
+import com.air.pong.core.game.HitResult
+import java.nio.ByteBuffer
+import java.nio.ByteOrder
+
+/**
+ * Encodes and decodes GameMessage objects to/from byte arrays.
+ * Uses compact binary format for low latency over Bluetooth.
+ * 
+ * Message Format:
+ * [Type: 1 byte][Payload: variable bytes]
+ */
+object MessageCodec {
+    
+    /**
+     * Encodes a GameMessage into a byte array for transmission.
+     */
+    fun encode(message: GameMessage): ByteArray {
+        return when (message) {
+            is GameMessage.Handshake -> encodeHandshake(message)
+            is GameMessage.Settings -> encodeSettings(message)
+            is GameMessage.StartGame -> encodeSimple(MessageType.START_GAME)
+            is GameMessage.ActionSwing -> encodeActionSwing(message)
+            is GameMessage.Result -> encodeResult(message)
+            is GameMessage.GameStateSync -> encodeGameStateSync(message)
+            is GameMessage.Pause -> encodeSimple(MessageType.PAUSE)
+            is GameMessage.Resume -> encodeSimple(MessageType.RESUME)
+            is GameMessage.PeerLeft -> encodeSimple(MessageType.PEER_LEFT)
+            is GameMessage.Rematch -> encodeSimple(MessageType.REMATCH)
+            is GameMessage.PlayerReady -> encodeSimple(MessageType.PLAYER_READY)
+        }
+    }
+    
+    /**
+     * Decodes a byte array into a GameMessage.
+     * @throws IllegalArgumentException if message type is unknown or data is corrupted
+     */
+    fun decode(data: ByteArray): GameMessage {
+        if (data.isEmpty()) {
+            throw IllegalArgumentException("Cannot decode empty byte array")
+        }
+        
+        val type = data[0]
+        val payload = data.sliceArray(1 until data.size)
+        
+        return when (type) {
+            MessageType.HANDSHAKE -> decodeHandshake(payload)
+            MessageType.SETTINGS -> decodeSettings(payload)
+            MessageType.START_GAME -> GameMessage.StartGame
+            MessageType.ACTION_SWING -> decodeActionSwing(payload)
+            MessageType.RESULT -> decodeResult(payload)
+            MessageType.GAME_STATE_SYNC -> decodeGameStateSync(payload)
+            MessageType.PAUSE -> GameMessage.Pause
+            MessageType.RESUME -> GameMessage.Resume
+            MessageType.PEER_LEFT -> GameMessage.PeerLeft
+            MessageType.REMATCH -> GameMessage.Rematch
+            MessageType.PLAYER_READY -> GameMessage.PlayerReady
+            else -> throw IllegalArgumentException("Unknown message type: 0x${type.toString(16)}")
+        }
+    }
+    
+    // ========== Encoding Functions ==========
+    
+    private fun encodeSimple(type: Byte): ByteArray {
+        return byteArrayOf(type)
+    }
+    
+    private fun encodeHandshake(msg: GameMessage.Handshake): ByteArray {
+        // [Type: 1][Version: 4]
+        val buffer = ByteBuffer.allocate(5).order(ByteOrder.BIG_ENDIAN)
+        buffer.put(MessageType.HANDSHAKE)
+        buffer.putInt(msg.versionCode)
+        return buffer.array()
+    }
+    
+    private fun encodeSettings(msg: GameMessage.Settings): ByteArray {
+        // [Type: 1][FlightTime: 8][Difficulty: 4]
+        val buffer = ByteBuffer.allocate(13).order(ByteOrder.BIG_ENDIAN)
+        buffer.put(MessageType.SETTINGS)
+        buffer.putLong(msg.flightTime)
+        buffer.putInt(msg.difficulty)
+        return buffer.array()
+    }
+    
+    private fun encodeActionSwing(msg: GameMessage.ActionSwing): ByteArray {
+        // [Type: 1][Timestamp: 8][Force: 4][SwingType: 4]
+        val buffer = ByteBuffer.allocate(17).order(ByteOrder.BIG_ENDIAN)
+        buffer.put(MessageType.ACTION_SWING)
+        buffer.putLong(msg.timestamp)
+        buffer.putFloat(msg.force)
+        buffer.putInt(msg.swingType)
+        return buffer.array()
+    }
+    
+    private fun encodeResult(msg: GameMessage.Result): ByteArray {
+        // [Type: 1][HitResult: 1][ScoringPlayer: 1 (0xFF if null)]
+        val buffer = ByteBuffer.allocate(3).order(ByteOrder.BIG_ENDIAN)
+        buffer.put(MessageType.RESULT)
+        buffer.put(msg.hitOrMiss.ordinal.toByte())
+        buffer.put(msg.scoringPlayer?.ordinal?.toByte() ?: 0xFF.toByte())
+        return buffer.array()
+    }
+    
+    private fun encodeGameStateSync(msg: GameMessage.GameStateSync): ByteArray {
+        // [Type: 1][P1Score: 4][P2Score: 4][Phase: 1][ServingPlayer: 1]
+        val buffer = ByteBuffer.allocate(11).order(ByteOrder.BIG_ENDIAN)
+        buffer.put(MessageType.GAME_STATE_SYNC)
+        buffer.putInt(msg.player1Score)
+        buffer.putInt(msg.player2Score)
+        buffer.put(msg.currentPhase.ordinal.toByte())
+        buffer.put(msg.servingPlayer.ordinal.toByte())
+        return buffer.array()
+    }
+    
+    // ========== Decoding Functions ==========
+    
+    private fun decodeHandshake(payload: ByteArray): GameMessage.Handshake {
+        val buffer = ByteBuffer.wrap(payload).order(ByteOrder.BIG_ENDIAN)
+        val versionCode = buffer.int
+        return GameMessage.Handshake(versionCode)
+    }
+    
+    private fun decodeSettings(payload: ByteArray): GameMessage.Settings {
+        val buffer = ByteBuffer.wrap(payload).order(ByteOrder.BIG_ENDIAN)
+        val flightTime = buffer.long
+        val difficulty = buffer.int
+        return GameMessage.Settings(flightTime, difficulty)
+    }
+    
+    private fun decodeActionSwing(payload: ByteArray): GameMessage.ActionSwing {
+        val buffer = ByteBuffer.wrap(payload).order(ByteOrder.BIG_ENDIAN)
+        val timestamp = buffer.long
+        val force = buffer.float
+        val swingType = if (buffer.remaining() >= 4) buffer.int else 0
+        return GameMessage.ActionSwing(timestamp, force, swingType)
+    }
+    
+    private fun decodeResult(payload: ByteArray): GameMessage.Result {
+        val buffer = ByteBuffer.wrap(payload).order(ByteOrder.BIG_ENDIAN)
+        val hitResult = HitResult.entries[buffer.get().toInt()]
+        val scoringPlayerByte = buffer.get()
+        val scoringPlayer = if (scoringPlayerByte == 0xFF.toByte()) {
+            null
+        } else {
+            Player.entries[scoringPlayerByte.toInt()]
+        }
+        return GameMessage.Result(hitResult, scoringPlayer)
+    }
+    
+    private fun decodeGameStateSync(payload: ByteArray): GameMessage.GameStateSync {
+        val buffer = ByteBuffer.wrap(payload).order(ByteOrder.BIG_ENDIAN)
+        val p1Score = buffer.int
+        val p2Score = buffer.int
+        val phase = GamePhase.entries[buffer.get().toInt()]
+        val servingPlayer = Player.entries[buffer.get().toInt()]
+        return GameMessage.GameStateSync(p1Score, p2Score, phase, servingPlayer)
+    }
+}
