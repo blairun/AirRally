@@ -13,5 +13,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Ping"
+rootProject.name = "AirRally"
 include(":app")

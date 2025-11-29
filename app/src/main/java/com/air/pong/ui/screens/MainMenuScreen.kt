@@ -288,7 +288,7 @@ fun MainMenuScreen(
 fun shareGame(context: android.content.Context) {
     val sendIntent: Intent = Intent().apply {
         action = Intent.ACTION_SEND
-        putExtra(Intent.EXTRA_TEXT, "Check out AirRally - Ping Pong without the table! https://blai.run")
+        putExtra(Intent.EXTRA_TEXT, "Check out AirRally - Ping Pong without the table! https://github.com/blairun/AirRally")
         type = "text/plain"
     }
     val shareIntent = Intent.createChooser(sendIntent, null)
