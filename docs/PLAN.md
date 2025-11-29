@@ -34,7 +34,12 @@ This plan addresses the gaps identified in the current implementation and provid
 - **Sound Effects Refinement**: Distinct tones for serve, bounce, hit, miss, score.
 - **UI Polish**: Animations, graphics, themes.
 - **Settings Screen**: Flight time, difficulty, debug mode.
+- **Settings Screen**: Flight time, difficulty, debug mode.
 - **Testing**: Comprehensive unit and integration tests.
+
+### ✅ Recently Completed
+- **Permissions Fix**: Added `ACCESS_COARSE_LOCATION` for older Android versions.
+- **Gameplay Cooldown**: Added `POINT_SCORED` phase with 2s delay between points.
 
 ## Implementation Phases
 

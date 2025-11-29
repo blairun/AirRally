@@ -10,8 +10,8 @@ AirRally is a motion-controlled table tennis game that turns your Android phone 
 
 ## Getting Started
 
-1.  **Install:** Download the APK from the Releases section.
-2.  **Connect:** Follow on screen instructions to connect to a nearby device.
+1.  **Install:** Download the APK from the Releases section onto two Android devices.
+2.  **Connect:** Follow on screen instructions to connect to each other over Bluetooth.
 3.  **Play:** Swing away!
 
 

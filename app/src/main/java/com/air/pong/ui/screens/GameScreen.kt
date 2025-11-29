@@ -136,6 +136,18 @@ fun GameScreen(
                         color = Color.White
                     )
                 }
+            } else if (gameState.gamePhase == GamePhase.POINT_SCORED) {
+                Text(
+                    "POINT SCORED",
+                    style = MaterialTheme.typography.headlineMedium,
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
+                    "Get Ready...",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = Color.White.copy(alpha = 0.8f)
+                )
             } else {
                 if (gameState.isMyTurn) {
                     // Only show HIT! if the ball has bounced (Green state)

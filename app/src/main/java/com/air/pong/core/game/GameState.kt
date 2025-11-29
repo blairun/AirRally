@@ -44,6 +44,7 @@ enum class ConnectionState {
 enum class GamePhase {
     IDLE,
     WAITING_FOR_SERVE,
+    POINT_SCORED,
     RALLY,
     PAUSED,
     GAME_OVER

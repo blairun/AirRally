@@ -373,12 +373,24 @@ class GameEngine {
                 state.copy(
                     player1Score = p1Score,
                     player2Score = p2Score,
-                    gamePhase = GamePhase.WAITING_FOR_SERVE,
                     servingPlayer = nextServer,
                     isMyTurn = (isHost && nextServer == Player.PLAYER_1) || (!isHost && nextServer == Player.PLAYER_2),
-                    lastEvent = "Point Scored",
-                    eventLog = (state.eventLog + "Point to $winnerName").takeLast(5)
+                    eventLog = (state.eventLog + "Point to $winnerName").takeLast(5),
+                    gamePhase = GamePhase.POINT_SCORED // Enter cooldown
                 )
+            }
+        }
+    }
+
+    fun startNextServe() {
+        _gameState.update { state ->
+            if (state.gamePhase == GamePhase.POINT_SCORED) {
+                state.copy(
+                    gamePhase = GamePhase.WAITING_FOR_SERVE,
+                    lastEvent = "Your Serve" // Or "Opponent Serving" - UI handles this text usually but good to reset
+                )
+            } else {
+                state
             }
         }
     }

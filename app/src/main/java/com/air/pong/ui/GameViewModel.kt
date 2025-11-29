@@ -93,6 +93,16 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
                 }
             }
         }
+
+        // Observe Game Phase for Cooldown
+        viewModelScope.launch {
+            gameState.collect { state ->
+                if (state.gamePhase == GamePhase.POINT_SCORED) {
+                    kotlinx.coroutines.delay(2000) // 2 second cooldown
+                    gameEngine.startNextServe()
+                }
+            }
+        }
     }
     
     fun hostGame() {
