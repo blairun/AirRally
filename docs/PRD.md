@@ -95,6 +95,7 @@ To avoid complexity, we use a deterministic "Time-of-Flight" model.
 ## 4. Technical Requirements
 -   **Platform**: Android (Min SDK 24).
 -   **Language**: Kotlin.
+-   **Localization**: English, Spanish, French, Italian, German.
 -   **Architecture**: MVVM with a "Context-First" modular structure.
     -   `core/`: Pure Kotlin logic (State Machine, Physics calc).
     -   `app/`: Android specific implementation.

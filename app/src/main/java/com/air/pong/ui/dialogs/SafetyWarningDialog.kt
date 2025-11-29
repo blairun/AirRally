@@ -5,9 +5,11 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import com.air.pong.R
 
 @Composable
 fun SafetyWarningDialog(
@@ -26,17 +28,16 @@ fun SafetyWarningDialog(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "Hey Listen!",
+                    text = stringResource(R.string.hey_listen),
                     style = MaterialTheme.typography.headlineMedium,
                     fontWeight = FontWeight.Bold,
-                    // color = MaterialTheme.colorScheme.error
                     color = MaterialTheme.colorScheme.primary
                 )
                 
                 Spacer(modifier = Modifier.height(16.dp))
                 
                 Text(
-                    text = "This game requires you to swing your phone.",
+                    text = stringResource(R.string.swing_warning),
                     style = MaterialTheme.typography.bodyLarge
                 )
                 
@@ -45,18 +46,10 @@ fun SafetyWarningDialog(
                 Column(
                     modifier = Modifier.fillMaxWidth().padding(start = 16.dp)
                 ) {
-                    Text("• Use a strap to secure your phone")
-                    Text("• Be aware of your surroundings")
-                    Text("• Hold phone with screen facing OUT (away from palm)")
+                    Text(stringResource(R.string.warning_strap))
+                    Text(stringResource(R.string.warning_surroundings))
+                    Text(stringResource(R.string.warning_hold))
                 }
-                
-                // Spacer(modifier = Modifier.height(16.dp))
-                
-                // Text(
-                //     text = "Don't be dumb.",
-                //     style = MaterialTheme.typography.bodySmall,
-                //     color = MaterialTheme.colorScheme.onSurfaceVariant
-                // )
                 
                 Spacer(modifier = Modifier.height(24.dp))
                 
@@ -68,7 +61,7 @@ fun SafetyWarningDialog(
                         onClick = onDismiss,
                         modifier = Modifier.weight(1f)
                     ) {
-                        Text("Nah")
+                        Text(stringResource(R.string.nah))
                     }
                     
                     Spacer(modifier = Modifier.width(8.dp))
@@ -77,7 +70,7 @@ fun SafetyWarningDialog(
                         onClick = onAccept,
                         modifier = Modifier.weight(1f)
                     ) {
-                        Text("Cool")
+                        Text(stringResource(R.string.cool))
                     }
                 }
             }

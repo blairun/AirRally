@@ -1,3 +1,149 @@
 <resources>
     <string name="app_name">AirRally</string>
+    
+    <!-- Main Menu -->
+    <string name="bluetooth_permission_required">Bluetooth permissions required to play.</string>
+    <string name="connected_to">Connected to %1$s</string>
+    <string name="unknown">Unknown</string>
+    <string name="redirecting_lobby">Redirecting to Lobby...</string>
+    <string name="disconnect">DISCONNECT</string>
+    <string name="host_game">HOST GAME</string>
+    <string name="join_game">JOIN GAME</string>
+    <string name="settings">SETTINGS</string>
+    <string name="waiting_for_players">Waiting for players...</string>
+    <string name="cancel">CANCEL</string>
+    <string name="looking_for_games">Looking for nearby games...</string>
+    <string name="available_games">Available Games:</string>
+    <string name="connect_to">Connect to %1$s</string>
+    <string name="auto_connecting">Auto-connecting in %1$ds...</string>
+    <string name="connecting">Connecting...</string>
+    <string name="error_prefix">Error: %1$s</string>
+    <string name="reset">Reset</string>
+    <string name="share_game_content">Check out AirRally - Ping Pong without the table! https://github.com/blairun/AirRally</string>
+    
+    <!-- Taglines -->
+    <string name="tagline_1">Ping pong without any balls 👀</string>
+    <string name="tagline_2">ImaginAIRy ping pong</string>
+    <string name="tagline_3">No table, no paddle, no problem.</string>
+    <string name="tagline_4">It\'s all in the wrist.</string>
+    <string name="tagline_5">Don\'t let go of your phone!</string>
+    <string name="tagline_6" formatted="false">100% invisible, 100% real.</string>
+    <string name="tagline_7">The ball is a lie.</string>
+    <string name="tagline_8">It\'s a paddle battle!</string>
+    <string name="tagline_9">Pongogo!</string>
+    <string name="tagline_10">Swing like nobody\'s watching.</string>
+
+    <!-- Settings -->
+    <string name="appearance">Appearance</string>
+    <string name="theme_system">System</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="player_name">Player Name</string>
+    <string name="game_parameters">Game Parameters</string>
+    <string name="defaults">Defaults</string>
+    <string name="flight_time_label">Flight Time: %1$d ms (%2$s)</string>
+    <string name="difficulty_hard">Hard</string>
+    <string name="difficulty_medium">Medium</string>
+    <string name="difficulty_easy">Easy</string>
+    <string name="info_flight_time_title">Flight Time</string>
+    <string name="info_flight_time_text">Controls the default time the ball stays in the air. (Swing force and phone tilt will increase or decrease this time.)\n\n500-600ms: Hard (Fast)\n700-900ms: Medium\n1000-1200ms: Easy (Slow)\n\n(Synced with opponent)</string>
+    <string name="hit_window_label">Hit Window: %1$d ms (%2$s)</string>
+    <string name="info_hit_window_title">Hit Window (Difficulty)</string>
+    <string name="info_hit_window_text">Changes the margin of error for your swing timing.\n\nLarger Window = Easier to hit.\nSmaller Window = Harder to hit.\n\nRange: 200ms (Hard) to 700ms (Easy)\n\n(Synced with opponent)</string>
+    <string name="how_to_play_safety">How to Play &amp; Safety</string>
+    <string name="safety_first">Safety First</string>
+    <string name="safety_strap">• Use a wrist strap.</string>
+    <string name="safety_area">• Clear your play area.</string>
+    <string name="gameplay">Gameplay</string>
+    <string name="gameplay_hold">• Hold phone with screen facing OUT (away from palm).</string>
+    <string name="gameplay_yellow">• YELLOW means Incoming (Get Ready).</string>
+    <string name="gameplay_green">• GREEN means Swing (After Bounce).</string>
+    <string name="gameplay_red">• RED means Opponent\'s Turn.</string>
+    <string name="shot_types_risks">Shot Types &amp; Risks</string>
+    <string name="shot_types_desc">Swing force and phone tilt change your shot:</string>
+    <string name="shot_flat">• Screen Vertical = FLAT HIT</string>
+    <string name="shot_flat_desc">  Standard shot. Safe and reliable.</string>
+    <string name="shot_lob">• Screen Up = LOB</string>
+    <string name="shot_lob_desc">  Slow, high arc.</string>
+    <string name="shot_lob_safe">  Safe, gives you time to recover.</string>
+    <string name="shot_spike">• Screen Down = SPIKE</string>
+    <string name="shot_spike_desc">  Fast &amp; Aggressive!</string>
+    <string name="shot_spike_risk">  Makes opponent\'s hit window shorter, but</string>
+    <string name="shot_spike_net">  Higher chance to hit net or off table.</string>
+    <string name="use_debug_tones">Use Debug Tones</string>
+    <string name="info_debug_tones_title">Debug Tones</string>
+    <string name="info_debug_tones_text">If enabled, plays simple beep tones instead of the game sound effects.</string>
+    <string name="debug_mode">Debug Mode</string>
+    <string name="info_debug_mode_title">Debug Mode</string>
+    <string name="info_debug_mode_text">Enables an overlay in the game screen showing technical stats like Round Trip Time (RTT), exact game state, and raw sensor values.\n\n(Local only)</string>
+    <string name="sensor_hit_test">Sensor Hit Test</string>
+    <string name="force_fmt">Force: %.1f</string>
+    <string name="accel_fmt">Accel: X: %1$.1f, Y: %2$.1f, Z: %3$.1f</string>
+    <string name="gyro_fmt">Gyro: X: %1$.1f, Y: %2$.1f, Z: %3$.1f</string>
+    <string name="grav_fmt">Grav: X: %1$.1f, Y: %2$.1f, Z: %3$.1f</string>
+    <string name="swing_test_prompt">Swing your phone to test!</string>
+    <string name="about_airrally">About AirRally</string>
+    <string name="version">Version</string>
+    <string name="credits">Credits</string>
+    <string name="created_by">Created by bl</string>
+    <string name="created_by_ai">AI</string>
+    <string name="created_by_r">r</string>
+    <string name="license">License</string>
+    <string name="mit_license">MIT License</string>
+    <string name="source_code">Source Code</string>
+    <string name="view_github_repo">View GitHub Repo</string>
+    <string name="problems">Problems?</string>
+    <string name="report_bug">Report a Bug</string>
+    <string name="back">Back</string>
+    <string name="close">Close</string>
+
+    <!-- Lobby -->
+    <string name="lobby_title">LOBBY</string>
+    <string name="start_game">START GAME</string>
+    <string name="waiting_for_opponent">WAITING FOR OPPONENT...</string>
+    <string name="waiting_for_host">Waiting for host to start...</string>
+    <string name="leave">LEAVE</string>
+
+    <!-- Game Screen -->
+    <string name="you">YOU</string>
+    <string name="opponent">OPPONENT</string>
+    <string name="your_serve">YOUR SERVE</string>
+    <string name="swing_to_serve">Swing to Serve!</string>
+    <string name="opponent_serving">OPPONENT SERVING</string>
+    <string name="point_scored">POINT SCORED</string>
+    <string name="get_ready">Get Ready...</string>
+    <string name="hit">HIT!</string>
+    <string name="wait">WAIT...</string>
+    <string name="action_feed">ACTION FEED</string>
+    <string name="debug_info">DEBUG INFO</string>
+    <string name="phase_fmt">Phase: %1$s</string>
+    <string name="arrival_fmt">Arrival: %1$d</string>
+    <string name="now_fmt">Now: %1$d</string>
+    <string name="delta_fmt">Delta: %1$dms</string>
+    <string name="difficulty_fmt">Difficulty: %1$d</string>
+    <string name="flight_time_fmt">FlightTime: %1$d</string>
+    <string name="last_swing">LAST SWING:</string>
+    <string name="type_fmt">Type: %1$s</string>
+    <string name="grav_z_fmt">GravZ: %1$s</string>
+
+    <!-- Game Over -->
+    <string name="you_won">YOU WON!</string>
+    <string name="you_lost">YOU LOST</string>
+    <string name="game_over">GAME OVER</string>
+    <string name="final_score">Final Score</string>
+    <string name="score">Score</string>
+    <string name="play_again">PLAY AGAIN</string>
+    <string name="main_menu">MAIN MENU</string>
+
+    <!-- Dialogs -->
+    <string name="device_incompatible">Device Incompatible</string>
+    <string name="missing_sensors_text">This game requires specific sensors to function. Your device is missing: %1$s.\n\nThe app will now close.</string>
+    <string name="exit">Exit</string>
+    <string name="hey_listen">Hey Listen!</string>
+    <string name="swing_warning">This game requires you to swing your phone.</string>
+    <string name="warning_strap">• Use a strap to secure your phone</string>
+    <string name="warning_surroundings">• Be aware of your surroundings</string>
+    <string name="warning_hold">• Hold phone with screen facing OUT (away from palm)</string>
+    <string name="nah">Nah</string>
+    <string name="cool">Cool</string>
 </resources>

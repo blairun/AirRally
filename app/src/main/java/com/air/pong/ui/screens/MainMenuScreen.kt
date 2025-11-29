@@ -16,6 +16,8 @@ import android.content.Intent
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import com.air.pong.R
 
 @Composable
 fun MainMenuScreen(
@@ -78,28 +80,28 @@ fun MainMenuScreen(
             verticalArrangement = Arrangement.Center
         ) {
         Text(
-            text = "AirRally",
+            text = stringResource(R.string.app_name),
             style = MaterialTheme.typography.displayLarge
         )
         
         val taglines = remember {
             listOf(
-                "Ping pong without any balls 👀",
-                "ImaginAIRy ping pong",
-                "No table, no paddle, no problem.",
-                "It's all in the wrist.",
-                "Don't let go of your phone!",
-                "100% invisible, 100% real.",
-                "The ball is a lie.",
-                "It's a paddle battle!",
-                "Pongogo!",
-                "Swing like nobody's watching."
+                R.string.tagline_1,
+                R.string.tagline_2,
+                R.string.tagline_3,
+                R.string.tagline_4,
+                R.string.tagline_5,
+                R.string.tagline_6,
+                R.string.tagline_7,
+                R.string.tagline_8,
+                R.string.tagline_9,
+                R.string.tagline_10
             )
         }
-        val selectedTagline = rememberSaveable { taglines.random() }
+        val selectedTaglineId = rememberSaveable { taglines.random() }
         
         Text(
-            text = selectedTagline,
+            text = stringResource(selectedTaglineId),
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.padding(top = 8.dp)
@@ -110,7 +112,7 @@ fun MainMenuScreen(
         Spacer(modifier = Modifier.height(48.dp))
         
         if (permissionState != PermissionsManager.PermissionState.GRANTED) {
-            Text("Bluetooth permissions required to play.")
+            Text(stringResource(R.string.bluetooth_permission_required))
             Spacer(modifier = Modifier.height(16.dp))
             // In a real app, we'd have a button to request permissions here
             // For now, we assume MainActivity handles the request on start
@@ -124,13 +126,13 @@ fun MainMenuScreen(
             }
             
             Text(
-                text = "Connected to ${connectedPlayerName ?: "Unknown"}",
+                text = stringResource(R.string.connected_to, connectedPlayerName ?: stringResource(R.string.unknown)),
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.primary
             )
             Spacer(modifier = Modifier.height(16.dp))
             
-            Text("Redirecting to Lobby...")
+            Text(stringResource(R.string.redirecting_lobby))
             
             Spacer(modifier = Modifier.height(16.dp))
             
@@ -138,7 +140,7 @@ fun MainMenuScreen(
                 onClick = { viewModel.disconnect() },
                 modifier = Modifier.fillMaxWidth().height(56.dp)
             ) {
-                Text("DISCONNECT")
+                Text(stringResource(R.string.disconnect))
             }
         } else {
             Button(
@@ -147,7 +149,7 @@ fun MainMenuScreen(
                           connectionState == NetworkAdapter.ConnectionState.DISCONNECTED,
                 modifier = Modifier.fillMaxWidth().height(56.dp)
             ) {
-                Text("HOST GAME")
+                Text(stringResource(R.string.host_game))
             }
             
             Spacer(modifier = Modifier.height(16.dp))
@@ -158,7 +160,7 @@ fun MainMenuScreen(
                           connectionState == NetworkAdapter.ConnectionState.DISCONNECTED,
                 modifier = Modifier.fillMaxWidth().height(56.dp)
             ) {
-                Text("JOIN GAME")
+                Text(stringResource(R.string.join_game))
             }
         }
         
@@ -171,7 +173,7 @@ fun MainMenuScreen(
             },
             modifier = Modifier.fillMaxWidth().height(56.dp)
         ) {
-            Text("SETTINGS")
+            Text(stringResource(R.string.settings))
         }
         
         Spacer(modifier = Modifier.height(32.dp))
@@ -179,10 +181,10 @@ fun MainMenuScreen(
         if (connectionState == NetworkAdapter.ConnectionState.ADVERTISING) {
             CircularProgressIndicator()
             Spacer(modifier = Modifier.height(8.dp))
-            Text("Waiting for players...")
+            Text(stringResource(R.string.waiting_for_players))
             Spacer(modifier = Modifier.height(8.dp))
             TextButton(onClick = { viewModel.cancelConnection() }) {
-                Text("CANCEL")
+                Text(stringResource(R.string.cancel))
             }
         } else if (connectionState == NetworkAdapter.ConnectionState.DISCOVERING) {
             
@@ -209,9 +211,9 @@ fun MainMenuScreen(
             if (discoveredEndpoints.isEmpty()) {
                 CircularProgressIndicator()
                 Spacer(modifier = Modifier.height(8.dp))
-                Text("Looking for nearby games...")
+                Text(stringResource(R.string.looking_for_games))
             } else {
-                Text("Available Games:", style = MaterialTheme.typography.labelLarge)
+                Text(stringResource(R.string.available_games), style = MaterialTheme.typography.labelLarge)
                 Spacer(modifier = Modifier.height(8.dp))
                 
                 discoveredEndpoints.forEach { endpoint ->
@@ -220,10 +222,10 @@ fun MainMenuScreen(
                         modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
                     ) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text("Connect to ${endpoint.name}")
+                            Text(stringResource(R.string.connect_to, endpoint.name))
                             if (discoveredEndpoints.size == 1 && autoConnectSeconds > 0 && connectingEndpointId == null) {
                                 Text(
-                                    "Auto-connecting in ${autoConnectSeconds}s...", 
+                                    stringResource(R.string.auto_connecting, autoConnectSeconds), 
                                     style = MaterialTheme.typography.labelSmall,
                                     color = MaterialTheme.colorScheme.primary
                                 )
@@ -231,7 +233,7 @@ fun MainMenuScreen(
                             
                             if (connectingEndpointId == endpoint.id) {
                                 Text(
-                                    "Connecting...", 
+                                    stringResource(R.string.connecting), 
                                     style = MaterialTheme.typography.labelSmall,
                                     color = MaterialTheme.colorScheme.primary
                                 )
@@ -243,33 +245,34 @@ fun MainMenuScreen(
             
             Spacer(modifier = Modifier.height(16.dp))
             TextButton(onClick = { viewModel.cancelConnection() }) {
-                Text("CANCEL")
+                Text(stringResource(R.string.cancel))
             }
         } else if (connectionState == NetworkAdapter.ConnectionState.CONNECTING) {
             CircularProgressIndicator()
             Spacer(modifier = Modifier.height(8.dp))
-            Text("Connecting...")
+            Text(stringResource(R.string.connecting))
             Spacer(modifier = Modifier.height(8.dp))
             TextButton(onClick = { viewModel.cancelConnection() }) {
-                Text("CANCEL")
+                Text(stringResource(R.string.cancel))
             }
         } else if (connectionState == NetworkAdapter.ConnectionState.ERROR) {
             val errorMessage by viewModel.errorMessage.collectAsState(initial = "Unknown Error")
             Text(
-                text = "Error: $errorMessage",
+                text = stringResource(R.string.error_prefix, errorMessage ?: "Unknown"),
                 color = MaterialTheme.colorScheme.error
             )
             Spacer(modifier = Modifier.height(16.dp))
             Button(onClick = { viewModel.disconnect() }) {
-                Text("Reset")
+                Text(stringResource(R.string.reset))
             }
         }
     }
 
 
     // Share Button (Top Right)
+    val shareText = stringResource(R.string.share_game_content)
     IconButton(
-        onClick = { shareGame(context) },
+        onClick = { shareGame(context, shareText) },
         modifier = Modifier
             .align(Alignment.TopEnd)
             .padding(16.dp)
@@ -285,10 +288,10 @@ fun MainMenuScreen(
 }
 
 
-fun shareGame(context: android.content.Context) {
+fun shareGame(context: android.content.Context, shareText: String) {
     val sendIntent: Intent = Intent().apply {
         action = Intent.ACTION_SEND
-        putExtra(Intent.EXTRA_TEXT, "Check out AirRally - Ping Pong without the table! https://github.com/blairun/AirRally")
+        putExtra(Intent.EXTRA_TEXT, shareText)
         type = "text/plain"
     }
     val shareIntent = Intent.createChooser(sendIntent, null)

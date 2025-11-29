@@ -7,7 +7,9 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.air.pong.R
 import com.air.pong.core.game.GamePhase
 import com.air.pong.ui.GameViewModel
 
@@ -22,6 +24,7 @@ fun LobbyScreen(
     val gameState by viewModel.gameState.collectAsState()
     val isOpponentInLobby by viewModel.isOpponentInLobby.collectAsState()
     val connectionState by viewModel.connectionState.collectAsState()
+    val isHost = viewModel.isHost
     
     // Disconnect if system back button is pressed
     androidx.activity.compose.BackHandler {
@@ -54,41 +57,39 @@ fun LobbyScreen(
         verticalArrangement = Arrangement.Center
     ) {
         Text(
-            text = "LOBBY",
+            text = stringResource(R.string.lobby_title),
             style = MaterialTheme.typography.headlineLarge
         )
         
         Spacer(modifier = Modifier.height(32.dp))
         
         Text(
-            text = "Connected to: ${connectedPlayerName ?: "Unknown"}",
+            text = stringResource(R.string.connected_to, connectedPlayerName ?: stringResource(R.string.unknown)),
             style = MaterialTheme.typography.titleMedium
         )
         
         Spacer(modifier = Modifier.height(48.dp))
         
-        if (viewModel.isHost) {
+        if (isHost) {
             Button(
                 onClick = { viewModel.startGame() },
                 modifier = Modifier.fillMaxWidth().height(56.dp),
                 enabled = isOpponentInLobby
             ) {
-                Text(if (isOpponentInLobby) "START GAME" else "WAITING FOR OPPONENT...")
+                Text(if (isOpponentInLobby) stringResource(R.string.start_game) else stringResource(R.string.waiting_for_opponent))
             }
         } else {
-            Text("Waiting for host to start...")
+            Text(stringResource(R.string.waiting_for_host))
             CircularProgressIndicator(modifier = Modifier.padding(top = 16.dp))
         }
         
         Spacer(modifier = Modifier.height(16.dp))
 
         OutlinedButton(
-            onClick = { 
-                onNavigateToSettings()
-            },
+            onClick = onNavigateToSettings,
             modifier = Modifier.fillMaxWidth().height(56.dp)
         ) {
-            Text("SETTINGS")
+            Text(stringResource(R.string.settings))
         }
         
         Spacer(modifier = Modifier.height(16.dp))
@@ -99,7 +100,7 @@ fun LobbyScreen(
             },
             modifier = Modifier.fillMaxWidth().height(56.dp)
         ) {
-            Text("LEAVE")
+            Text(stringResource(R.string.leave))
         }
     }
 }

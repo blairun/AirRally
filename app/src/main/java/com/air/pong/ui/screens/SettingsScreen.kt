@@ -28,6 +28,9 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import com.air.pong.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -39,6 +42,7 @@ fun SettingsScreen(
 ) {
     val gameState by viewModel.gameState.collectAsState()
     val playerName by viewModel.playerName.collectAsState()
+    val context = LocalContext.current
     
     // Local state for UI before saving
     var flightTime by remember { mutableFloatStateOf(gameState.flightTime.toFloat()) }
@@ -72,7 +76,7 @@ fun SettingsScreen(
             text = { Text(infoText) },
             confirmButton = {
                 TextButton(onClick = { showInfoDialog = false }) {
-                    Text("Close")
+                    Text(stringResource(R.string.close))
                 }
             }
         )
@@ -91,7 +95,7 @@ fun SettingsScreen(
         verticalArrangement = Arrangement.Top
     ) {
         Text(
-            text = "Settings",
+            text = stringResource(R.string.settings),
             style = MaterialTheme.typography.headlineMedium,
             modifier = Modifier.padding(bottom = 24.dp)
         )
@@ -103,7 +107,7 @@ fun SettingsScreen(
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
                 Text(
-                    "Appearance",
+                    stringResource(R.string.appearance),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(bottom = 16.dp)
@@ -120,9 +124,9 @@ fun SettingsScreen(
                             label = { 
                                 Text(
                                     when(mode) {
-                                        ThemeMode.SYSTEM -> "System"
-                                        ThemeMode.LIGHT -> "Light"
-                                        ThemeMode.DARK -> "Dark"
+                                        ThemeMode.SYSTEM -> stringResource(R.string.theme_system)
+                                        ThemeMode.LIGHT -> stringResource(R.string.theme_light)
+                                        ThemeMode.DARK -> stringResource(R.string.theme_dark)
                                     }
                                 ) 
                             }
@@ -135,7 +139,7 @@ fun SettingsScreen(
                 OutlinedTextField(
                     value = playerName,
                     onValueChange = { viewModel.updatePlayerName(it) },
-                    label = { Text("Player Name") },
+                    label = { Text(stringResource(R.string.player_name)) },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true
                 )
@@ -156,7 +160,7 @@ fun SettingsScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        "Game Parameters",
+                        stringResource(R.string.game_parameters),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold
                     )
@@ -164,7 +168,7 @@ fun SettingsScreen(
                         viewModel.resetGameSettings()
                         // Local state update handled by LaunchedEffect observing gameState
                     }) {
-                        Text("Defaults")
+                        Text(stringResource(R.string.defaults))
                     }
                 }
                 
@@ -172,24 +176,9 @@ fun SettingsScreen(
 
                 // Flight Time
                 val flightTimeLabel = when {
-                    flightTime <= 600 -> "Hard"
-                    flightTime <= 900 -> "Medium"
-                    else -> "Easy"
-                }
-                
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text("Flight Time: ${flightTime.toLong()} ms ($flightTimeLabel)", style = MaterialTheme.typography.bodyLarge)
-                    IconButton(onClick = {
-                        infoTitle = "Flight Time"
-                        infoText = "Controls the default time the ball stays in the air. (Swing force and phone tilt will increase or decrease this time.)\n\n" +
-                                "500-600ms: Hard (Fast)\n" +
-                                "700-900ms: Medium\n" +
-                                "1000-1200ms: Easy (Slow)\n\n" +
-                                "(Synced with opponent)"
-                        showInfoDialog = true
-                    }) {
-                        Icon(Icons.Default.Info, contentDescription = "Info", modifier = Modifier.size(20.dp))
-                    }
+                    flightTime <= 600 -> stringResource(R.string.difficulty_hard)
+                    flightTime <= 900 -> stringResource(R.string.difficulty_medium)
+                    else -> stringResource(R.string.difficulty_easy)
                 }
                 Slider(
                     value = flightTime,
@@ -208,19 +197,16 @@ fun SettingsScreen(
 
                 // Difficulty (Hit Window)
                 val difficultyLabel = when {
-                    difficulty <= 300 -> "Hard"
-                    difficulty <= 500 -> "Medium"
-                    else -> "Easy"
+                    difficulty <= 300 -> stringResource(R.string.difficulty_hard)
+                    difficulty <= 500 -> stringResource(R.string.difficulty_medium)
+                    else -> stringResource(R.string.difficulty_easy)
                 }
                 
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text("Hit Window: $difficulty ms ($difficultyLabel)", style = MaterialTheme.typography.bodyLarge)
+                    Text(stringResource(R.string.hit_window_label, difficulty, difficultyLabel), style = MaterialTheme.typography.bodyLarge)
                     IconButton(onClick = {
-                        infoTitle = "Hit Window (Difficulty)"
-                        infoText = "Changes the margin of error for your swing timing.\n\n" +
-                                "Larger Window = Easier to hit.\n" +
-                                "Smaller Window = Harder to hit.\n\n" +
-                                "Range: 200ms (Hard) to 700ms (Easy)\n\n(Synced with opponent)"
+                        infoTitle = context.getString(R.string.info_hit_window_title)
+                        infoText = context.getString(R.string.info_hit_window_text)
                         showInfoDialog = true
                     }) {
                         Icon(Icons.Default.Info, contentDescription = "Info", modifier = Modifier.size(20.dp))
@@ -273,7 +259,7 @@ fun SettingsScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        "How to Play & Safety",
+                        stringResource(R.string.how_to_play_safety),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold
                     )
@@ -289,42 +275,42 @@ fun SettingsScreen(
                     Spacer(modifier = Modifier.height(16.dp))
 
                     // Safety
-                    Text("Safety First", style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
+                    Text(stringResource(R.string.safety_first), style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
                     Spacer(modifier = Modifier.height(4.dp))
-                    Text("• Use a wrist strap.", style = MaterialTheme.typography.bodyMedium)
-                    Text("• Clear your play area.", style = MaterialTheme.typography.bodyMedium)
+                    Text(stringResource(R.string.safety_strap), style = MaterialTheme.typography.bodyMedium)
+                    Text(stringResource(R.string.safety_area), style = MaterialTheme.typography.bodyMedium)
 
                     Spacer(modifier = Modifier.height(16.dp))
 
                     // Gameplay
-                    Text("Gameplay", style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
-                    Text("• Hold phone with screen facing OUT (away from palm).", style = MaterialTheme.typography.bodyMedium)
+                    Text(stringResource(R.string.gameplay), style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
+                    Text(stringResource(R.string.gameplay_hold), style = MaterialTheme.typography.bodyMedium)
                     // Text("• Hold phone with screen facing OUT (away from palm).", style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)
                     Spacer(modifier = Modifier.height(4.dp))
-                    Text("• YELLOW means Incoming (Get Ready).", style = MaterialTheme.typography.bodyMedium)
-                    Text("• GREEN means Swing (After Bounce).", style = MaterialTheme.typography.bodyMedium)
-                    Text("• RED means Opponent's Turn.", style = MaterialTheme.typography.bodyMedium)
+                    Text(stringResource(R.string.gameplay_yellow), style = MaterialTheme.typography.bodyMedium)
+                    Text(stringResource(R.string.gameplay_green), style = MaterialTheme.typography.bodyMedium)
+                    Text(stringResource(R.string.gameplay_red), style = MaterialTheme.typography.bodyMedium)
 
                     Spacer(modifier = Modifier.height(16.dp))
 
                     // Shot Types
-                    Text("Shot Types & Risks", style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
+                    Text(stringResource(R.string.shot_types_risks), style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
                     Spacer(modifier = Modifier.height(4.dp))
-                    Text("Swing force and phone tilt change your shot:", style = MaterialTheme.typography.bodyMedium)
+                    Text(stringResource(R.string.shot_types_desc), style = MaterialTheme.typography.bodyMedium)
                     Spacer(modifier = Modifier.height(4.dp))
-                    Text("• Screen Vertical = FLAT HIT", style = MaterialTheme.typography.bodyMedium)
-                    Text("  Standard shot. Safe and reliable.", style = MaterialTheme.typography.bodyMedium)
+                    Text(stringResource(R.string.shot_flat), style = MaterialTheme.typography.bodyMedium)
+                    Text(stringResource(R.string.shot_flat_desc), style = MaterialTheme.typography.bodyMedium)
                     
                     Spacer(modifier = Modifier.height(4.dp))
-                    Text("• Screen Up = LOB", style = MaterialTheme.typography.bodyMedium)
-                    Text("  Slow, high arc.", style = MaterialTheme.typography.bodyMedium)
-                    Text("  Safe, gives you time to recover.", style = MaterialTheme.typography.bodyMedium)
+                    Text(stringResource(R.string.shot_lob), style = MaterialTheme.typography.bodyMedium)
+                    Text(stringResource(R.string.shot_lob_desc), style = MaterialTheme.typography.bodyMedium)
+                    Text(stringResource(R.string.shot_lob_safe), style = MaterialTheme.typography.bodyMedium)
                     
                     Spacer(modifier = Modifier.height(4.dp))
-                    Text("• Screen Down = SPIKE", style = MaterialTheme.typography.bodyMedium)
-                    Text("  Fast & Aggressive!", style = MaterialTheme.typography.bodyMedium)
-                    Text("  Makes opponent's hit window shorter, but", style = MaterialTheme.typography.bodyMedium)
-                    Text("  Higher chance to hit net or off table.", style = MaterialTheme.typography.bodyMedium)
+                    Text(stringResource(R.string.shot_spike), style = MaterialTheme.typography.bodyMedium)
+                    Text(stringResource(R.string.shot_spike_desc), style = MaterialTheme.typography.bodyMedium)
+                    Text(stringResource(R.string.shot_spike_risk), style = MaterialTheme.typography.bodyMedium)
+                    Text(stringResource(R.string.shot_spike_net), style = MaterialTheme.typography.bodyMedium)
                     // Text("  High Risk: Chance to hit Net or go Out.", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.error)
                     // Text("  Reward: Makes opponent's hit window smaller!", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.tertiary)
 
@@ -363,10 +349,10 @@ fun SettingsScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text("Use Debug Tones", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                        Text(stringResource(R.string.use_debug_tones), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
                         IconButton(onClick = {
-                            infoTitle = "Debug Tones"
-                            infoText = "If enabled, plays simple beep tones instead of the game sound effects."
+                            infoTitle = context.getString(R.string.info_debug_tones_title)
+                            infoText = context.getString(R.string.info_debug_tones_text)
                             showInfoDialog = true
                         }) {
                             Icon(Icons.Default.Info, contentDescription = "Info", modifier = Modifier.size(20.dp))
@@ -386,10 +372,10 @@ fun SettingsScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text("Debug Mode", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                        Text(stringResource(R.string.debug_mode), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
                         IconButton(onClick = {
-                            infoTitle = "Debug Mode"
-                            infoText = "Enables an overlay in the game screen showing technical stats like Round Trip Time (RTT), exact game state, and raw sensor values.\n\n(Local only)"
+                            infoTitle = context.getString(R.string.info_debug_mode_title)
+                            infoText = context.getString(R.string.info_debug_mode_text)
                             showInfoDialog = true
                         }) {
                             Icon(Icons.Default.Info, contentDescription = "Info", modifier = Modifier.size(20.dp))
@@ -417,7 +403,7 @@ fun SettingsScreen(
                     HorizontalDivider()
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
-                        "Sensor Hit Test",
+                        stringResource(R.string.sensor_hit_test),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold
                     )
@@ -433,10 +419,10 @@ fun SettingsScreen(
                             
                             gameState.lastSwingData?.let { data ->
                                 Spacer(modifier = Modifier.height(4.dp))
-                                Text("Force: %.1f".format(data.force), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-                                Text("Accel: X: %.1f, Y: %.1f, Z: %.1f".format(data.accelX, data.accelY, data.accelZ), style = MaterialTheme.typography.labelSmall)
-                                Text("Gyro: X: %.1f, Y: %.1f, Z: %.1f".format(data.gyroX, data.gyroY, data.gyroZ), style = MaterialTheme.typography.labelSmall)
-                                Text("Grav: X: %.1f, Y: %.1f, Z: %.1f".format(data.gravX, data.gravY, data.gravZ), style = MaterialTheme.typography.labelSmall)
+                                Text(stringResource(R.string.force_fmt, data.force), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                                Text(stringResource(R.string.accel_fmt, data.accelX, data.accelY, data.accelZ), style = MaterialTheme.typography.labelSmall)
+                                Text(stringResource(R.string.gyro_fmt, data.gyroX, data.gyroY, data.gyroZ), style = MaterialTheme.typography.labelSmall)
+                                Text(stringResource(R.string.grav_fmt, data.gravX, data.gravY, data.gravZ), style = MaterialTheme.typography.labelSmall)
                                 
                                 // Play sound based on force for testing
                                 LaunchedEffect(data) {
@@ -452,7 +438,7 @@ fun SettingsScreen(
                             }
                         } else {
                             Text(
-                                text = "Swing your phone to test!",
+                                text = stringResource(R.string.swing_test_prompt),
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -494,7 +480,7 @@ fun SettingsScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        "About AirRally",
+                        stringResource(R.string.about_airrally),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold
                     )
@@ -515,7 +501,7 @@ fun SettingsScreen(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text("Version", style = MaterialTheme.typography.bodyMedium)
+                        Text(stringResource(R.string.version), style = MaterialTheme.typography.bodyMedium)
                         Text(
                             com.air.pong.BuildConfig.VERSION_NAME, 
                             style = MaterialTheme.typography.bodyMedium, 
@@ -529,11 +515,11 @@ fun SettingsScreen(
 
                     // Credits
                     val creditsText = buildAnnotatedString {
-                        append("Created by bl")
+                        append(stringResource(R.string.created_by))
                         withStyle(style = SpanStyle(textDecoration = TextDecoration.Underline)) {
-                            append("AI")
+                            append(stringResource(R.string.created_by_ai))
                         }
-                        append("r")
+                        append(stringResource(R.string.created_by_r))
                     }
                     
                     Row(
@@ -541,7 +527,7 @@ fun SettingsScreen(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text("Credits", style = MaterialTheme.typography.bodyMedium)
+                        Text(stringResource(R.string.credits), style = MaterialTheme.typography.bodyMedium)
                         Text(
                             text = creditsText, 
                             style = MaterialTheme.typography.bodyMedium, 
@@ -559,9 +545,9 @@ fun SettingsScreen(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text("License", style = MaterialTheme.typography.bodyMedium)
+                        Text(stringResource(R.string.license), style = MaterialTheme.typography.bodyMedium)
                         Text(
-                            "MIT License", 
+                            stringResource(R.string.mit_license), 
                             style = MaterialTheme.typography.bodyMedium, 
                             fontWeight = FontWeight.Bold,
                             color = linkColor,
@@ -577,9 +563,9 @@ fun SettingsScreen(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text("Source Code", style = MaterialTheme.typography.bodyMedium)
+                        Text(stringResource(R.string.source_code), style = MaterialTheme.typography.bodyMedium)
                         Text(
-                            "View GitHub Repo", 
+                            stringResource(R.string.view_github_repo), 
                             style = MaterialTheme.typography.bodyMedium, 
                             fontWeight = FontWeight.Bold,
                             color = linkColor,
@@ -595,9 +581,9 @@ fun SettingsScreen(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text("Problems?", style = MaterialTheme.typography.bodyMedium)
+                        Text(stringResource(R.string.problems), style = MaterialTheme.typography.bodyMedium)
                         Text(
-                            "Report a Bug", 
+                            stringResource(R.string.report_bug), 
                             style = MaterialTheme.typography.bodyMedium, 
                             fontWeight = FontWeight.Bold,
                             color = linkColor,
@@ -614,7 +600,7 @@ fun SettingsScreen(
             onClick = onNavigateBack,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Back")
+            Text(stringResource(R.string.back))
         }
     }
 }

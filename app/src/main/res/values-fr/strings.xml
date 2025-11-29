@@ -1,0 +1,149 @@
+<resources>
+    <string name="app_name">AirRally</string>
+    
+    <!-- Main Menu -->
+    <string name="bluetooth_permission_required">Permissions Bluetooth requises pour jouer.</string>
+    <string name="connected_to">Connecté à %1$s</string>
+    <string name="unknown">Inconnu</string>
+    <string name="redirecting_lobby">Redirection vers le salon...</string>
+    <string name="disconnect">DÉCONNECTER</string>
+    <string name="host_game">CRÉER PARTIE</string>
+    <string name="join_game">REJOINDRE PARTIE</string>
+    <string name="settings">PARAMÈTRES</string>
+    <string name="waiting_for_players">En attente de joueurs...</string>
+    <string name="cancel">ANNULER</string>
+    <string name="looking_for_games">Recherche de parties à proximité...</string>
+    <string name="available_games">Parties disponibles :</string>
+    <string name="connect_to">Se connecter à %1$s</string>
+    <string name="auto_connecting">Connexion auto dans %1$ds...</string>
+    <string name="connecting">Connexion...</string>
+    <string name="error_prefix">Erreur : %1$s</string>
+    <string name="reset">Réinitialiser</string>
+    <string name="share_game_content">Découvrez AirRally - Ping Pong sans table ! https://github.com/blairun/AirRally</string>
+    
+    <!-- Taglines -->
+    <string name="tagline_1">Ping pong sans balles 👀</string>
+    <string name="tagline_2">Ping pong imaginAIR</string>
+    <string name="tagline_3">Pas de table, pas de raquette, pas de problème.</string>
+    <string name="tagline_4">Tout est dans le poignet.</string>
+    <string name="tagline_5">Ne lâchez pas votre téléphone !</string>
+    <string name="tagline_6" formatted="false">100% invisible, 100% réel.</string>
+    <string name="tagline_7">La balle est un mensonge.</string>
+    <string name="tagline_8">C\'est une bataille de raquettes !</string>
+    <string name="tagline_9">Pongogo !</string>
+    <string name="tagline_10">Swinguez comme si personne ne regardait.</string>
+
+    <!-- Settings -->
+    <string name="appearance">Apparence</string>
+    <string name="theme_system">Système</string>
+    <string name="theme_light">Clair</string>
+    <string name="theme_dark">Sombre</string>
+    <string name="player_name">Nom du joueur</string>
+    <string name="game_parameters">Paramètres du jeu</string>
+    <string name="defaults">Défauts</string>
+    <string name="flight_time_label">Temps de vol : %1$d ms (%2$s)</string>
+    <string name="difficulty_hard">Difficile</string>
+    <string name="difficulty_medium">Moyen</string>
+    <string name="difficulty_easy">Facile</string>
+    <string name="info_flight_time_title">Temps de vol</string>
+    <string name="info_flight_time_text">Contrôle le temps par défaut que la balle reste en l\'air. (La force du swing et l\'inclinaison du téléphone augmenteront ou diminueront ce temps.)\n\n500-600ms : Difficile (Rapide)\n700-900ms : Moyen\n1000-1200ms : Facile (Lent)\n\n(Synchronisé avec l\'adversaire)</string>
+    <string name="hit_window_label">Fenêtre de frappe : %1$d ms (%2$s)</string>
+    <string name="info_hit_window_title">Fenêtre de frappe (Difficulté)</string>
+    <string name="info_hit_window_text">Modifie la marge d\'erreur pour le timing de votre swing.\n\nFenêtre plus grande = Plus facile à frapper.\nFenêtre plus petite = Plus difficile à frapper.\n\nPlage : 200ms (Difficile) à 700ms (Facile)\n\n(Synchronisé avec l\'adversaire)</string>
+    <string name="how_to_play_safety">Comment jouer et sécurité</string>
+    <string name="safety_first">Sécurité d\'abord</string>
+    <string name="safety_strap">• Utilisez une dragonne.</string>
+    <string name="safety_area">• Dégagez votre aire de jeu.</string>
+    <string name="gameplay">Jeu</string>
+    <string name="gameplay_hold">• Tenez le téléphone avec l\'écran vers l\'EXTÉRIEUR (loin de la paume).</string>
+    <string name="gameplay_yellow">• JAUNE signifie Arrivée (Préparez-vous).</string>
+    <string name="gameplay_green">• VERT signifie Frapper (Après le rebond).</string>
+    <string name="gameplay_red">• ROUGE signifie Tour de l\'adversaire.</string>
+    <string name="shot_types_risks">Types de coups et risques</string>
+    <string name="shot_types_desc">La force du swing et l\'inclinaison du téléphone changent votre coup :</string>
+    <string name="shot_flat">• Écran Vertical = COUP PLAT</string>
+    <string name="shot_flat_desc">  Coup standard. Sûr et fiable.</string>
+    <string name="shot_lob">• Écran vers le haut = LOB</string>
+    <string name="shot_lob_desc">  Arc lent et haut.</string>
+    <string name="shot_lob_safe">  Sûr, vous donne le temps de récupérer.</string>
+    <string name="shot_spike">• Écran vers le bas = SMASH</string>
+    <string name="shot_spike_desc">  Rapide et agressif !</string>
+    <string name="shot_spike_risk">  Rend la fenêtre de frappe de l\'adversaire plus courte, mais</string>
+    <string name="shot_spike_net">  Plus grand risque de toucher le filet ou de sortir.</string>
+    <string name="use_debug_tones">Utiliser les tons de débogage</string>
+    <string name="info_debug_tones_title">Tons de débogage</string>
+    <string name="info_debug_tones_text">Si activé, joue des bips simples au lieu des effets sonores du jeu.</string>
+    <string name="debug_mode">Mode débogage</string>
+    <string name="info_debug_mode_title">Mode débogage</string>
+    <string name="info_debug_mode_text">Active une superposition dans l\'écran de jeu affichant des statistiques techniques comme le temps aller-retour (RTT), l\'état exact du jeu et les valeurs brutes des capteurs.\n\n(Local uniquement)</string>
+    <string name="sensor_hit_test">Test de frappe du capteur</string>
+    <string name="force_fmt">Force : %1$.1f</string>
+    <string name="accel_fmt">Accél : X : %1$.1f, Y : %2$.1f, Z : %3$.1f</string>
+    <string name="gyro_fmt">Gyro : X : %1$.1f, Y : %2$.1f, Z : %3$.1f</string>
+    <string name="grav_fmt">Grav : X : %1$.1f, Y : %2$.1f, Z : %3$.1f</string>
+    <string name="swing_test_prompt">Balancez votre téléphone pour tester !</string>
+    <string name="about_airrally">À propos d\'AirRally</string>
+    <string name="version">Version</string>
+    <string name="credits">Crédits</string>
+    <string name="created_by">Créé par bl</string>
+    <string name="created_by_ai">AI</string>
+    <string name="created_by_r">r</string>
+    <string name="license">Licence</string>
+    <string name="mit_license">Licence MIT</string>
+    <string name="source_code">Code source</string>
+    <string name="view_github_repo">Voir le dépôt GitHub</string>
+    <string name="problems">Des problèmes ?</string>
+    <string name="report_bug">Signaler un bug</string>
+    <string name="back">Retour</string>
+    <string name="close">Fermer</string>
+
+    <!-- Lobby -->
+    <string name="lobby_title">SALON</string>
+    <string name="start_game">COMMENCER</string>
+    <string name="waiting_for_opponent">EN ATTENTE DE L\'ADVERSAIRE...</string>
+    <string name="waiting_for_host">En attente de l\'hôte...</string>
+    <string name="leave">QUITTER</string>
+
+    <!-- Game Screen -->
+    <string name="you">VOUS</string>
+    <string name="opponent">ADVERSAIRE</string>
+    <string name="your_serve">À VOUS DE SERVIR</string>
+    <string name="swing_to_serve">Balancez pour servir !</string>
+    <string name="opponent_serving">ADVERSAIRE SERT</string>
+    <string name="point_scored">POINT MARQUÉ</string>
+    <string name="get_ready">Préparez-vous...</string>
+    <string name="hit">FRAPPÉ !</string>
+    <string name="wait">ATTENDEZ...</string>
+    <string name="action_feed">FLUX D\'ACTION</string>
+    <string name="debug_info">INFO DÉBOGAGE</string>
+    <string name="phase_fmt">Phase : %1$s</string>
+    <string name="arrival_fmt">Arrivée : %1$d</string>
+    <string name="now_fmt">Maint : %1$d</string>
+    <string name="delta_fmt">Delta : %1$dms</string>
+    <string name="difficulty_fmt">Difficulté : %1$d</string>
+    <string name="flight_time_fmt">TempsVol : %1$d</string>
+    <string name="last_swing">DERNIER SWING :</string>
+    <string name="type_fmt">Type : %1$s</string>
+    <string name="grav_z_fmt">GravZ : %1$s</string>
+
+    <!-- Game Over -->
+    <string name="you_won">VOUS AVEZ GAGNÉ !</string>
+    <string name="you_lost">VOUS AVEZ PERDU</string>
+    <string name="game_over">FIN DE PARTIE</string>
+    <string name="final_score">Score Final</string>
+    <string name="score">Score</string>
+    <string name="play_again">REJOUER</string>
+    <string name="main_menu">MENU PRINCIPAL</string>
+
+    <!-- Dialogs -->
+    <string name="device_incompatible">Appareil Incompatible</string>
+    <string name="missing_sensors_text">Ce jeu nécessite des capteurs spécifiques pour fonctionner. Il manque à votre appareil : %1$s.\n\nL\'application va maintenant se fermer.</string>
+    <string name="exit">Quitter</string>
+    <string name="hey_listen">Hé écoutez !</string>
+    <string name="swing_warning">Ce jeu nécessite que vous balanciez votre téléphone.</string>
+    <string name="warning_strap">• Utilisez une dragonne pour sécuriser votre téléphone</string>
+    <string name="warning_surroundings">• Soyez conscient de votre environnement</string>
+    <string name="warning_hold">• Tenez le téléphone avec l\'écran vers l\'EXTÉRIEUR (loin de la paume)</string>
+    <string name="nah">Non</string>
+    <string name="cool">Cool</string>
+</resources>

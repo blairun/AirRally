@@ -8,8 +8,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.air.pong.R
 import com.air.pong.core.game.Player
 import com.air.pong.ui.GameViewModel
 
@@ -42,6 +44,12 @@ fun GameOverScreen(
     val isGameFinished = (gameState.player1Score >= 11 || gameState.player2Score >= 11) && 
                          kotlin.math.abs(gameState.player1Score - gameState.player2Score) >= 2
 
+    val winnerName = when {
+        isGameFinished && iWon -> "YOU"
+        isGameFinished && !iWon -> "OPPONENT"
+        else -> "UNKNOWN"
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -51,17 +59,17 @@ fun GameOverScreen(
         verticalArrangement = Arrangement.Center
     ) {
         Text(
-            text = if (isGameFinished) (if (iWon) "YOU WON!" else "YOU LOST") else "GAME OVER",
-            style = MaterialTheme.typography.displayLarge,
-            color = if (isGameFinished) (if (iWon) Color(0xFF4CAF50) else Color(0xFFF44336)) else MaterialTheme.colorScheme.onBackground,
+            text = if (winnerName == "YOU") stringResource(R.string.you_won) else if (winnerName == "OPPONENT") stringResource(R.string.you_lost) else stringResource(R.string.game_over),
+            style = MaterialTheme.typography.displayMedium,
+            color = if (winnerName == "YOU") MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error,
             fontWeight = FontWeight.Bold
         )
         
         Spacer(modifier = Modifier.height(32.dp))
         
         Text(
-            text = if (isGameFinished) "Final Score" else "Score",
-            style = MaterialTheme.typography.titleLarge
+            text = if (winnerName == "YOU" || winnerName == "OPPONENT") stringResource(R.string.final_score) else stringResource(R.string.score),
+            style = MaterialTheme.typography.titleMedium
         )
         
         Text(
@@ -77,7 +85,7 @@ fun GameOverScreen(
             modifier = Modifier.fillMaxWidth().height(56.dp),
             colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primaryContainer, contentColor = MaterialTheme.colorScheme.onPrimaryContainer)
         ) {
-            Text("PLAY AGAIN")
+            Text(stringResource(R.string.play_again))
         }
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -86,19 +94,19 @@ fun GameOverScreen(
             onClick = { onNavigateToSettings() },
             modifier = Modifier.fillMaxWidth().height(56.dp)
         ) {
-            Text("SETTINGS")
+            Text(stringResource(R.string.settings))
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Button(
+        OutlinedButton(
             onClick = { 
                 viewModel.disconnect()
                 onReturnToMenu() 
             },
             modifier = Modifier.fillMaxWidth().height(56.dp)
         ) {
-            Text("MAIN MENU")
+            Text(stringResource(R.string.main_menu))
         }
     }
 }
