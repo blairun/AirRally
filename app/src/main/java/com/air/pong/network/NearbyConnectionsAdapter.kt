@@ -2,6 +2,7 @@ package com.air.pong.network
 
 import android.content.Context
 import com.air.pong.core.network.NetworkAdapter
+import com.air.pong.utils.PermissionsManager
 import com.google.android.gms.nearby.Nearby
 import com.google.android.gms.nearby.connection.*
 import kotlinx.coroutines.Job
@@ -130,6 +131,12 @@ class NearbyConnectionsAdapter(
     }
     
     override suspend fun startAdvertising(name: String) {
+        if (!PermissionsManager(context).hasPermissions()) {
+            _errorMessage.update { "Missing required permissions" }
+            _connectionState.update { NetworkAdapter.ConnectionState.ERROR }
+            return
+        }
+
         val advertisingOptions = AdvertisingOptions.Builder()
             .setStrategy(Strategy.P2P_POINT_TO_POINT)
             .build()
@@ -150,6 +157,12 @@ class NearbyConnectionsAdapter(
     }
     
     override suspend fun startDiscovery(name: String) {
+        if (!PermissionsManager(context).hasPermissions()) {
+            _errorMessage.update { "Missing required permissions" }
+            _connectionState.update { NetworkAdapter.ConnectionState.ERROR }
+            return
+        }
+
         localPlayerName = name
         val discoveryOptions = DiscoveryOptions.Builder()
             .setStrategy(Strategy.P2P_POINT_TO_POINT)

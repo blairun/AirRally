@@ -47,6 +47,7 @@ class PermissionsManager(private val context: Context) {
                 )
             }
             else -> { // Android 11 and below
+                // ACCESS_COARSE_LOCATION is required for Bluetooth discovery on older Android versions
                 listOf(
                     Manifest.permission.BLUETOOTH,
                     Manifest.permission.BLUETOOTH_ADMIN,
