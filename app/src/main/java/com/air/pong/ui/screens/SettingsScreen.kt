@@ -180,6 +180,19 @@ fun SettingsScreen(
                     flightTime <= 900 -> stringResource(R.string.difficulty_medium)
                     else -> stringResource(R.string.difficulty_easy)
                 }
+
+                
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(stringResource(R.string.flight_time_label, flightTime.toInt(), flightTimeLabel), style = MaterialTheme.typography.bodyLarge)
+                    IconButton(onClick = {
+                        infoTitle = context.getString(R.string.info_flight_time_title)
+                        infoText = context.getString(R.string.info_flight_time_text)
+                        showInfoDialog = true
+                    }) {
+                        Icon(Icons.Default.Info, contentDescription = "Info", modifier = Modifier.size(20.dp))
+                    }
+                }
+
                 Slider(
                     value = flightTime,
                     onValueChange = { 

@@ -146,4 +146,32 @@
     <string name="warning_hold">• Sostén el teléfono con la pantalla hacia AFUERA (lejos de la palma)</string>
     <string name="nah">No</string>
     <string name="cool">Genial</string>
+    <string name="event_you_served">Has servido: %1$s</string>
+    <string name="event_you_hit">Has golpeado: %1$s</string>
+    <string name="event_opponent_hit">Oponente golpeó: %1$s</string>
+    <string name="event_ball_bounced">Pelota rebotó</string>
+    <string name="event_fault_net">✖️ Falta (Red) ✖️</string>
+    <string name="event_fault_out">✖️ Falta (Fuera) ✖️</string>
+    <string name="event_hit_net">✖️ ¡Golpeaste la red! (%1$s) ✖️</string>
+    <string name="event_hit_out">✖️ ¡Golpeaste fuera! (%1$s) ✖️</string>
+    <string name="event_whiff_early">✖️ Fallaste (Demasiado pronto) ✖️</string>
+    <string name="event_miss_late">✖️ Fallaste (Demasiado tarde) ✖️</string>
+    <string name="event_miss_no_swing">✖️ Fallaste (Sin golpe) ✖️</string>
+    <string name="event_opp_net">✔️ ¡Oponente golpeó la red! ✔️</string>
+    <string name="event_opp_out">✔️ ¡Oponente golpeó fuera! ✔️</string>
+    <string name="event_opp_whiff">✔️ ¡Oponente falló! ✔️</string>
+    <string name="event_opp_miss_no_swing">✔️ Oponente falló (Sin golpe) ✔️</string>
+    <string name="event_opp_miss">✔️ ¡Oponente falló! ✔️</string>
+    <string name="event_point_to">Punto para %1$s</string>
+
+    <!-- Swing Types -->
+    <string name="swing_soft_flat">PLANO SUAVE</string>
+    <string name="swing_medium_flat">PLANO MEDIO</string>
+    <string name="swing_hard_flat">PLANO FUERTE</string>
+    <string name="swing_soft_lob">GLOBO SUAVE</string>
+    <string name="swing_medium_lob">GLOBO MEDIO</string>
+    <string name="swing_hard_lob">GLOBO FUERTE</string>
+    <string name="swing_soft_spike">REMATE SUAVE</string>
+    <string name="swing_medium_spike">REMATE MEDIO</string>
+    <string name="swing_hard_spike">REMATE FUERTE</string>
 </resources>

@@ -146,4 +146,32 @@
     <string name="warning_hold">• Tieni il telefono con lo schermo rivolto verso l\'ESTERNO (lontano dal palmo)</string>
     <string name="nah">No</string>
     <string name="cool">Fico</string>
+    <string name="event_you_served">Hai servito: %1$s</string>
+    <string name="event_you_hit">Hai colpito: %1$s</string>
+    <string name="event_opponent_hit">Avversario ha colpito: %1$s</string>
+    <string name="event_ball_bounced">Palla rimbalzata</string>
+    <string name="event_fault_net">✖️ Fallo (Rete) ✖️</string>
+    <string name="event_fault_out">✖️ Fallo (Fuori) ✖️</string>
+    <string name="event_hit_net">✖️ Hai colpito la rete! (%1$s) ✖️</string>
+    <string name="event_hit_out">✖️ Hai colpito fuori! (%1$s) ✖️</string>
+    <string name="event_whiff_early">✖️ Hai mancato (Troppo presto) ✖️</string>
+    <string name="event_miss_late">✖️ Hai mancato (Troppo tardi) ✖️</string>
+    <string name="event_miss_no_swing">✖️ Hai mancato (Nessun colpo) ✖️</string>
+    <string name="event_opp_net">✔️ Avversario ha colpito la rete! ✔️</string>
+    <string name="event_opp_out">✔️ Avversario ha colpito fuori! ✔️</string>
+    <string name="event_opp_whiff">✔️ Avversario ha mancato! ✔️</string>
+    <string name="event_opp_miss_no_swing">✔️ Avversario ha mancato (Nessun colpo) ✔️</string>
+    <string name="event_opp_miss">✔️ Avversario ha mancato! ✔️</string>
+    <string name="event_point_to">Punto a %1$s</string>
+
+    <!-- Swing Types -->
+    <string name="swing_soft_flat">PIATTO SOFT</string>
+    <string name="swing_medium_flat">PIATTO MEDIO</string>
+    <string name="swing_hard_flat">PIATTO FORTE</string>
+    <string name="swing_soft_lob">PALLONETTO SOFT</string>
+    <string name="swing_medium_lob">PALLONETTO MEDIO</string>
+    <string name="swing_hard_lob">PALLONETTO FORTE</string>
+    <string name="swing_soft_spike">SCHIACCIATA SOFT</string>
+    <string name="swing_medium_spike">SCHIACCIATA MEDIA</string>
+    <string name="swing_hard_spike">SCHIACCIATA FORTE</string>
 </resources>

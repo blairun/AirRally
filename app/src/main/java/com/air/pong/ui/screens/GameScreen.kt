@@ -207,8 +207,29 @@ fun GameScreen(
                     gameState.eventLog.forEachIndexed { index, event ->
                         val isMostRecent = index == gameState.eventLog.lastIndex
                         
+                        val eventText = when (event) {
+                            is com.air.pong.core.game.GameEvent.YouServed -> stringResource(R.string.event_you_served, stringResource(getSwingTypeStringId(event.swingType)))
+                            is com.air.pong.core.game.GameEvent.YouHit -> stringResource(R.string.event_you_hit, stringResource(getSwingTypeStringId(event.swingType)))
+                            is com.air.pong.core.game.GameEvent.OpponentHit -> stringResource(R.string.event_opponent_hit, stringResource(getSwingTypeStringId(event.swingType)))
+                            is com.air.pong.core.game.GameEvent.BallBounced -> stringResource(R.string.event_ball_bounced)
+                            is com.air.pong.core.game.GameEvent.FaultNet -> stringResource(R.string.event_fault_net)
+                            is com.air.pong.core.game.GameEvent.FaultOut -> stringResource(R.string.event_fault_out)
+                            is com.air.pong.core.game.GameEvent.HitNet -> stringResource(R.string.event_hit_net, stringResource(getSwingTypeStringId(event.swingType)))
+                            is com.air.pong.core.game.GameEvent.HitOut -> stringResource(R.string.event_hit_out, stringResource(getSwingTypeStringId(event.swingType)))
+                            is com.air.pong.core.game.GameEvent.WhiffEarly -> stringResource(R.string.event_whiff_early)
+                            is com.air.pong.core.game.GameEvent.MissLate -> stringResource(R.string.event_miss_late)
+                            is com.air.pong.core.game.GameEvent.MissNoSwing -> stringResource(R.string.event_miss_no_swing)
+                            is com.air.pong.core.game.GameEvent.OpponentNet -> stringResource(R.string.event_opp_net)
+                            is com.air.pong.core.game.GameEvent.OpponentOut -> stringResource(R.string.event_opp_out)
+                            is com.air.pong.core.game.GameEvent.OpponentWhiff -> stringResource(R.string.event_opp_whiff)
+                            is com.air.pong.core.game.GameEvent.OpponentMissNoSwing -> stringResource(R.string.event_opp_miss_no_swing)
+                            is com.air.pong.core.game.GameEvent.OpponentMiss -> stringResource(R.string.event_opp_miss)
+                            is com.air.pong.core.game.GameEvent.PointScored -> stringResource(R.string.event_point_to, if (event.isYou) stringResource(R.string.you) else stringResource(R.string.opponent))
+                            is com.air.pong.core.game.GameEvent.RawMessage -> event.message
+                        }
+
                         Text(
-                            text = event,
+                            text = eventText,
                             style = if (isMostRecent) MaterialTheme.typography.titleMedium else MaterialTheme.typography.bodyMedium,
                             color = if (isMostRecent) Color.White else Color.White.copy(alpha = 0.7f),
                             fontWeight = if (isMostRecent) FontWeight.Bold else FontWeight.Normal,
@@ -250,12 +271,27 @@ fun GameScreen(
                              Text(stringResource(R.string.type_fmt, it), color = Color.White, style = MaterialTheme.typography.bodySmall)
                         }
                         gameState.lastSwingData?.let {
-                             Text(stringResource(R.string.force_fmt, "%.2f".format(it.force)), color = Color.White, style = MaterialTheme.typography.bodySmall)
+                             Text(stringResource(R.string.force_fmt, it.force), color = Color.White, style = MaterialTheme.typography.bodySmall)
                              Text(stringResource(R.string.grav_z_fmt, "%.2f".format(it.gravZ)), color = Color.White, style = MaterialTheme.typography.bodySmall)
                         }
                     }
                 }
             }
         }
+    }
+}
+
+@Composable
+fun getSwingTypeStringId(swingType: com.air.pong.core.game.SwingType): Int {
+    return when (swingType) {
+        com.air.pong.core.game.SwingType.SOFT_FLAT -> R.string.swing_soft_flat
+        com.air.pong.core.game.SwingType.MEDIUM_FLAT -> R.string.swing_medium_flat
+        com.air.pong.core.game.SwingType.HARD_FLAT -> R.string.swing_hard_flat
+        com.air.pong.core.game.SwingType.SOFT_LOB -> R.string.swing_soft_lob
+        com.air.pong.core.game.SwingType.MEDIUM_LOB -> R.string.swing_medium_lob
+        com.air.pong.core.game.SwingType.HARD_LOB -> R.string.swing_hard_lob
+        com.air.pong.core.game.SwingType.SOFT_SPIKE -> R.string.swing_soft_spike
+        com.air.pong.core.game.SwingType.MEDIUM_SPIKE -> R.string.swing_medium_spike
+        com.air.pong.core.game.SwingType.HARD_SPIKE -> R.string.swing_hard_spike
     }
 }

@@ -146,4 +146,32 @@
     <string name="warning_hold">• Hold phone with screen facing OUT (away from palm)</string>
     <string name="nah">Nah</string>
     <string name="cool">Cool</string>
+    <string name="event_you_served">You Served: %1$s</string>
+    <string name="event_you_hit">You Hit: %1$s</string>
+    <string name="event_opponent_hit">Opponent Hit: %1$s</string>
+    <string name="event_ball_bounced">Ball Bounced</string>
+    <string name="event_fault_net">✖️ Fault (Net) ✖️</string>
+    <string name="event_fault_out">✖️ Fault (Out) ✖️</string>
+    <string name="event_hit_net">✖️ You Hit Net! (%1$s) ✖️</string>
+    <string name="event_hit_out">✖️ You Hit Out! (%1$s) ✖️</string>
+    <string name="event_whiff_early">✖️ You Whiffed (Too Early) ✖️</string>
+    <string name="event_miss_late">✖️ You Missed (Too Late) ✖️</string>
+    <string name="event_miss_no_swing">✖️ You Missed (No Swing) ✖️</string>
+    <string name="event_opp_net">✔️ Opponent Hit Net! ✔️</string>
+    <string name="event_opp_out">✔️ Opponent Hit Out! ✔️</string>
+    <string name="event_opp_whiff">✔️ Opponent Whiffed! ✔️</string>
+    <string name="event_opp_miss_no_swing">✔️ Opponent Missed (No Swing) ✔️</string>
+    <string name="event_opp_miss">✔️ Opponent Missed! ✔️</string>
+    <string name="event_point_to">Point to %1$s</string>
+    
+    <!-- Swing Types -->
+    <string name="swing_soft_flat">SOFT FLAT</string>
+    <string name="swing_medium_flat">MEDIUM FLAT</string>
+    <string name="swing_hard_flat">HARD FLAT</string>
+    <string name="swing_soft_lob">SOFT LOB</string>
+    <string name="swing_medium_lob">MEDIUM LOB</string>
+    <string name="swing_hard_lob">HARD LOB</string>
+    <string name="swing_soft_spike">SOFT SPIKE</string>
+    <string name="swing_medium_spike">MEDIUM SPIKE</string>
+    <string name="swing_hard_spike">HARD SPIKE</string>
 </resources>

@@ -146,4 +146,32 @@
     <string name="warning_hold">• Halte das Handy mit dem Bildschirm nach AUSSEN (weg von der Handfläche)</string>
     <string name="nah">Nö</string>
     <string name="cool">Cool</string>
+    <string name="event_you_served">Du hast serviert: %1$s</string>
+    <string name="event_you_hit">Du hast getroffen: %1$s</string>
+    <string name="event_opponent_hit">Gegner hat getroffen: %1$s</string>
+    <string name="event_ball_bounced">Ball ist gesprungen</string>
+    <string name="event_fault_net">✖️ Fehler (Netz) ✖️</string>
+    <string name="event_fault_out">✖️ Fehler (Aus) ✖️</string>
+    <string name="event_hit_net">✖️ Du hast das Netz getroffen! (%1$s) ✖️</string>
+    <string name="event_hit_out">✖️ Du hast ins Aus getroffen! (%1$s) ✖️</string>
+    <string name="event_whiff_early">✖️ Du hast verfehlt (Zu früh) ✖️</string>
+    <string name="event_miss_late">✖️ Du hast verfehlt (Zu spät) ✖️</string>
+    <string name="event_miss_no_swing">✖️ Du hast verfehlt (Kein Schwung) ✖️</string>
+    <string name="event_opp_net">✔️ Gegner hat das Netz getroffen! ✔️</string>
+    <string name="event_opp_out">✔️ Gegner hat ins Aus getroffen! ✔️</string>
+    <string name="event_opp_whiff">✔️ Gegner hat verfehlt! ✔️</string>
+    <string name="event_opp_miss_no_swing">✔️ Gegner hat verfehlt (Kein Schwung) ✔️</string>
+    <string name="event_opp_miss">✔️ Gegner hat verfehlt! ✔️</string>
+    <string name="event_point_to">Punkt für %1$s</string>
+
+    <!-- Swing Types -->
+    <string name="swing_soft_flat">FLACH WEICH</string>
+    <string name="swing_medium_flat">FLACH MITTEL</string>
+    <string name="swing_hard_flat">FLACH HART</string>
+    <string name="swing_soft_lob">LOB WEICH</string>
+    <string name="swing_medium_lob">LOB MITTEL</string>
+    <string name="swing_hard_lob">LOB HART</string>
+    <string name="swing_soft_spike">SMASH WEICH</string>
+    <string name="swing_medium_spike">SMASH MITTEL</string>
+    <string name="swing_hard_spike">SMASH HART</string>
 </resources>

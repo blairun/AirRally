@@ -21,7 +21,7 @@ data class GameState(
     val useDebugTones: Boolean = false,
     
     val ballState: BallState = BallState.IDLE,
-    val eventLog: List<String> = emptyList(),
+    val eventLog: List<GameEvent> = emptyList(),
     val lastSwingType: SwingType? = null,
     val lastSwingData: SwingData? = null
 )

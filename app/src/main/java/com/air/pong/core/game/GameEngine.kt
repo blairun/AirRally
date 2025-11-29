@@ -158,9 +158,9 @@ class GameEngine {
              val riskResult = checkRisk(swingType)
              if (riskResult != HitResult.HIT) {
                  // Fault on serve!
-                 val reason = if (riskResult == HitResult.MISS_NET) "✖️ Fault (Net) ✖️" else "✖️ Fault (Out) ✖️"
+                 val event = if (riskResult == HitResult.MISS_NET) GameEvent.FaultNet else GameEvent.FaultOut
                  _gameState.update {
-                     it.copy(eventLog = (it.eventLog + reason).takeLast(5))
+                     it.copy(eventLog = (it.eventLog + event).takeLast(5))
                  }
                  handleMiss(if (isHost) Player.PLAYER_1 else Player.PLAYER_2)
                  return riskResult
@@ -173,7 +173,7 @@ class GameEngine {
                      isMyTurn = false,
                      ballArrivalTimestamp = nextArrival,
                      lastEvent = "You Served!",
-                     eventLog = (it.eventLog + "You Served: ${swingType.name.replace("_", " ")}").takeLast(5),
+                     eventLog = (it.eventLog + GameEvent.YouServed(swingType)).takeLast(5),
                      ballState = BallState.IN_AIR
                  )
              }
@@ -196,29 +196,29 @@ class GameEngine {
                         isMyTurn = false,
                         ballArrivalTimestamp = nextArrival,
                         lastEvent = "You Hit!",
-                        eventLog = (it.eventLog + "You Hit: ${swingType.name.replace("_", " ")}").takeLast(5),
+                        eventLog = (it.eventLog + GameEvent.YouHit(swingType)).takeLast(5),
                         ballState = BallState.IN_AIR
                     )
                 }
                 return HitResult.HIT
             } else {
                 // Failed Risk Check (Net or Out)
-                val reason = if (riskResult == HitResult.MISS_NET) 
-                    "✖️ You Hit Net! (${swingType.name.replace("_", " ")}) ✖️" 
+                val event = if (riskResult == HitResult.MISS_NET) 
+                    GameEvent.HitNet(swingType)
                 else 
-                    "✖️ You Hit Out! (${swingType.name.replace("_", " ")}) ✖️"
+                    GameEvent.HitOut(swingType)
                 
                 _gameState.update {
-                    it.copy(eventLog = (it.eventLog + reason).takeLast(5))
+                    it.copy(eventLog = (it.eventLog + event).takeLast(5))
                 }
                 handleMiss(if (isHost) Player.PLAYER_1 else Player.PLAYER_2)
                 return riskResult
             }
         } else {
             // Timing Miss
-            val missReason = if (timingResult == HitResult.MISS_EARLY) "✖️ You Whiffed (Too Early) ✖️" else "✖️ You Missed (Too Late) ✖️"
+            val event = if (timingResult == HitResult.MISS_EARLY) GameEvent.WhiffEarly else GameEvent.MissLate
             _gameState.update {
-                it.copy(eventLog = (it.eventLog + missReason).takeLast(5))
+                it.copy(eventLog = (it.eventLog + event).takeLast(5))
             }
             handleMiss(if (isHost) Player.PLAYER_1 else Player.PLAYER_2)
             return timingResult
@@ -284,7 +284,7 @@ class GameEngine {
                  isMyTurn = true, // Now it's my turn
                  ballArrivalTimestamp = nextArrival,
                  lastEvent = "Opponent Hit: $swingType",
-                 eventLog = (it.eventLog + "Opponent Hit: ${swingType.name.replace("_", " ")}").takeLast(5),
+                 eventLog = (it.eventLog + GameEvent.OpponentHit(swingType)).takeLast(5),
                  ballState = BallState.IN_AIR,
                  lastSwingType = swingType // Store this so we can calculate window shrink later
              )
@@ -302,7 +302,7 @@ class GameEngine {
         _gameState.update {
             it.copy(
                 ballState = if (it.isMyTurn) BallState.BOUNCED_MY_SIDE else BallState.BOUNCED_OPP_SIDE,
-                eventLog = (it.eventLog + "Ball Bounced").takeLast(5)
+                eventLog = (it.eventLog + GameEvent.BallBounced).takeLast(5)
             )
         }
     }
@@ -311,16 +311,16 @@ class GameEngine {
      * Called when opponent sends a Result(MISS) (they missed).
      */
     fun onOpponentMiss(reason: HitResult = HitResult.MISS_LATE) {
-        val logMsg = when (reason) {
-            HitResult.MISS_NET -> "✔️ Opponent Hit Net! ✔️"
-            HitResult.MISS_OUT -> "✔️ Opponent Hit Out! ✔️"
-            HitResult.MISS_EARLY, HitResult.MISS_LATE -> "✔️ Opponent Whiffed! ✔️"
-            HitResult.MISS_TIMEOUT -> "✔️ Opponent Missed (No Swing) ✔️"
-            else -> "✔️ Opponent Missed! ✔️"
+        val event = when (reason) {
+            HitResult.MISS_NET -> GameEvent.OpponentNet
+            HitResult.MISS_OUT -> GameEvent.OpponentOut
+            HitResult.MISS_EARLY, HitResult.MISS_LATE -> GameEvent.OpponentWhiff
+            HitResult.MISS_TIMEOUT -> GameEvent.OpponentMissNoSwing
+            else -> GameEvent.OpponentMiss
         }
         
         _gameState.update {
-            it.copy(eventLog = (it.eventLog + logMsg).takeLast(5))
+            it.copy(eventLog = (it.eventLog + event).takeLast(5))
         }
         handleMiss(if (isHost) Player.PLAYER_2 else Player.PLAYER_1)
     }
@@ -340,7 +340,7 @@ class GameEngine {
         // If we are past the arrival time + window, it's a miss
         if (currentTime > state.ballArrivalTimestamp + window) {
             _gameState.update {
-                it.copy(eventLog = (it.eventLog + "✖️ You Missed (No Swing) ✖️").takeLast(5))
+                it.copy(eventLog = (it.eventLog + GameEvent.MissNoSwing).takeLast(5))
             }
             handleMiss(if (isHost) Player.PLAYER_1 else Player.PLAYER_2)
             return true
@@ -383,7 +383,7 @@ class GameEngine {
                     player2Score = p2Score,
                     servingPlayer = nextServer,
                     isMyTurn = (isHost && nextServer == Player.PLAYER_1) || (!isHost && nextServer == Player.PLAYER_2),
-                    eventLog = (state.eventLog + "Point to $winnerName").takeLast(5),
+                    eventLog = (state.eventLog + GameEvent.PointScored(iWon)).takeLast(5),
                     gamePhase = GamePhase.POINT_SCORED // Enter cooldown
                 )
             }

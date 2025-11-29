@@ -146,4 +146,32 @@
     <string name="warning_hold">• Tenez le téléphone avec l\'écran vers l\'EXTÉRIEUR (loin de la paume)</string>
     <string name="nah">Non</string>
     <string name="cool">Cool</string>
+    <string name="event_you_served">Vous avez servi : %1$s</string>
+    <string name="event_you_hit">Vous avez frappé : %1$s</string>
+    <string name="event_opponent_hit">Adversaire a frappé : %1$s</string>
+    <string name="event_ball_bounced">Balle a rebondi</string>
+    <string name="event_fault_net">✖️ Faute (Filet) ✖️</string>
+    <string name="event_fault_out">✖️ Faute (Dehors) ✖️</string>
+    <string name="event_hit_net">✖️ Vous avez touché le filet ! (%1$s) ✖️</string>
+    <string name="event_hit_out">✖️ Vous avez frappé dehors ! (%1$s) ✖️</string>
+    <string name="event_whiff_early">✖️ Vous avez manqué (Trop tôt) ✖️</string>
+    <string name="event_miss_late">✖️ Vous avez manqué (Trop tard) ✖️</string>
+    <string name="event_miss_no_swing">✖️ Vous avez manqué (Pas de swing) ✖️</string>
+    <string name="event_opp_net">✔️ Adversaire a touché le filet ! ✔️</string>
+    <string name="event_opp_out">✔️ Adversaire a frappé dehors ! ✔️</string>
+    <string name="event_opp_whiff">✔️ Adversaire a manqué ! ✔️</string>
+    <string name="event_opp_miss_no_swing">✔️ Adversaire a manqué (Pas de swing) ✔️</string>
+    <string name="event_opp_miss">✔️ Adversaire a manqué ! ✔️</string>
+    <string name="event_point_to">Point pour %1$s</string>
+
+    <!-- Swing Types -->
+    <string name="swing_soft_flat">PLAT DOUX</string>
+    <string name="swing_medium_flat">PLAT MOYEN</string>
+    <string name="swing_hard_flat">PLAT FORT</string>
+    <string name="swing_soft_lob">LOB DOUX</string>
+    <string name="swing_medium_lob">LOB MOYEN</string>
+    <string name="swing_hard_lob">LOB FORT</string>
+    <string name="swing_soft_spike">SMASH DOUX</string>
+    <string name="swing_medium_spike">SMASH MOYEN</string>
+    <string name="swing_hard_spike">SMASH FORT</string>
 </resources>
