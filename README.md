@@ -1,4 +1,5 @@
-# AirRally
+![AirRally Feature Graphic](docs/images/feature_graphic.png)
+
 
 AirRally is a motion-controlled table tennis game that turns your Android phone into a paddle. Connect with nearby friends over Bluetooth and swing your devices to rally an invisible ball back and forth with each other.
 
@@ -19,5 +20,3 @@ AirRally is a motion-controlled table tennis game that turns your Android phone 
 
 MIT License
 
-
-![AirRally Feature Graphic](docs/images/feature_graphic_option_2.png)
