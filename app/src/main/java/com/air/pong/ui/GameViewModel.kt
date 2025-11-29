@@ -382,6 +382,9 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
     }
     
     fun onPause() {
+        // Stop sensors to save battery
+        sensorProvider.stopListening()
+
         if (gameState.value.gamePhase == GamePhase.RALLY || gameState.value.gamePhase == GamePhase.WAITING_FOR_SERVE) {
             gameEngine.onPause()
             sendMessage(GameMessage.Pause)
@@ -389,7 +392,13 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
     }
     
     fun onResume() {
-        if (gameState.value.gamePhase == GamePhase.PAUSED) {
+        val phase = gameState.value.gamePhase
+        // Resume sensors if we are in a game state (active or paused)
+        if (phase == GamePhase.RALLY || phase == GamePhase.WAITING_FOR_SERVE || phase == GamePhase.PAUSED || phase == GamePhase.POINT_SCORED) {
+             sensorProvider.startListening()
+        }
+
+        if (phase == GamePhase.PAUSED) {
             gameEngine.onResume()
             sendMessage(GameMessage.Resume)
         }

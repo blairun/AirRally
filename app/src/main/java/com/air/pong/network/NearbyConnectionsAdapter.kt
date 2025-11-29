@@ -79,6 +79,11 @@ class NearbyConnectionsAdapter(
                 ConnectionsStatusCodes.STATUS_OK -> {
                     connectedEndpointId = endpointId
                     _connectionState.update { NetworkAdapter.ConnectionState.CONNECTED }
+                    
+                    // Stop advertising/discovery to save battery
+                    connectionsClient.stopAdvertising()
+                    connectionsClient.stopDiscovery()
+                    cancelTimeout()
                 }
                 ConnectionsStatusCodes.STATUS_CONNECTION_REJECTED -> {
                     _connectionState.update { NetworkAdapter.ConnectionState.ERROR }

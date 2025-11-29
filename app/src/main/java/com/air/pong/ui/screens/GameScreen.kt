@@ -24,6 +24,8 @@ fun GameScreen(
     viewModel: GameViewModel,
     onGameOver: () -> Unit
 ) {
+    com.air.pong.ui.components.KeepScreenOn()
+
     val gameState by viewModel.gameState.collectAsState()
     
     LaunchedEffect(gameState.gamePhase) {

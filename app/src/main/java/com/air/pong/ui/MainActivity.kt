@@ -37,8 +37,8 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         
-        // Keep screen on during gameplay
-        window.addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        // Keep screen on during gameplay - Moved to GameScreen
+        // window.addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
         // Check for required sensors
         val sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
