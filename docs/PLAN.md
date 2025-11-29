@@ -40,6 +40,7 @@ This plan addresses the gaps identified in the current implementation and provid
 ### ✅ Recently Completed
 - **Permissions Fix**: Added `ACCESS_COARSE_LOCATION` for older Android versions.
 - **Gameplay Cooldown**: Added `POINT_SCORED` phase with 2s delay between points.
+- **Debug Tones**: Verified 1:1 mapping and simultaneous playback with game sounds.
 
 ## Implementation Phases
 

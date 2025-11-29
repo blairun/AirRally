@@ -137,6 +137,8 @@ class AudioManager(context: Context) {
                     toneGenerator.startTone(android.media.ToneGenerator.TONE_DTMF_1, 100)
                 SoundEvent.SERVE -> toneGenerator.startTone(android.media.ToneGenerator.TONE_DTMF_0, 150)
                 SoundEvent.BOUNCE -> toneGenerator.startTone(android.media.ToneGenerator.TONE_CDMA_PIP, 50)
+                SoundEvent.BALL_POP_UP -> toneGenerator.startTone(android.media.ToneGenerator.TONE_DTMF_2, 100)
+                SoundEvent.BALL_WHIZ -> toneGenerator.startTone(android.media.ToneGenerator.TONE_DTMF_3, 100)
                 SoundEvent.MISS_WHIFF, SoundEvent.MISS_TABLE, SoundEvent.HIT_NET, SoundEvent.MISS_NO_SWING -> 
                     toneGenerator.startTone(android.media.ToneGenerator.TONE_SUP_ERROR, 300)
                 SoundEvent.WIN_POINT -> toneGenerator.startTone(android.media.ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD, 500)
