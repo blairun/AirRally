@@ -515,7 +515,7 @@ fun SettingsScreen(
                     ) {
                         Text("Version", style = MaterialTheme.typography.bodyMedium)
                         Text(
-                            "1.0.2", 
+                            com.air.pong.BuildConfig.VERSION_NAME, 
                             style = MaterialTheme.typography.bodyMedium, 
                             fontWeight = FontWeight.Bold,
                             color = linkColor,
