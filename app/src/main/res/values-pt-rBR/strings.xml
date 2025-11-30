@@ -1,0 +1,177 @@
+<resources>
+    <string name="app_name">AirRally</string>
+    
+    <!-- Main Menu -->
+    <string name="bluetooth_permission_required">Permissões de Bluetooth necessárias para jogar.</string>
+    <string name="connected_to">Conectado a %1$s</string>
+    <string name="unknown">Desconhecido</string>
+    <string name="redirecting_lobby">Redirecionando para o Lobby...</string>
+    <string name="disconnect">DESCONECTAR</string>
+    <string name="host_game">CRIAR JOGO</string>
+    <string name="join_game">ENTRAR EM JOGO</string>
+    <string name="settings">CONFIGURAÇÕES</string>
+    <string name="waiting_for_players">Aguardando jogadores...</string>
+    <string name="cancel">CANCELAR</string>
+    <string name="looking_for_games">Procurando jogos próximos...</string>
+    <string name="available_games">Jogos Disponíveis:</string>
+    <string name="connect_to">Conectar a %1$s</string>
+    <string name="auto_connecting">Conectando auto. em %1$ds...</string>
+    <string name="connecting">Conectando...</string>
+    <string name="error_prefix">Erro: %1$s</string>
+    <string name="reset">Redefinir</string>
+    <string name="share_game_content">Confira o AirRally - Pingue-pongue sem mesa! https://github.com/blairun/AirRally</string>
+    
+    <!-- Taglines -->
+    <string name="tagline_1">Pingue-pongue sem bolas 👀</string>
+    <string name="tagline_2">Pingue-pongue imaginAIRio</string>
+    <string name="tagline_3">Sem mesa, sem raquete, sem problemas.</string>
+    <string name="tagline_4">Tudo está no pulso.</string>
+    <string name="tagline_5">Não solte o celular!</string>
+    <string name="tagline_6" formatted="false">100% invisível, 100% real.</string>
+    <string name="tagline_7">A bola é uma mentira.</string>
+    <string name="tagline_8">Batalha de raquetes!</string>
+    <string name="tagline_9">Pongogo!</string>
+    <string name="tagline_10">Balance como se ninguém estivesse olhando.</string>
+
+    <!-- Settings -->
+    <string name="appearance">Aparência</string>
+    <string name="theme_system">Sistema</string>
+    <string name="theme_light">Claro</string>
+    <string name="theme_dark">Escuro</string>
+    <string name="player_name">Nome do Jogador</string>
+    <string name="game_parameters">Parâmetros do Jogo</string>
+    <string name="defaults">Padrões</string>
+    <string name="flight_time_label">Tempo de Voo: %1$d ms (%2$s)</string>
+    <string name="difficulty_hard">Difícil</string>
+    <string name="difficulty_medium">Médio</string>
+    <string name="difficulty_easy">Fácil</string>
+    <string name="info_flight_time_title">Tempo de Voo</string>
+    <string name="info_flight_time_text">Controla o tempo padrão que a bola fica no ar. (A força do balanço e a inclinação do celular aumentarão ou diminuirão esse tempo.)\n\n500-600ms: Difícil (Rápido)\n700-900ms: Médio\n1000-1200ms: Fácil (Lento)\n\n(Sincronizado com o oponente)</string>
+    <string name="hit_window_label">Janela de Acerto: %1$d ms (%2$s)</string>
+    <string name="info_hit_window_title">Janela de Acerto (Dificuldade)</string>
+    <string name="info_hit_window_text">Altera a margem de erro para o tempo do seu balanço.\n\nJanela Maior = Mais fácil de acertar.\nJanela Menor = Mais difícil de acertar.\n\nFaixa: 200ms (Difícil) a 700ms (Fácil)\n\n(Sincronizado com o oponente)</string>
+    <string name="how_to_play_safety">Como Jogar e Segurança</string>
+    <string name="safety_first">Segurança Primeiro</string>
+    <string name="safety_strap">• Use uma alça de pulso.</string>
+    <string name="safety_area">• Limpe sua área de jogo.</string>
+    <string name="gameplay">Jogabilidade</string>
+    <string name="gameplay_hold">• Segure o celular com a tela para FORA (longe da palma).</string>
+    <string name="gameplay_yellow">• AMARELO significa Chegando (Prepare-se).</string>
+    <string name="gameplay_green">• VERDE significa Balançar (Após o Pulo).</string>
+    <string name="gameplay_red">• VERMELHO significa Vez do Oponente.</string>
+    <string name="shot_types_risks">Tipos de Jogada e Riscos</string>
+    <string name="shot_types_desc">A força do balanço e a inclinação mudam sua jogada:</string>
+    <string name="shot_flat">• Tela Vertical = BATIDA PLANA</string>
+    <string name="shot_flat_desc">  Jogada padrão. Segura e confiável.</string>
+    <string name="shot_lob">• Tela Para Cima = LOB</string>
+    <string name="shot_lob_desc">  Arco alto e lento.</string>
+    <string name="shot_lob_safe">  Seguro, te dá tempo para recuperar.</string>
+    <string name="shot_spike">• Tela Para Baixo = CORTADA</string>
+    <string name="shot_spike_desc">  Rápido e Agressivo!</string>
+    <string name="shot_spike_risk">  Diminui a janela de acerto do oponente, mas</string>
+    <string name="shot_spike_net">  Maior chance de acertar a rede ou fora.</string>
+    <string name="use_debug_tones">Usar Tons de Debug</string>
+    <string name="info_debug_tones_title">Tons de Debug</string>
+    <string name="info_debug_tones_text">Se ativado, toca tons simples de bip em vez dos efeitos sonoros do jogo.</string>
+    <string name="debug_mode">Modo Debug</string>
+    <string name="info_debug_mode_title">Modo Debug</string>
+    <string name="info_debug_mode_text">Ativa uma sobreposição na tela do jogo mostrando estatísticas técnicas como RTT, estado exato do jogo e valores brutos dos sensores.\n\n(Apenas local)</string>
+    <string name="sensor_hit_test">Teste de Sensor de Batida</string>
+    <string name="force_fmt">Força: %.1f</string>
+    <string name="accel_fmt">Acel: X: %1$.1f, Y: %2$.1f, Z: %3$.1f</string>
+    <string name="gyro_fmt">Giro: X: %1$.1f, Y: %2$.1f, Z: %3$.1f</string>
+    <string name="grav_fmt">Grav: X: %1$.1f, Y: %2$.1f, Z: %3$.1f</string>
+    <string name="swing_test_prompt">Balance seu celular para testar!</string>
+    <string name="about_airrally">Sobre o AirRally</string>
+    <string name="version">Versão</string>
+    <string name="credits">Créditos</string>
+    <string name="created_by">Criado por bl</string>
+    <string name="created_by_ai">AI</string>
+    <string name="created_by_r">r</string>
+    <string name="license">Licença</string>
+    <string name="mit_license">Licença MIT</string>
+    <string name="source_code">Código Fonte</string>
+    <string name="view_github_repo">Ver Repositório GitHub</string>
+    <string name="problems">Problemas?</string>
+    <string name="report_bug">Reportar um Bug</string>
+    <string name="back">Voltar</string>
+    <string name="close">Fechar</string>
+
+    <!-- Lobby -->
+    <string name="lobby_title">LOBBY</string>
+    <string name="start_game">INICIAR JOGO</string>
+    <string name="waiting_for_opponent">AGUARDANDO OPONENTE...</string>
+    <string name="waiting_for_host">Aguardando host iniciar...</string>
+    <string name="leave">SAIR</string>
+
+    <!-- Game Screen -->
+    <string name="you">VOCÊ</string>
+    <string name="opponent">OPONENTE</string>
+    <string name="your_serve">SEU SAQUE</string>
+    <string name="swing_to_serve">Balance para Sacar!</string>
+    <string name="opponent_serving">OPONENTE SACANDO</string>
+    <string name="point_scored">PONTO MARCADO</string>
+    <string name="get_ready">Prepare-se...</string>
+    <string name="hit">ACERTOU!</string>
+    <string name="wait">ESPERE...</string>
+    <string name="action_feed">FEED DE AÇÃO</string>
+    <string name="debug_info">INFO DEBUG</string>
+    <string name="phase_fmt">Fase: %1$s</string>
+    <string name="arrival_fmt">Chegada: %1$d</string>
+    <string name="now_fmt">Agora: %1$d</string>
+    <string name="delta_fmt">Delta: %1$dms</string>
+    <string name="difficulty_fmt">Dificuldade: %1$d</string>
+    <string name="flight_time_fmt">TempoVoo: %1$d</string>
+    <string name="last_swing">ÚLTIMO BALANÇO:</string>
+    <string name="type_fmt">Tipo: %1$s</string>
+    <string name="grav_z_fmt">GravZ: %1$s</string>
+
+    <!-- Game Over -->
+    <string name="you_won">VOCÊ VENCEU!</string>
+    <string name="you_lost">VOCÊ PERDEU</string>
+    <string name="game_over">FIM DE JOGO</string>
+    <string name="final_score">Placar Final</string>
+    <string name="score">Placar</string>
+    <string name="play_again">JOGAR NOVAMENTE</string>
+    <string name="main_menu">MENU PRINCIPAL</string>
+
+    <!-- Dialogs -->
+    <string name="device_incompatible">Dispositivo Incompatível</string>
+    <string name="missing_sensors_text">Este jogo requer sensores específicos. Seu dispositivo não possui: %1$s.\n\nO app será fechado.</string>
+    <string name="exit">Sair</string>
+    <string name="hey_listen">Ei, Escute!</string>
+    <string name="swing_warning">Este jogo requer que você balance seu celular.</string>
+    <string name="warning_strap">• Use uma alça para prender seu celular</string>
+    <string name="warning_surroundings">• Esteja ciente do seu redor</string>
+    <string name="warning_hold">• Segure o celular com a tela para FORA (longe da palma)</string>
+    <string name="nah">Não</string>
+    <string name="cool">Legal</string>
+    <string name="event_you_served">Você Sacou: %1$s</string>
+    <string name="event_you_hit">Você Acertou: %1$s</string>
+    <string name="event_opponent_hit">Oponente Acertou: %1$s</string>
+    <string name="event_ball_bounced">Bola Pulou</string>
+    <string name="event_fault_net">✖️ Falta (Rede) ✖️</string>
+    <string name="event_fault_out">✖️ Falta (Fora) ✖️</string>
+    <string name="event_hit_net">✖️ Você Acertou a Rede! (%1$s) ✖️</string>
+    <string name="event_hit_out">✖️ Você Acertou Fora! (%1$s) ✖️</string>
+    <string name="event_whiff_early">✖️ Você Errou (Muito Cedo) ✖️</string>
+    <string name="event_miss_late">✖️ Você Errou (Muito Tarde) ✖️</string>
+    <string name="event_miss_no_swing">✖️ Você Errou (Sem Balanço) ✖️</string>
+    <string name="event_opp_net">✔️ Oponente Acertou a Rede! ✔️</string>
+    <string name="event_opp_out">✔️ Oponente Acertou Fora! ✔️</string>
+    <string name="event_opp_whiff">✔️ Oponente Errou o Tempo! ✔️</string>
+    <string name="event_opp_miss_no_swing">✔️ Oponente Errou (Sem Balanço) ✔️</string>
+    <string name="event_opp_miss">✔️ Oponente Errou! ✔️</string>
+    <string name="event_point_to">Ponto para %1$s</string>
+    
+    <!-- Swing Types -->
+    <string name="swing_soft_flat">PLANO SUAVE</string>
+    <string name="swing_medium_flat">PLANO MÉDIO</string>
+    <string name="swing_hard_flat">PLANO FORTE</string>
+    <string name="swing_soft_lob">LOB SUAVE</string>
+    <string name="swing_medium_lob">LOB MÉDIO</string>
+    <string name="swing_hard_lob">LOB FORTE</string>
+    <string name="swing_soft_spike">CORTADA SUAVE</string>
+    <string name="swing_medium_spike">CORTADA MÉDIA</string>
+    <string name="swing_hard_spike">CORTADA FORTE</string>
+</resources>

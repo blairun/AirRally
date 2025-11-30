@@ -1,0 +1,177 @@
+<resources>
+    <string name="app_name">AirRally</string>
+    
+    <!-- Main Menu -->
+    <string name="bluetooth_permission_required">Для игры требуются разрешения Bluetooth.</string>
+    <string name="connected_to">Подключено к %1$s</string>
+    <string name="unknown">Неизвестно</string>
+    <string name="redirecting_lobby">Перенаправление в лобби...</string>
+    <string name="disconnect">ОТКЛЮЧИТЬСЯ</string>
+    <string name="host_game">СОЗДАТЬ ИГРУ</string>
+    <string name="join_game">ПРИСОЕДИНИТЬСЯ</string>
+    <string name="settings">НАСТРОЙКИ</string>
+    <string name="waiting_for_players">Ожидание игроков...</string>
+    <string name="cancel">ОТМЕНА</string>
+    <string name="looking_for_games">Поиск игр поблизости...</string>
+    <string name="available_games">Доступные игры:</string>
+    <string name="connect_to">Подключиться к %1$s</string>
+    <string name="auto_connecting">Автоподключение через %1$dс...</string>
+    <string name="connecting">Подключение...</string>
+    <string name="error_prefix">Ошибка: %1$s</string>
+    <string name="reset">Сброс</string>
+    <string name="share_game_content">Зацените AirRally - Пинг-понг без стола! https://github.com/blairun/AirRally</string>
+    
+    <!-- Taglines -->
+    <string name="tagline_1">Пинг-понг без мячей 👀</string>
+    <string name="tagline_2">Воображаемый пинг-понг</string>
+    <string name="tagline_3">Нет стола, нет ракетки, нет проблем.</string>
+    <string name="tagline_4">Всё дело в запястье.</string>
+    <string name="tagline_5">Не выпускай телефон из рук!</string>
+    <string name="tagline_6" formatted="false">100% невидимый, 100% реальный.</string>
+    <string name="tagline_7">Мяч - это ложь.</string>
+    <string name="tagline_8">Битва ракеток!</string>
+    <string name="tagline_9">Понгого!</string>
+    <string name="tagline_10">Маши так, будто никто не смотрит.</string>
+
+    <!-- Settings -->
+    <string name="appearance">Внешний вид</string>
+    <string name="theme_system">Системная</string>
+    <string name="theme_light">Светлая</string>
+    <string name="theme_dark">Тёмная</string>
+    <string name="player_name">Имя игрока</string>
+    <string name="game_parameters">Параметры игры</string>
+    <string name="defaults">По умолчанию</string>
+    <string name="flight_time_label">Время полета: %1$d мс (%2$s)</string>
+    <string name="difficulty_hard">Сложно</string>
+    <string name="difficulty_medium">Средне</string>
+    <string name="difficulty_easy">Легко</string>
+    <string name="info_flight_time_title">Время полета</string>
+    <string name="info_flight_time_text">Контролирует время, которое мяч находится в воздухе. (Сила замаха и наклон телефона увеличивают или уменьшают это время.)\n\n500-600мс: Сложно (Быстро)\n700-900мс: Средне\n1000-1200мс: Легко (Медленно)\n\n(Синхронизировано с противником)</string>
+    <string name="hit_window_label">Окно удара: %1$d мс (%2$s)</string>
+    <string name="info_hit_window_title">Окно удара (Сложность)</string>
+    <string name="info_hit_window_text">Изменяет допустимую погрешность времени замаха.\n\nБольше окно = Легче попасть.\nМеньше окно = Сложнее попасть.\n\nДиапазон: 200мс (Сложно) до 700мс (Легко)\n\n(Синхронизировано с противником)</string>
+    <string name="how_to_play_safety">Как играть и Безопасность</string>
+    <string name="safety_first">Безопасность прежде всего</string>
+    <string name="safety_strap">• Используйте ремешок на запястье.</string>
+    <string name="safety_area">• Освободите игровое пространство.</string>
+    <string name="gameplay">Геймплей</string>
+    <string name="gameplay_hold">• Держите телефон экраном НАРУЖУ (от ладони).</string>
+    <string name="gameplay_yellow">• ЖЕЛТЫЙ означает Приближается (Приготовься).</string>
+    <string name="gameplay_green">• ЗЕЛЕНЫЙ означает Мах (После отскока).</string>
+    <string name="gameplay_red">• КРАСНЫЙ означает Ход противника.</string>
+    <string name="shot_types_risks">Типы ударов и Риски</string>
+    <string name="shot_types_desc">Сила замаха и наклон меняют ваш удар:</string>
+    <string name="shot_flat">• Экран Вертикально = ПЛОСКИЙ УДАР</string>
+    <string name="shot_flat_desc">  Стандартный удар. Безопасный и надежный.</string>
+    <string name="shot_lob">• Экран Вверх = СВЕЧА</string>
+    <string name="shot_lob_desc">  Медленная, высокая дуга.</string>
+    <string name="shot_lob_safe">  Безопасно, дает время восстановиться.</string>
+    <string name="shot_spike">• Экран Вниз = ГАШЕНИЕ</string>
+    <string name="shot_spike_desc">  Быстро и Агрессивно!</string>
+    <string name="shot_spike_risk">  Уменьшает окно удара противника, но</string>
+    <string name="shot_spike_net">  Выше шанс попасть в сетку или в аут.</string>
+    <string name="use_debug_tones">Использовать тоны отладки</string>
+    <string name="info_debug_tones_title">Тоны отладки</string>
+    <string name="info_debug_tones_text">Если включено, воспроизводит простые звуковые сигналы вместо звуковых эффектов игры.</string>
+    <string name="debug_mode">Режим отладки</string>
+    <string name="info_debug_mode_title">Режим отладки</string>
+    <string name="info_debug_mode_text">Включает оверлей на игровом экране, показывающий техническую статистику, такую как RTT, точное состояние игры и сырые данные датчиков.\n\n(Только локально)</string>
+    <string name="sensor_hit_test">Тест датчика удара</string>
+    <string name="force_fmt">Сила: %.1f</string>
+    <string name="accel_fmt">Ускор: X: %1$.1f, Y: %2$.1f, Z: %3$.1f</string>
+    <string name="gyro_fmt">Гиро: X: %1$.1f, Y: %2$.1f, Z: %3$.1f</string>
+    <string name="grav_fmt">Грав: X: %1$.1f, Y: %2$.1f, Z: %3$.1f</string>
+    <string name="swing_test_prompt">Взмахните телефоном для теста!</string>
+    <string name="about_airrally">О AirRally</string>
+    <string name="version">Версия</string>
+    <string name="credits">Кредиты</string>
+    <string name="created_by">Создано bl</string>
+    <string name="created_by_ai">AI</string>
+    <string name="created_by_r">r</string>
+    <string name="license">Лицензия</string>
+    <string name="mit_license">Лицензия MIT</string>
+    <string name="source_code">Исходный код</string>
+    <string name="view_github_repo">GitHub репозиторий</string>
+    <string name="problems">Проблемы?</string>
+    <string name="report_bug">Сообщить об ошибке</string>
+    <string name="back">Назад</string>
+    <string name="close">Закрыть</string>
+
+    <!-- Lobby -->
+    <string name="lobby_title">ЛОББИ</string>
+    <string name="start_game">НАЧАТЬ ИГРУ</string>
+    <string name="waiting_for_opponent">ОЖИДАНИЕ ПРОТИВНИКА...</string>
+    <string name="waiting_for_host">Ожидание хоста...</string>
+    <string name="leave">ВЫЙТИ</string>
+
+    <!-- Game Screen -->
+    <string name="you">ВЫ</string>
+    <string name="opponent">ПРОТИВНИК</string>
+    <string name="your_serve">ВАША ПОДАЧА</string>
+    <string name="swing_to_serve">Взмахните для подачи!</string>
+    <string name="opponent_serving">ПОДАЧА ПРОТИВНИКА</string>
+    <string name="point_scored">ОЧКО</string>
+    <string name="get_ready">Приготовьтесь...</string>
+    <string name="hit">УДАР!</string>
+    <string name="wait">ЖДИТЕ...</string>
+    <string name="action_feed">ЛЕНТА СОБЫТИЙ</string>
+    <string name="debug_info">ИНФО ОТЛАДКИ</string>
+    <string name="phase_fmt">Фаза: %1$s</string>
+    <string name="arrival_fmt">Прибытие: %1$d</string>
+    <string name="now_fmt">Сейчас: %1$d</string>
+    <string name="delta_fmt">Дельта: %1$dмс</string>
+    <string name="difficulty_fmt">Сложность: %1$d</string>
+    <string name="flight_time_fmt">ВремяПолета: %1$d</string>
+    <string name="last_swing">ПОСЛЕДНИЙ ВЗМАХ:</string>
+    <string name="type_fmt">Тип: %1$s</string>
+    <string name="grav_z_fmt">ГравZ: %1$s</string>
+
+    <!-- Game Over -->
+    <string name="you_won">ВЫ ПОБЕДИЛИ!</string>
+    <string name="you_lost">ВЫ ПРОИГРАЛИ</string>
+    <string name="game_over">ИГРА ОКОНЧЕНА</string>
+    <string name="final_score">Итоговый счет</string>
+    <string name="score">Счет</string>
+    <string name="play_again">ИГРАТЬ СНОВА</string>
+    <string name="main_menu">ГЛАВНОЕ МЕНЮ</string>
+
+    <!-- Dialogs -->
+    <string name="device_incompatible">Устройство несовместимо</string>
+    <string name="missing_sensors_text">Для этой игры требуются специальные датчики. На вашем устройстве отсутствуют: %1$s.\n\nПриложение будет закрыто.</string>
+    <string name="exit">Выход</string>
+    <string name="hey_listen">Эй, послушай!</string>
+    <string name="swing_warning">В этой игре нужно махать телефоном.</string>
+    <string name="warning_strap">• Используйте ремешок для фиксации телефона</string>
+    <string name="warning_surroundings">• Следите за окружением</string>
+    <string name="warning_hold">• Держите телефон экраном НАРУЖУ (от ладони)</string>
+    <string name="nah">Неа</string>
+    <string name="cool">Круто</string>
+    <string name="event_you_served">Вы подали: %1$s</string>
+    <string name="event_you_hit">Вы ударили: %1$s</string>
+    <string name="event_opponent_hit">Противник ударил: %1$s</string>
+    <string name="event_ball_bounced">Мяч отскочил</string>
+    <string name="event_fault_net">✖️ Ошибка (Сетка) ✖️</string>
+    <string name="event_fault_out">✖️ Ошибка (Аут) ✖️</string>
+    <string name="event_hit_net">✖️ Вы попали в сетку! (%1$s) ✖️</string>
+    <string name="event_hit_out">✖️ Вы попали в аут! (%1$s) ✖️</string>
+    <string name="event_whiff_early">✖️ Промах (Слишком рано) ✖️</string>
+    <string name="event_miss_late">✖️ Промах (Слишком поздно) ✖️</string>
+    <string name="event_miss_no_swing">✖️ Промах (Нет замаха) ✖️</string>
+    <string name="event_opp_net">✔️ Противник в сетку! ✔️</string>
+    <string name="event_opp_out">✔️ Противник в аут! ✔️</string>
+    <string name="event_opp_whiff">✔️ Противник промахнулся! ✔️</string>
+    <string name="event_opp_miss_no_swing">✔️ Противник промахнулся (Нет замаха) ✔️</string>
+    <string name="event_opp_miss">✔️ Противник промахнулся! ✔️</string>
+    <string name="event_point_to">Очко %1$s</string>
+    
+    <!-- Swing Types -->
+    <string name="swing_soft_flat">МЯГКИЙ ПЛОСКИЙ</string>
+    <string name="swing_medium_flat">СРЕДНИЙ ПЛОСКИЙ</string>
+    <string name="swing_hard_flat">СИЛЬНЫЙ ПЛОСКИЙ</string>
+    <string name="swing_soft_lob">МЯГКАЯ СВЕЧА</string>
+    <string name="swing_medium_lob">СРЕДНЯЯ СВЕЧА</string>
+    <string name="swing_hard_lob">СИЛЬНАЯ СВЕЧА</string>
+    <string name="swing_soft_spike">МЯГКОЕ ГАШЕНИЕ</string>
+    <string name="swing_medium_spike">СРЕДНЕЕ ГАШЕНИЕ</string>
+    <string name="swing_hard_spike">СИЛЬНОЕ ГАШЕНИЕ</string>
+</resources>
