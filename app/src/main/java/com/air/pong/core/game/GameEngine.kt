@@ -49,6 +49,7 @@ class GameEngine {
 
     companion object {
         const val BOUNCE_OFFSET_MS = 200L
+        const val DEFAULT_SWING_THRESHOLD = 14.0f
     }
 
     /**

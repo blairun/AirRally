@@ -7,6 +7,7 @@ import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import com.air.pong.core.sensors.SensorProvider
 import com.air.pong.core.sensors.SensorProvider.SwingEvent
+import com.air.pong.core.game.GameEngine
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlin.math.sqrt
@@ -27,9 +28,8 @@ class AccelerometerSensorProvider(context: Context) : SensorProvider {
     
     private var lastSwingTime = 0L
     
-    // Threshold in m/s^2. 1g = 9.8m/s^2. 
-    // Default 16.0 (approx 1.6g) - Adjustable via settings
-    private var swingThreshold = 16.0f 
+    // Threshold in m/s^2. 1g = 9.8m/s^2. Adjustable via settings
+    private var swingThreshold = GameEngine.DEFAULT_SWING_THRESHOLD 
     private val DEBOUNCE_MS = 500L
 
     // Store latest gyro values

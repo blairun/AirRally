@@ -130,7 +130,7 @@ class GameEngineTest {
     fun `test timing window`() {
         // Explicitly set flight time to avoid relying on default
         val testFlightTime = 1000L
-        gameEngine.updateSettings(testFlightTime, 500, isDebugMode = false, useDebugTones = false, minSwingThreshold = 16.0f) // Difficulty 500ms (Medium)
+        gameEngine.updateSettings(testFlightTime, 500, isDebugMode = false, useDebugTones = false, minSwingThreshold = GameEngine.DEFAULT_SWING_THRESHOLD) // Difficulty 500ms (Medium)
 
         // P1 serves at T=1000. Arrival = 1000 + 1000 = 2000.
         // Note: Must start > 500ms to avoid cooldown check against initial 0
@@ -198,7 +198,7 @@ class GameEngineTest {
     fun `test flight time modifiers`() {
         // Set base flight time to 1000ms explicitly (default is 700ms)
         val baseFlightTime = 1000L
-        gameEngine.updateSettings(baseFlightTime, 500, isDebugMode = false, useDebugTones = false, minSwingThreshold = 16.0f)
+        gameEngine.updateSettings(baseFlightTime, 500, isDebugMode = false, useDebugTones = false, minSwingThreshold = GameEngine.DEFAULT_SWING_THRESHOLD)
         
         // 1. MEDIUM_FLAT (1.0x) -> 1000ms
         gameEngine.onOpponentHit(0L, SwingType.MEDIUM_FLAT.ordinal)
@@ -217,7 +217,7 @@ class GameEngineTest {
     fun `test window shrink`() {
         // Base Window (Medium Difficulty)
         val testFlightTime = 1000L
-        gameEngine.updateSettings(testFlightTime, 500, isDebugMode = false, useDebugTones = false, minSwingThreshold = 16.0f) // Difficulty 500ms
+        gameEngine.updateSettings(testFlightTime, 500, isDebugMode = false, useDebugTones = false, minSwingThreshold = GameEngine.DEFAULT_SWING_THRESHOLD) // Difficulty 500ms
         val baseWindow = 500L
         
         // 1. Incoming SOFT_FLAT (0% shrink) -> 500ms
@@ -348,11 +348,26 @@ class GameEngineTest {
         gameEngine.processSwing(3000L, 19.0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f)
         assertEquals(SwingType.HARD_FLAT, gameEngine.gameState.value.lastSwingType)
         
+        // Set default threshold (14.0f)
+        gameEngine.updateSettings(1000L, 500, false, false, GameEngine.DEFAULT_SWING_THRESHOLD)
+
+        // 4. SOFT (Force=15.0) -> > 14.0 (but < 19.0)
+        gameEngine.processSwing(4000L, 15.0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f)
+        assertEquals(SwingType.SOFT_FLAT, gameEngine.gameState.value.lastSwingType)
+
+        // 5. MEDIUM (Force=20.0) -> > 14.0 + 5.0 = 19.0
+        gameEngine.processSwing(5000L, 20.0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f)
+        assertEquals(SwingType.MEDIUM_FLAT, gameEngine.gameState.value.lastSwingType)
+
+        // 6. HARD (Force=23.0) -> > 14.0 + 8.0 = 22.0
+        gameEngine.processSwing(6000L, 23.0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f)
+        assertEquals(SwingType.HARD_FLAT, gameEngine.gameState.value.lastSwingType)
+
         // Set high threshold (24.0f) - New Max
         gameEngine.updateSettings(1000L, 500, false, false, 24.0f)
         
-        // 4. SOFT (Force=25.0) -> > 24.0
-        gameEngine.processSwing(4000L, 25.0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f)
+        // 7. SOFT (Force=25.0) -> > 24.0
+        gameEngine.processSwing(7000L, 25.0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f)
         assertEquals(SwingType.SOFT_FLAT, gameEngine.gameState.value.lastSwingType)
     }
 }

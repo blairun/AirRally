@@ -64,7 +64,7 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
         val savedDebugMode = sharedPrefs.getBoolean("debug_mode", false)
         val savedDebugTones = sharedPrefs.getBoolean("debug_tones", false)
         val savedPlayerName = sharedPrefs.getString("player_name", null) ?: fetchDeviceName()
-        val savedMinSwingThreshold = sharedPrefs.getFloat("min_swing_threshold", 16.0f)
+        val savedMinSwingThreshold = sharedPrefs.getFloat("min_swing_threshold", GameEngine.DEFAULT_SWING_THRESHOLD)
 
         _playerName.value = savedPlayerName
 
@@ -118,15 +118,15 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
     }
     
     fun resetGameSettings() {
-        gameEngine.updateSettings(700L, 400, false, false, 16.0f)
-        sensorProvider.setSwingThreshold(16.0f)
+        gameEngine.updateSettings(700L, 400, false, false, GameEngine.DEFAULT_SWING_THRESHOLD)
+        sensorProvider.setSwingThreshold(GameEngine.DEFAULT_SWING_THRESHOLD)
         // Also update shared prefs so it persists
         with(sharedPrefs.edit()) {
             putLong("flight_time", 700L)
             putInt("difficulty", 400)
             putBoolean("debug_mode", false)
             putBoolean("debug_tones", false)
-            putFloat("min_swing_threshold", 16.0f)
+            putFloat("min_swing_threshold", GameEngine.DEFAULT_SWING_THRESHOLD)
             apply()
         }
     }

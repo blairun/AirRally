@@ -443,6 +443,11 @@ If the shot is valid, the **Receiver's Hit Window** is tightened based on the in
     -   Incoming `HARD_SPIKE` (50% shrink) → Window becomes ±100ms.
 This makes aggressive shots significantly harder to return, rewarding the risk taken by the hitter.
 
+### Component 7.6: Game Flow
+1- P1 serve | bounce P1 side | bounce P2 side | P2 hit | bounce P1 side |
+2- P1 hit | bounce P2 side | P2 hit | bounce P1 side | [repeat line 2 until someone misses]
+3- Types of misses: whiff too early | whiff too late | ball hit into net | ball hit over net but miss opposite side of table | [note that sounds are always played on the player's phone where the action takes place]
+
 ## Verification Plan
 
 ### Automated Tests

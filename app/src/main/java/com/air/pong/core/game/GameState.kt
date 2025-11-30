@@ -25,7 +25,7 @@ data class GameState(
     val lastSwingType: SwingType? = null,
     val lastSwingData: SwingData? = null,
     val pendingMiss: PendingMiss? = null,
-    val minSwingThreshold: Float = 16.0f
+    val minSwingThreshold: Float = GameEngine.DEFAULT_SWING_THRESHOLD
 )
 
 data class PendingMiss(
