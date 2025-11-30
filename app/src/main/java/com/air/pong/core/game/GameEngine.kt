@@ -158,12 +158,23 @@ class GameEngine {
              val riskResult = checkRisk(swingType)
              if (riskResult != HitResult.HIT) {
                  // Fault on serve!
-                 val event = if (riskResult == HitResult.MISS_NET) GameEvent.FaultNet else GameEvent.FaultOut
-                 _gameState.update {
-                     it.copy(eventLog = (it.eventLog + event).takeLast(5))
+                 // Calculate delay for natural feel
+                 val flightTime = currentState.flightTime
+                 val delay = if (riskResult == HitResult.MISS_NET) {
+                     (flightTime * 0.5).toLong() // Hits net halfway
+                 } else {
+                     (flightTime * 1.2).toLong() // Goes out (full flight + bit more)
                  }
-                 handleMiss(if (isHost) Player.PLAYER_1 else Player.PLAYER_2)
-                 return riskResult
+
+                 _gameState.update {
+                     it.copy(
+                         pendingMiss = PendingMiss(riskResult, System.currentTimeMillis(), delay),
+                         // We still update lastSwingType so UI can show the swing
+                         lastSwingType = swingType,
+                         lastSwingData = SwingData(force, x, y, z, gx, gy, gz, gravX, gravY, gravZ)
+                     )
+                 }
+                 return HitResult.PENDING
              }
 
              val nextArrival = timestamp + currentState.flightTime
@@ -203,16 +214,23 @@ class GameEngine {
                 return HitResult.HIT
             } else {
                 // Failed Risk Check (Net or Out)
-                val event = if (riskResult == HitResult.MISS_NET) 
-                    GameEvent.HitNet(swingType)
-                else 
-                    GameEvent.HitOut(swingType)
-                
-                _gameState.update {
-                    it.copy(eventLog = (it.eventLog + event).takeLast(5))
+                // Calculate delay for natural feel
+                val flightTime = currentState.flightTime
+                val delay = if (riskResult == HitResult.MISS_NET) {
+                    (flightTime * 0.5).toLong() // Hits net halfway
+                } else {
+                    (flightTime * 1.2).toLong() // Goes out (full flight + bit more)
                 }
-                handleMiss(if (isHost) Player.PLAYER_1 else Player.PLAYER_2)
-                return riskResult
+
+                _gameState.update {
+                    it.copy(
+                        pendingMiss = PendingMiss(riskResult, System.currentTimeMillis(), delay),
+                        // We still update lastSwingType so UI can show the swing
+                        lastSwingType = swingType,
+                        lastSwingData = SwingData(force, x, y, z, gx, gy, gz, gravX, gravY, gravZ)
+                    )
+                }
+                return HitResult.PENDING
             }
         } else {
             // Timing Miss
@@ -331,6 +349,11 @@ class GameEngine {
      */
     fun checkAutoMiss(): Boolean {
         val state = _gameState.value
+        // If there is a pending miss, we have already swung and are just waiting for the result.
+        if (state.pendingMiss != null) {
+            return false
+        }
+
         if (state.gamePhase != GamePhase.RALLY || !state.isMyTurn) {
             return false
         }
@@ -435,13 +458,14 @@ class GameEngine {
         }
     }
 
-    fun updateSettings(flightTime: Long, difficulty: Int, isDebugMode: Boolean, useDebugTones: Boolean) {
+    fun updateSettings(flightTime: Long, difficulty: Int, isDebugMode: Boolean, useDebugTones: Boolean, minSwingThreshold: Float) {
         _gameState.update {
             it.copy(
                 flightTime = flightTime,
                 difficulty = difficulty,
                 isDebugMode = isDebugMode,
-                useDebugTones = useDebugTones
+                useDebugTones = useDebugTones,
+                minSwingThreshold = minSwingThreshold
             )
         }
     }
@@ -480,6 +504,27 @@ class GameEngine {
         }
     }
 
+    fun resolvePendingMiss(): HitResult? {
+        val pending = _gameState.value.pendingMiss ?: return null
+        
+        // Clear pending state
+        _gameState.update { it.copy(pendingMiss = null) }
+        
+        // Log event
+        val event = if (pending.type == HitResult.MISS_NET) {
+             if (_gameState.value.gamePhase == GamePhase.WAITING_FOR_SERVE) GameEvent.FaultNet else GameEvent.HitNet(_gameState.value.lastSwingType ?: SwingType.MEDIUM_FLAT)
+        } else {
+             if (_gameState.value.gamePhase == GamePhase.WAITING_FOR_SERVE) GameEvent.FaultOut else GameEvent.HitOut(_gameState.value.lastSwingType ?: SwingType.MEDIUM_FLAT)
+        }
+        
+        _gameState.update {
+            it.copy(eventLog = (it.eventLog + event).takeLast(5))
+        }
+        
+        handleMiss(if (isHost) Player.PLAYER_1 else Player.PLAYER_2)
+        return pending.type
+    }
+
     private fun classifySwing(force: Float, gravZ: Float): SwingType {
         // Classification based on Gravity Z (Tilt)
         // Gravity Z > 3.0 -> Screen Tilted Up -> LOB
@@ -492,9 +537,10 @@ class GameEngine {
             else -> "FLAT"
         }
         
+        val minThreshold = _gameState.value.minSwingThreshold
         val intensity = when {
-            force > 20.0f -> "HARD"
-            force > 17.0f -> "MEDIUM"
+            force > (minThreshold + 8.0f) -> "HARD"   // e.g. 12+8 = 20
+            force > (minThreshold + 5.0f) -> "MEDIUM" // e.g. 12+5 = 17
             else -> "SOFT"
         }
         

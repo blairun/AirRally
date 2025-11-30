@@ -48,12 +48,14 @@ fun SettingsScreen(
     var flightTime by remember { mutableFloatStateOf(gameState.flightTime.toFloat()) }
     var difficulty by remember { mutableIntStateOf(gameState.difficulty) }
     var isDebugMode by remember { mutableStateOf(gameState.isDebugMode) }
+    var minSwingThreshold by remember { mutableFloatStateOf(gameState.minSwingThreshold) }
     
     // Update local state if external state changes (e.g. initial load)
-    LaunchedEffect(gameState.flightTime, gameState.difficulty, gameState.isDebugMode) {
+    LaunchedEffect(gameState.flightTime, gameState.difficulty, gameState.isDebugMode, gameState.minSwingThreshold) {
         flightTime = gameState.flightTime.toFloat()
         difficulty = gameState.difficulty
         isDebugMode = gameState.isDebugMode
+        minSwingThreshold = gameState.minSwingThreshold
     }
     
     // Manage Sensor Lifecycle for Hit Testing
@@ -149,9 +151,25 @@ fun SettingsScreen(
         Spacer(modifier = Modifier.height(16.dp))
         
         // Game Rules Card
+        var isGameParamsExpanded by remember { mutableStateOf(false) }
+        var gameParamsCardY by remember { mutableIntStateOf(0) }
+
         Card(
-            modifier = Modifier.fillMaxWidth(),
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
+            modifier = Modifier
+                .fillMaxWidth()
+                .onGloballyPositioned { coordinates ->
+                    gameParamsCardY = coordinates.positionInParent().y.toInt()
+                },
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+            onClick = {
+                isGameParamsExpanded = !isGameParamsExpanded
+                if (isGameParamsExpanded) {
+                    coroutineScope.launch {
+                        kotlinx.coroutines.delay(100)
+                        scrollState.animateScrollTo(gameParamsCardY)
+                    }
+                }
+            }
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
                 Row(
@@ -164,80 +182,118 @@ fun SettingsScreen(
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold
                     )
-                    TextButton(onClick = { 
-                        viewModel.resetGameSettings()
-                        // Local state update handled by LaunchedEffect observing gameState
-                    }) {
-                        Text(stringResource(R.string.defaults))
-                    }
-                }
-                
-                Spacer(modifier = Modifier.height(8.dp))
-
-                // Flight Time
-                val flightTimeLabel = when {
-                    flightTime <= 600 -> stringResource(R.string.difficulty_hard)
-                    flightTime <= 900 -> stringResource(R.string.difficulty_medium)
-                    else -> stringResource(R.string.difficulty_easy)
+                    Icon(
+                        if (isGameParamsExpanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                        contentDescription = "Expand"
+                    )
                 }
 
-                
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(stringResource(R.string.flight_time_label, flightTime.toInt(), flightTimeLabel), style = MaterialTheme.typography.bodyLarge)
-                    IconButton(onClick = {
-                        infoTitle = context.getString(R.string.info_flight_time_title)
-                        infoText = context.getString(R.string.info_flight_time_text)
-                        showInfoDialog = true
-                    }) {
-                        Icon(Icons.Default.Info, contentDescription = "Info", modifier = Modifier.size(20.dp))
+                if (isGameParamsExpanded) {
+                    Spacer(modifier = Modifier.height(8.dp))
+                    HorizontalDivider()
+                    Spacer(modifier = Modifier.height(8.dp))
+                    
+                    // Defaults Button
+                    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
+                        TextButton(onClick = {
+                            viewModel.resetGameSettings()
+                        }) {
+                            Text(stringResource(R.string.defaults))
+                        }
                     }
-                }
+                    
+                    Spacer(modifier = Modifier.height(8.dp))
 
-                Slider(
-                    value = flightTime,
-                    onValueChange = { 
-                        // Snap to 100ms
-                        flightTime = (it / 100).toInt() * 100f
-                    },
-                    valueRange = 500f..1200f,
-                    steps = 6, // (1200-500)/100 = 7 intervals -> 6 steps
-                    onValueChangeFinished = {
-                        viewModel.updateSettings(flightTime.toLong(), difficulty, isDebugMode, gameState.useDebugTones)
+                    // Flight Time
+                    val flightTimeLabel = when {
+                        flightTime <= 600 -> stringResource(R.string.difficulty_hard)
+                        flightTime <= 900 -> stringResource(R.string.difficulty_medium)
+                        else -> stringResource(R.string.difficulty_easy)
                     }
-                )
-                
-                Spacer(modifier = Modifier.height(16.dp))
 
-                // Difficulty (Hit Window)
-                val difficultyLabel = when {
-                    difficulty <= 300 -> stringResource(R.string.difficulty_hard)
-                    difficulty <= 500 -> stringResource(R.string.difficulty_medium)
-                    else -> stringResource(R.string.difficulty_easy)
-                }
-                
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(stringResource(R.string.hit_window_label, difficulty, difficultyLabel), style = MaterialTheme.typography.bodyLarge)
-                    IconButton(onClick = {
-                        infoTitle = context.getString(R.string.info_hit_window_title)
-                        infoText = context.getString(R.string.info_hit_window_text)
-                        showInfoDialog = true
-                    }) {
-                        Icon(Icons.Default.Info, contentDescription = "Info", modifier = Modifier.size(20.dp))
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(stringResource(R.string.flight_time_label, flightTime.toInt(), flightTimeLabel), style = MaterialTheme.typography.bodyLarge)
+                        IconButton(onClick = {
+                            infoTitle = context.getString(R.string.info_flight_time_title)
+                            infoText = context.getString(R.string.info_flight_time_text)
+                            showInfoDialog = true
+                        }) {
+                            Icon(Icons.Default.Info, contentDescription = "Info", modifier = Modifier.size(20.dp))
+                        }
                     }
-                }
-                Slider(
-                    value = difficulty.toFloat(),
-                    onValueChange = { 
-                        // Snap to 50ms
-                        val snapped = (it / 50).toInt() * 50
-                        difficulty = snapped
-                    },
-                    valueRange = 200f..700f,
-                    steps = 9, // (700-200)/50 = 10 intervals -> 9 steps
-                    onValueChangeFinished = {
-                        viewModel.updateSettings(flightTime.toLong(), difficulty, isDebugMode, gameState.useDebugTones)
+
+                    Slider(
+                        value = flightTime,
+                        onValueChange = {
+                            // Snap to 100ms
+                            flightTime = (it / 100).toInt() * 100f
+                        },
+                        valueRange = 500f..1200f,
+                        steps = 6, // (1200-500)/100 = 7 intervals -> 6 steps
+                        onValueChangeFinished = {
+                            viewModel.updateSettings(flightTime.toLong(), difficulty, isDebugMode, gameState.useDebugTones, minSwingThreshold)
+                        }
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    // Difficulty (Hit Window)
+                    val difficultyLabel = when {
+                        difficulty <= 300 -> stringResource(R.string.difficulty_hard)
+                        difficulty <= 500 -> stringResource(R.string.difficulty_medium)
+                        else -> stringResource(R.string.difficulty_easy)
                     }
-                )
+
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(stringResource(R.string.hit_window_label, difficulty, difficultyLabel), style = MaterialTheme.typography.bodyLarge)
+                        IconButton(onClick = {
+                            infoTitle = context.getString(R.string.info_hit_window_title)
+                            infoText = context.getString(R.string.info_hit_window_text)
+                            showInfoDialog = true
+                        }) {
+                            Icon(Icons.Default.Info, contentDescription = "Info", modifier = Modifier.size(20.dp))
+                        }
+                    }
+                    Slider(
+                        value = difficulty.toFloat(),
+                        onValueChange = {
+                            // Snap to 50ms
+                            val snapped = (it / 50).toInt() * 50
+                            difficulty = snapped
+                        },
+                        valueRange = 200f..700f,
+                        steps = 9, // (700-200)/50 = 10 intervals -> 9 steps
+                        onValueChangeFinished = {
+                            viewModel.updateSettings(flightTime.toLong(), difficulty, isDebugMode, gameState.useDebugTones, minSwingThreshold)
+                        }
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    // Swing Sensitivity (Local)
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(stringResource(R.string.swing_sensitivity_label, minSwingThreshold), style = MaterialTheme.typography.bodyLarge)
+                        IconButton(onClick = {
+                            infoTitle = context.getString(R.string.info_sensitivity_title)
+                            infoText = context.getString(R.string.info_sensitivity_text)
+                            showInfoDialog = true
+                        }) {
+                            Icon(Icons.Default.Info, contentDescription = "Info", modifier = Modifier.size(20.dp))
+                        }
+                    }
+                    Slider(
+                        value = minSwingThreshold,
+                        onValueChange = {
+                            // Snap to 1.0
+                            minSwingThreshold = kotlin.math.round(it)
+                        },
+                        valueRange = 10.0f..24.0f,
+                        steps = 13, // (24-10)/1 = 14 intervals -> 13 steps
+                        onValueChangeFinished = {
+                            viewModel.updateSettings(flightTime.toLong(), difficulty, isDebugMode, gameState.useDebugTones, minSwingThreshold)
+                        }
+                    )
+                }
             }
         }
         
@@ -345,6 +401,7 @@ fun SettingsScreen(
         Spacer(modifier = Modifier.height(16.dp))
 
         // Debug & Testing Card
+        var isDebugExpanded by remember { mutableStateOf(false) }
         var debugCardY by remember { mutableIntStateOf(0) }
 
         Card(
@@ -353,7 +410,16 @@ fun SettingsScreen(
                 .onGloballyPositioned { coordinates ->
                     debugCardY = coordinates.positionInParent().y.toInt()
                 },
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+            onClick = {
+                isDebugExpanded = !isDebugExpanded
+                if (isDebugExpanded) {
+                    coroutineScope.launch {
+                        kotlinx.coroutines.delay(100)
+                        scrollState.animateScrollTo(debugCardY)
+                    }
+                }
+            }
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
                 Row(
@@ -361,100 +427,114 @@ fun SettingsScreen(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text(stringResource(R.string.use_debug_tones), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-                        IconButton(onClick = {
-                            infoTitle = context.getString(R.string.info_debug_tones_title)
-                            infoText = context.getString(R.string.info_debug_tones_text)
-                            showInfoDialog = true
-                        }) {
-                            Icon(Icons.Default.Info, contentDescription = "Info", modifier = Modifier.size(20.dp))
-                        }
-                    }
-                    Switch(
-                        checked = gameState.useDebugTones,
-                        onCheckedChange = { 
-                            viewModel.updateSettings(flightTime.toLong(), difficulty, isDebugMode, it)
-                        }
-                    )
-                }
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text(stringResource(R.string.debug_mode), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-                        IconButton(onClick = {
-                            infoTitle = context.getString(R.string.info_debug_mode_title)
-                            infoText = context.getString(R.string.info_debug_mode_text)
-                            showInfoDialog = true
-                        }) {
-                            Icon(Icons.Default.Info, contentDescription = "Info", modifier = Modifier.size(20.dp))
-                        }
-                    }
-                    Switch(
-                        checked = isDebugMode,
-                        onCheckedChange = { 
-                            isDebugMode = it
-                            viewModel.updateSettings(flightTime.toLong(), difficulty, isDebugMode, gameState.useDebugTones)
-                            
-                            if (isDebugMode) {
-                                coroutineScope.launch {
-                                    // Small delay to allow layout to update
-                                    kotlinx.coroutines.delay(100) 
-                                    scrollState.animateScrollTo(debugCardY)
-                                }
-                            }
-                        }
-                    )
-                }
-
-                if (isDebugMode) {
-                    Spacer(modifier = Modifier.height(16.dp))
-                    HorizontalDivider()
-                    Spacer(modifier = Modifier.height(16.dp))
                     Text(
-                        stringResource(R.string.sensor_hit_test),
+                        stringResource(R.string.debug_settings),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold
                     )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    
-                    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
-                        if (gameState.lastSwingType != null) {
-                            Text(
-                                text = gameState.lastSwingType!!.name.replace("_", " "),
-                                style = MaterialTheme.typography.headlineMedium,
-                                color = MaterialTheme.colorScheme.primary
-                            )
-                            
-                            gameState.lastSwingData?.let { data ->
-                                Spacer(modifier = Modifier.height(4.dp))
-                                Text(stringResource(R.string.force_fmt, data.force), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-                                Text(stringResource(R.string.accel_fmt, data.accelX, data.accelY, data.accelZ), style = MaterialTheme.typography.labelSmall)
-                                Text(stringResource(R.string.gyro_fmt, data.gyroX, data.gyroY, data.gyroZ), style = MaterialTheme.typography.labelSmall)
-                                Text(stringResource(R.string.grav_fmt, data.gravX, data.gravY, data.gravZ), style = MaterialTheme.typography.labelSmall)
-                                
-                                // Play sound based on force for testing
-                                LaunchedEffect(data) {
-                                     val soundEvent = when {
-                                         data.force > 20.0f -> com.air.pong.audio.AudioManager.SoundEvent.HIT_HARD
-                                         data.force > 17.0f -> com.air.pong.audio.AudioManager.SoundEvent.HIT_MEDIUM
-                                         else -> com.air.pong.audio.AudioManager.SoundEvent.HIT_SOFT
-                                     }
-                                     // We need access to AudioManager here, but it's in ViewModel.
-                                     // We can expose a method in ViewModel to play test sound.
-                                     viewModel.playTestSound(soundEvent)
-                                }
+                    Icon(
+                        if (isDebugExpanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                        contentDescription = "Expand"
+                    )
+                }
+
+                if (isDebugExpanded) {
+                    Spacer(modifier = Modifier.height(16.dp))
+                    HorizontalDivider()
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text(stringResource(R.string.use_debug_tones), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                            IconButton(onClick = {
+                                infoTitle = context.getString(R.string.info_debug_tones_title)
+                                infoText = context.getString(R.string.info_debug_tones_text)
+                                showInfoDialog = true
+                            }) {
+                                Icon(Icons.Default.Info, contentDescription = "Info", modifier = Modifier.size(20.dp))
                             }
-                        } else {
-                            Text(
-                                text = stringResource(R.string.swing_test_prompt),
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
+                        }
+                        Switch(
+                            checked = gameState.useDebugTones,
+                            onCheckedChange = {
+                                viewModel.updateSettings(flightTime.toLong(), difficulty, isDebugMode, it, minSwingThreshold)
+                            }
+                        )
+                    }
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text(stringResource(R.string.debug_mode), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                            IconButton(onClick = {
+                                infoTitle = context.getString(R.string.info_debug_mode_title)
+                                infoText = context.getString(R.string.info_debug_mode_text)
+                                showInfoDialog = true
+                            }) {
+                                Icon(Icons.Default.Info, contentDescription = "Info", modifier = Modifier.size(20.dp))
+                            }
+                        }
+                        Switch(
+                            checked = isDebugMode,
+                            onCheckedChange = {
+                                isDebugMode = it
+                                viewModel.updateSettings(flightTime.toLong(), difficulty, isDebugMode, gameState.useDebugTones, minSwingThreshold)
+                            }
+                        )
+                    }
+
+                    if (isDebugMode) {
+                        Spacer(modifier = Modifier.height(16.dp))
+                        HorizontalDivider()
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text(
+                            stringResource(R.string.sensor_hit_test),
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
+                            if (gameState.lastSwingType != null) {
+                                Text(
+                                    text = gameState.lastSwingType!!.name.replace("_", " "),
+                                    style = MaterialTheme.typography.headlineMedium,
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+
+                                gameState.lastSwingData?.let { data ->
+                                    Spacer(modifier = Modifier.height(4.dp))
+                                    Text(stringResource(R.string.force_fmt, data.force), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                                    Text(stringResource(R.string.accel_fmt, data.accelX, data.accelY, data.accelZ), style = MaterialTheme.typography.labelSmall)
+                                    Text(stringResource(R.string.gyro_fmt, data.gyroX, data.gyroY, data.gyroZ), style = MaterialTheme.typography.labelSmall)
+                                    Text(stringResource(R.string.grav_fmt, data.gravX, data.gravY, data.gravZ), style = MaterialTheme.typography.labelSmall)
+
+                                    // Play sound based on force for testing
+                                    LaunchedEffect(data) {
+                                        val soundEvent = when {
+                                            data.force > 20.0f -> com.air.pong.audio.AudioManager.SoundEvent.HIT_HARD
+                                            data.force > 17.0f -> com.air.pong.audio.AudioManager.SoundEvent.HIT_MEDIUM
+                                            else -> com.air.pong.audio.AudioManager.SoundEvent.HIT_SOFT
+                                        }
+                                        // We need access to AudioManager here, but it's in ViewModel.
+                                        // We can expose a method in ViewModel to play test sound.
+                                        viewModel.playTestSound(soundEvent)
+                                    }
+                                }
+                            } else {
+                                Text(
+                                    text = stringResource(R.string.swing_test_prompt),
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
                         }
                     }
                 }

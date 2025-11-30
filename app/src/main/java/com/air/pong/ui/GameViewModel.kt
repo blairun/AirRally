@@ -64,10 +64,12 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
         val savedDebugMode = sharedPrefs.getBoolean("debug_mode", false)
         val savedDebugTones = sharedPrefs.getBoolean("debug_tones", false)
         val savedPlayerName = sharedPrefs.getString("player_name", null) ?: fetchDeviceName()
+        val savedMinSwingThreshold = sharedPrefs.getFloat("min_swing_threshold", 16.0f)
 
         _playerName.value = savedPlayerName
 
-        gameEngine.updateSettings(savedFlightTime, savedDifficulty, savedDebugMode, savedDebugTones)
+        gameEngine.updateSettings(savedFlightTime, savedDifficulty, savedDebugMode, savedDebugTones, savedMinSwingThreshold)
+        sensorProvider.setSwingThreshold(savedMinSwingThreshold)
 
         // Observe Network Messages
         viewModelScope.launch {
@@ -116,13 +118,15 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
     }
     
     fun resetGameSettings() {
-        gameEngine.updateSettings(700L, 400, false, false)
+        gameEngine.updateSettings(700L, 400, false, false, 16.0f)
+        sensorProvider.setSwingThreshold(16.0f)
         // Also update shared prefs so it persists
         with(sharedPrefs.edit()) {
             putLong("flight_time", 700L)
             putInt("difficulty", 400)
             putBoolean("debug_mode", false)
             putBoolean("debug_tones", false)
+            putFloat("min_swing_threshold", 16.0f)
             apply()
         }
     }
@@ -185,6 +189,47 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
                     audioManager.play(com.air.pong.audio.AudioManager.SoundEvent.HIT_HARD, gameEngine.gameState.value.useDebugTones)
                     hapticManager.playHit()
                 }
+            } else if (result == HitResult.PENDING) {
+                // Delayed Miss Logic
+                // 1. Play HIT sound and haptic immediately (simulating contact)
+                if (wasServing) {
+                    audioManager.play(com.air.pong.audio.AudioManager.SoundEvent.SERVE, gameEngine.gameState.value.useDebugTones)
+                } else {
+                    audioManager.play(com.air.pong.audio.AudioManager.SoundEvent.HIT_HARD, gameEngine.gameState.value.useDebugTones)
+                }
+                hapticManager.playHit()
+                
+                // 2. Schedule the resolution (Net/Out)
+                val pendingMiss = gameEngine.gameState.value.pendingMiss
+                val delay = pendingMiss?.delayMs ?: 500L
+                
+                viewModelScope.launch {
+                    kotlinx.coroutines.delay(delay)
+                    val finalResult = gameEngine.resolvePendingMiss()
+                    
+                    if (finalResult != null) {
+                        // Send Result to opponent (Miss)
+                        sendMessage(GameMessage.Result(finalResult, null))
+                        
+                        // Play Miss Sound
+                        val soundEvent = if (finalResult == HitResult.MISS_NET) {
+                             com.air.pong.audio.AudioManager.SoundEvent.HIT_NET
+                        } else {
+                             // For Out, the ball lands on the opponent's side.
+                             // We (the hitter) do NOT hear it land.
+                             null
+                        }
+                        
+                        if (soundEvent != null) {
+                            audioManager.play(soundEvent, gameEngine.gameState.value.useDebugTones)
+                        }
+                        hapticManager.playMiss()
+                        
+                        // Play Lose Point sound after a delay
+                        kotlinx.coroutines.delay(1000)
+                        audioManager.play(com.air.pong.audio.AudioManager.SoundEvent.LOSE_POINT, gameEngine.gameState.value.useDebugTones)
+                    }
+                }
             } else {
                 sendMessage(GameMessage.Result(result, null)) 
                 
@@ -230,7 +275,8 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
             is GameMessage.Settings -> {
                 val currentDebug = gameEngine.gameState.value.isDebugMode
                 val currentUseDebugTones = gameEngine.gameState.value.useDebugTones
-                gameEngine.updateSettings(msg.flightTime, msg.difficulty, currentDebug, currentUseDebugTones)
+                val currentMinThreshold = gameEngine.gameState.value.minSwingThreshold
+                gameEngine.updateSettings(msg.flightTime, msg.difficulty, currentDebug, currentUseDebugTones, currentMinThreshold)
             }
             is GameMessage.ActionSwing -> {
                 // Fix for Clock Synchronization:
@@ -404,8 +450,11 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
     
-    fun updateSettings(flightTime: Long, difficulty: Int, isDebugMode: Boolean, useDebugTones: Boolean) {
-        gameEngine.updateSettings(flightTime, difficulty, isDebugMode, useDebugTones)
+    fun updateSettings(flightTime: Long, difficulty: Int, isDebugMode: Boolean, useDebugTones: Boolean, minSwingThreshold: Float) {
+        gameEngine.updateSettings(flightTime, difficulty, isDebugMode, useDebugTones, minSwingThreshold)
+        sensorProvider.setSwingThreshold(minSwingThreshold)
+        
+        // Only sync synced settings (Flight Time, Difficulty)
         sendMessage(GameMessage.Settings(flightTime, difficulty))
         
         // Save to SharedPreferences
@@ -414,6 +463,7 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
             putInt("difficulty", difficulty)
             putBoolean("debug_mode", isDebugMode)
             putBoolean("debug_tones", useDebugTones)
+            putFloat("min_swing_threshold", minSwingThreshold)
             apply()
         }
     }

@@ -130,7 +130,7 @@ class GameEngineTest {
     fun `test timing window`() {
         // Explicitly set flight time to avoid relying on default
         val testFlightTime = 1000L
-        gameEngine.updateSettings(testFlightTime, 500, isDebugMode = false, useDebugTones = false) // Difficulty 500ms (Medium)
+        gameEngine.updateSettings(testFlightTime, 500, isDebugMode = false, useDebugTones = false, minSwingThreshold = 16.0f) // Difficulty 500ms (Medium)
 
         // P1 serves at T=1000. Arrival = 1000 + 1000 = 2000.
         // Note: Must start > 500ms to avoid cooldown check against initial 0
@@ -177,20 +177,20 @@ class GameEngineTest {
         gameEngine.processSwing(1000L, 10f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f)
         assertEquals(SwingType.SOFT_FLAT, gameEngine.gameState.value.lastSwingType)
         
-        // 2. MEDIUM FLAT (Force=18, GravZ=0)
-        gameEngine.processSwing(2000L, 18f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f)
+        // 2. MEDIUM FLAT (Force=22, GravZ=0)
+        gameEngine.processSwing(2000L, 22f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f)
         assertEquals(SwingType.MEDIUM_FLAT, gameEngine.gameState.value.lastSwingType)
         
-        // 3. HARD FLAT (Force=25, GravZ=0)
-        gameEngine.processSwing(3000L, 25f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f)
+        // 3. HARD FLAT (Force=26, GravZ=0)
+        gameEngine.processSwing(3000L, 26f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f)
         assertEquals(SwingType.HARD_FLAT, gameEngine.gameState.value.lastSwingType)
         
         // 4. SOFT LOB (Force=10, GravZ=4.0)
         gameEngine.processSwing(4000L, 10f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 4.0f)
         assertEquals(SwingType.SOFT_LOB, gameEngine.gameState.value.lastSwingType)
         
-        // 5. HARD SPIKE (Force=25, GravZ=-4.0)
-        gameEngine.processSwing(5000L, 25f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, -4.0f)
+        // 5. HARD SPIKE (Force=26, GravZ=-4.0)
+        gameEngine.processSwing(5000L, 26f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, -4.0f)
         assertEquals(SwingType.HARD_SPIKE, gameEngine.gameState.value.lastSwingType)
     }
 
@@ -198,7 +198,7 @@ class GameEngineTest {
     fun `test flight time modifiers`() {
         // Set base flight time to 1000ms explicitly (default is 700ms)
         val baseFlightTime = 1000L
-        gameEngine.updateSettings(baseFlightTime, 500, isDebugMode = false, useDebugTones = false)
+        gameEngine.updateSettings(baseFlightTime, 500, isDebugMode = false, useDebugTones = false, minSwingThreshold = 16.0f)
         
         // 1. MEDIUM_FLAT (1.0x) -> 1000ms
         gameEngine.onOpponentHit(0L, SwingType.MEDIUM_FLAT.ordinal)
@@ -217,7 +217,7 @@ class GameEngineTest {
     fun `test window shrink`() {
         // Base Window (Medium Difficulty)
         val testFlightTime = 1000L
-        gameEngine.updateSettings(testFlightTime, 500, isDebugMode = false, useDebugTones = false) // Difficulty 500ms
+        gameEngine.updateSettings(testFlightTime, 500, isDebugMode = false, useDebugTones = false, minSwingThreshold = 16.0f) // Difficulty 500ms
         val baseWindow = 500L
         
         // 1. Incoming SOFT_FLAT (0% shrink) -> 500ms
@@ -266,7 +266,12 @@ class GameEngineTest {
             
             assertNotNull("Swing was ignored (returned null)", result)
             
-            if (result == HitResult.MISS_NET || result == HitResult.MISS_OUT) {
+            var finalResult = result
+            if (result == HitResult.PENDING) {
+                finalResult = engine.resolvePendingMiss()
+            }
+            
+            if (finalResult == HitResult.MISS_NET || finalResult == HitResult.MISS_OUT) {
                 failures++
             }
         }
@@ -289,8 +294,11 @@ class GameEngineTest {
             val engine = GameEngine()
             engine.setLocalPlayer(true)
             engine.startGame()
-            // Force=18 (Medium), GravZ=0 (Flat)
-            val result = engine.processSwing(1000L, 18f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f)
+            // Force=22 (Medium), GravZ=0 (Flat)
+            var result = engine.processSwing(1000L, 22f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f)
+            if (result == HitResult.PENDING) {
+                result = engine.resolvePendingMiss()
+            }
             if (result == HitResult.MISS_NET) mediumFlatNet++
             if (result == HitResult.MISS_OUT) mediumFlatOut++
         }
@@ -307,8 +315,11 @@ class GameEngineTest {
             val engine = GameEngine()
             engine.setLocalPlayer(true)
             engine.startGame()
-            // Force=25 (Hard), GravZ=0 (Flat)
-            val result = engine.processSwing(1000L, 25f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f)
+            // Force=26 (Hard), GravZ=0 (Flat)
+            var result = engine.processSwing(1000L, 26f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f)
+            if (result == HitResult.PENDING) {
+                result = engine.resolvePendingMiss()
+            }
             if (result == HitResult.MISS_NET) hardFlatNet++
             if (result == HitResult.MISS_OUT) hardFlatOut++
         }
@@ -317,5 +328,31 @@ class GameEngineTest {
         assertTrue("HARD_FLAT Net Rate should be ~5% (actual: $hardFlatNet)", hardFlatNet in 400..600)
         // Expected Out ~1500 (15%). Allow 1350-1650
         assertTrue("HARD_FLAT Out Rate should be ~15% (actual: $hardFlatOut)", hardFlatOut in 1350..1650)
+    }
+    @Test
+    fun `test dynamic swing threshold`() {
+        // Set low threshold (10.0f) - New Min
+        gameEngine.updateSettings(1000L, 500, false, false, 10.0f)
+        
+        // 1. SOFT (Force=11.0) -> Should be valid SOFT (since > 10.0)
+        // Note: We need to ensure we are in a valid state to swing (e.g. Waiting for Serve)
+        gameEngine.startGame()
+        gameEngine.processSwing(1000L, 11.0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f)
+        assertEquals(SwingType.SOFT_FLAT, gameEngine.gameState.value.lastSwingType)
+        
+        // 2. MEDIUM (Force=16.0) -> > 10.0 + 5.0 = 15.0
+        gameEngine.processSwing(2000L, 16.0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f)
+        assertEquals(SwingType.MEDIUM_FLAT, gameEngine.gameState.value.lastSwingType)
+        
+        // 3. HARD (Force=19.0) -> > 10.0 + 8.0 = 18.0
+        gameEngine.processSwing(3000L, 19.0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f)
+        assertEquals(SwingType.HARD_FLAT, gameEngine.gameState.value.lastSwingType)
+        
+        // Set high threshold (24.0f) - New Max
+        gameEngine.updateSettings(1000L, 500, false, false, 24.0f)
+        
+        // 4. SOFT (Force=25.0) -> > 24.0
+        gameEngine.processSwing(4000L, 25.0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f)
+        assertEquals(SwingType.SOFT_FLAT, gameEngine.gameState.value.lastSwingType)
     }
 }

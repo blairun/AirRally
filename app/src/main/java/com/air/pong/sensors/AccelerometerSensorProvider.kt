@@ -28,9 +28,8 @@ class AccelerometerSensorProvider(context: Context) : SensorProvider {
     private var lastSwingTime = 0L
     
     // Threshold in m/s^2. 1g = 9.8m/s^2. 
-    // 2.0g is approx 19.6. Let's start with 15.0 to be a bit more sensitive, 
-    // as phone accelerometers can be noisy or dampened.
-    private val SWING_THRESHOLD = 15.0f 
+    // Default 16.0 (approx 1.6g) - Adjustable via settings
+    private var swingThreshold = 16.0f 
     private val DEBOUNCE_MS = 500L
 
     // Store latest gyro values
@@ -54,7 +53,7 @@ class AccelerometerSensorProvider(context: Context) : SensorProvider {
                     // Calculate magnitude of acceleration vector
                     val magnitude = sqrt(x*x + y*y + z*z)
                     
-                    if (magnitude > SWING_THRESHOLD) {
+                    if (magnitude > swingThreshold) {
                         val now = System.currentTimeMillis()
                         if (now - lastSwingTime > DEBOUNCE_MS) {
                             lastSwingTime = now
@@ -93,5 +92,9 @@ class AccelerometerSensorProvider(context: Context) : SensorProvider {
 
     override fun stopListening() {
         sensorManager.unregisterListener(sensorListener)
+    }
+
+    fun setSwingThreshold(threshold: Float) {
+        this.swingThreshold = threshold
     }
 }

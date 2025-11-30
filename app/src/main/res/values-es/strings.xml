@@ -174,4 +174,8 @@
     <string name="swing_soft_spike">REMATE SUAVE</string>
     <string name="swing_medium_spike">REMATE MEDIO</string>
     <string name="swing_hard_spike">REMATE FUERTE</string>
+    <string name="swing_sensitivity_label">Swing Sensitivity: %1$.1f</string>
+    <string name="info_sensitivity_title">Swing Sensitivity</string>
+    <string name="info_sensitivity_text">Adjusts the minimum force required to register a swing.\n\nLower = More Sensitive (Easier to trigger)\nHigher = Less Sensitive (Harder to trigger)\n\n(Local only)</string>
+    <string name="debug_settings">Debug Settings</string>
 </resources>

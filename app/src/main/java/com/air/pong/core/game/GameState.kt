@@ -23,7 +23,15 @@ data class GameState(
     val ballState: BallState = BallState.IDLE,
     val eventLog: List<GameEvent> = emptyList(),
     val lastSwingType: SwingType? = null,
-    val lastSwingData: SwingData? = null
+    val lastSwingData: SwingData? = null,
+    val pendingMiss: PendingMiss? = null,
+    val minSwingThreshold: Float = 16.0f
+)
+
+data class PendingMiss(
+    val type: HitResult,
+    val timestamp: Long,
+    val delayMs: Long
 )
 
 enum class BallState {
@@ -64,5 +72,6 @@ enum class HitResult {
     MISS_EARLY, // Swung too early
     MISS_NET,   // Hit into the net (Risk check failed)
     MISS_OUT,   // Hit out of bounds (Risk check failed)
-    MISS_TIMEOUT // Didn't swing in time
+    MISS_TIMEOUT, // Didn't swing in time
+    PENDING     // Hit was successful physically, but result (Net/Out) is delayed
 }
