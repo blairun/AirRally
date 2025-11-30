@@ -35,6 +35,7 @@
 
     <!-- Settings -->
     <string name="appearance">外观</string>
+    <string name="theme">主题</string>
     <string name="theme_system">系统</string>
     <string name="theme_light">浅色</string>
     <string name="theme_dark">深色</string>

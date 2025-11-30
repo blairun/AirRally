@@ -35,6 +35,7 @@
 
     <!-- Settings -->
     <string name="appearance">Внешний вид</string>
+    <string name="theme">Тема</string>
     <string name="theme_system">Системная</string>
     <string name="theme_light">Светлая</string>
     <string name="theme_dark">Тёмная</string>
