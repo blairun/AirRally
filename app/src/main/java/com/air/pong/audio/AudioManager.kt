@@ -145,7 +145,6 @@ class AudioManager(context: Context) {
                 SoundEvent.LOSE_POINT -> toneGenerator.startTone(android.media.ToneGenerator.TONE_CDMA_SOFT_ERROR_LITE, 500)
                 SoundEvent.GAME_START -> toneGenerator.startTone(android.media.ToneGenerator.TONE_PROP_BEEP, 500)
                 SoundEvent.GAME_OVER -> toneGenerator.startTone(android.media.ToneGenerator.TONE_CDMA_SOFT_ERROR_LITE, 1000)
-                else -> {}
             }
         } catch (e: Exception) {
             e.printStackTrace()

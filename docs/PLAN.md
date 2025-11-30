@@ -29,13 +29,12 @@ This plan addresses the gaps identified in the current implementation and provid
     - Swing Classification (Flat, Lob, Spike) based on accelerometer. [done]
     - Event Log & Hit Feedback UI. [done]
     - Hit Testing & Timing Window Settings. [done]
+- **Testing**: Comprehensive unit and integration tests.
+- **Settings Screen**: Flight time, difficulty, debug mode.
+- **Sound Effects Refinement**: Distinct tones for serve, bounce, hit, miss, score.
 
 ### ❌ What's Missing / To Do
-- **Sound Effects Refinement**: Distinct tones for serve, bounce, hit, miss, score.
-- **UI Polish**: Animations, graphics, themes.
-- **Settings Screen**: Flight time, difficulty, debug mode.
-- **Settings Screen**: Flight time, difficulty, debug mode.
-- **Testing**: Comprehensive unit and integration tests.
+- **UI Polish**: Animations (Settings done), graphics, themes.
 
 ### ✅ Recently Completed
 - **Permissions Fix**: Added `ACCESS_COARSE_LOCATION` for older Android versions.

@@ -1,6 +1,7 @@
 package com.air.pong.ui.screens
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.*
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -12,7 +13,7 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -140,54 +141,68 @@ fun SettingsScreen(
         }
     ) { innerPadding ->
         Box(modifier = Modifier.padding(innerPadding)) {
-            when (currentScreen) {
-                SettingsScreenType.Main -> SettingsMainScreen(
-                    onNavigate = { currentScreen = it }
-                )
-                SettingsScreenType.Appearance -> AppearanceSettingsScreen(
-                    currentTheme = currentTheme,
-                    onThemeChange = onThemeChange,
-                    playerName = playerName,
-                    onPlayerNameChange = { viewModel.updatePlayerName(it) }
-                )
-                SettingsScreenType.GameParams -> GameParamsSettingsScreen(
-                    flightTime = flightTime,
-                    onFlightTimeChange = { flightTime = it },
-                    difficulty = difficulty,
-                    onDifficultyChange = { difficulty = it },
-                    minSwingThreshold = minSwingThreshold,
-                    onSwingThresholdChange = { minSwingThreshold = it },
-                    onSettingsChange = {
-                        viewModel.updateSettings(flightTime.toLong(), difficulty, isDebugMode, gameState.useDebugTones, minSwingThreshold)
-                    },
-                    onResetDefaults = { viewModel.resetGameSettings() },
-                    onShowInfo = { title, text ->
-                        infoTitle = title
-                        infoText = text
-                        showInfoDialog = true
+            AnimatedContent(
+                targetState = currentScreen,
+                transitionSpec = {
+                    if (targetState == SettingsScreenType.Main) {
+                        slideInHorizontally { -it } + fadeIn() togetherWith
+                        slideOutHorizontally { it } + fadeOut()
+                    } else {
+                        slideInHorizontally { it } + fadeIn() togetherWith
+                        slideOutHorizontally { -it } + fadeOut()
                     }
-                )
-                SettingsScreenType.Help -> HelpSettingsScreen()
-                SettingsScreenType.Debug -> DebugSettingsScreen(
-                    isDebugMode = isDebugMode,
-                    onDebugModeChange = {
-                        isDebugMode = it
-                        viewModel.updateSettings(flightTime.toLong(), difficulty, isDebugMode, gameState.useDebugTones, minSwingThreshold)
-                    },
-                    useDebugTones = gameState.useDebugTones,
-                    onUseDebugTonesChange = {
-                        viewModel.updateSettings(flightTime.toLong(), difficulty, isDebugMode, it, minSwingThreshold)
-                    },
-                    lastSwingType = gameState.lastSwingType,
-                    lastSwingData = gameState.lastSwingData,
-                    onPlayTestSound = { viewModel.playTestSound(it) },
-                    onShowInfo = { title, text ->
-                        infoTitle = title
-                        infoText = text
-                        showInfoDialog = true
-                    }
-                )
-                SettingsScreenType.About -> AboutSettingsScreen()
+                },
+                label = "SettingsAnimation"
+            ) { targetScreen ->
+                when (targetScreen) {
+                    SettingsScreenType.Main -> SettingsMainScreen(
+                        onNavigate = { currentScreen = it }
+                    )
+                    SettingsScreenType.Appearance -> AppearanceSettingsScreen(
+                        currentTheme = currentTheme,
+                        onThemeChange = onThemeChange,
+                        playerName = playerName,
+                        onPlayerNameChange = { viewModel.updatePlayerName(it) }
+                    )
+                    SettingsScreenType.GameParams -> GameParamsSettingsScreen(
+                        flightTime = flightTime,
+                        onFlightTimeChange = { flightTime = it },
+                        difficulty = difficulty,
+                        onDifficultyChange = { difficulty = it },
+                        minSwingThreshold = minSwingThreshold,
+                        onSwingThresholdChange = { minSwingThreshold = it },
+                        onSettingsChange = {
+                            viewModel.updateSettings(flightTime.toLong(), difficulty, isDebugMode, gameState.useDebugTones, minSwingThreshold)
+                        },
+                        onResetDefaults = { viewModel.resetGameSettings() },
+                        onShowInfo = { title, text ->
+                            infoTitle = title
+                            infoText = text
+                            showInfoDialog = true
+                        }
+                    )
+                    SettingsScreenType.Help -> HelpSettingsScreen()
+                    SettingsScreenType.Debug -> DebugSettingsScreen(
+                        isDebugMode = isDebugMode,
+                        onDebugModeChange = {
+                            isDebugMode = it
+                            viewModel.updateSettings(flightTime.toLong(), difficulty, isDebugMode, gameState.useDebugTones, minSwingThreshold)
+                        },
+                        useDebugTones = gameState.useDebugTones,
+                        onUseDebugTonesChange = {
+                            viewModel.updateSettings(flightTime.toLong(), difficulty, isDebugMode, it, minSwingThreshold)
+                        },
+                        lastSwingType = gameState.lastSwingType,
+                        lastSwingData = gameState.lastSwingData,
+                        onPlayTestSound = { viewModel.playTestSound(it) },
+                        onShowInfo = { title, text ->
+                            infoTitle = title
+                            infoText = text
+                            showInfoDialog = true
+                        }
+                    )
+                    SettingsScreenType.About -> AboutSettingsScreen()
+                }
             }
         }
     }
@@ -263,7 +278,7 @@ fun SettingsCategoryItem(
                 )
             }
             Icon(
-                imageVector = Icons.Default.KeyboardArrowRight,
+                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                 contentDescription = "Navigate"
             )
         }
