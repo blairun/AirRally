@@ -19,6 +19,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import com.air.pong.R
 
+import androidx.compose.ui.text.style.TextAlign
+
 @Composable
 fun MainMenuScreen(
     viewModel: GameViewModel,
@@ -104,7 +106,8 @@ fun MainMenuScreen(
             text = stringResource(selectedTaglineId),
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.padding(top = 8.dp)
+            modifier = Modifier.padding(top = 8.dp),
+            textAlign = TextAlign.Center
         )
         
 
@@ -112,7 +115,7 @@ fun MainMenuScreen(
         Spacer(modifier = Modifier.height(48.dp))
         
         if (permissionState != PermissionsManager.PermissionState.GRANTED) {
-            Text(stringResource(R.string.bluetooth_permission_required))
+            Text(stringResource(R.string.bluetooth_permission_required), textAlign = TextAlign.Center)
             Spacer(modifier = Modifier.height(16.dp))
             // In a real app, we'd have a button to request permissions here
             // For now, we assume MainActivity handles the request on start
@@ -128,11 +131,12 @@ fun MainMenuScreen(
             Text(
                 text = stringResource(R.string.connected_to, connectedPlayerName ?: stringResource(R.string.unknown)),
                 style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.primary
+                color = MaterialTheme.colorScheme.primary,
+                textAlign = TextAlign.Center
             )
             Spacer(modifier = Modifier.height(16.dp))
             
-            Text(stringResource(R.string.redirecting_lobby))
+            Text(stringResource(R.string.redirecting_lobby), textAlign = TextAlign.Center)
             
             Spacer(modifier = Modifier.height(16.dp))
             
@@ -181,7 +185,7 @@ fun MainMenuScreen(
         if (connectionState == NetworkAdapter.ConnectionState.ADVERTISING) {
             CircularProgressIndicator()
             Spacer(modifier = Modifier.height(8.dp))
-            Text(stringResource(R.string.waiting_for_players))
+            Text(stringResource(R.string.waiting_for_players), textAlign = TextAlign.Center)
             Spacer(modifier = Modifier.height(8.dp))
             TextButton(onClick = { viewModel.cancelConnection() }) {
                 Text(stringResource(R.string.cancel))
@@ -211,9 +215,9 @@ fun MainMenuScreen(
             if (discoveredEndpoints.isEmpty()) {
                 CircularProgressIndicator()
                 Spacer(modifier = Modifier.height(8.dp))
-                Text(stringResource(R.string.looking_for_games))
+                Text(stringResource(R.string.looking_for_games), textAlign = TextAlign.Center)
             } else {
-                Text(stringResource(R.string.available_games), style = MaterialTheme.typography.labelLarge)
+                Text(stringResource(R.string.available_games), style = MaterialTheme.typography.labelLarge, textAlign = TextAlign.Center)
                 Spacer(modifier = Modifier.height(8.dp))
                 
                 discoveredEndpoints.forEach { endpoint ->
@@ -222,12 +226,13 @@ fun MainMenuScreen(
                         modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
                     ) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text(stringResource(R.string.connect_to, endpoint.name))
+                            Text(stringResource(R.string.connect_to, endpoint.name), textAlign = TextAlign.Center)
                             if (discoveredEndpoints.size == 1 && autoConnectSeconds > 0 && connectingEndpointId == null) {
                                 Text(
                                     stringResource(R.string.auto_connecting, autoConnectSeconds), 
                                     style = MaterialTheme.typography.labelSmall,
-                                    color = MaterialTheme.colorScheme.primary
+                                    color = MaterialTheme.colorScheme.primary,
+                                    textAlign = TextAlign.Center
                                 )
                             }
                             
@@ -235,7 +240,8 @@ fun MainMenuScreen(
                                 Text(
                                     stringResource(R.string.connecting), 
                                     style = MaterialTheme.typography.labelSmall,
-                                    color = MaterialTheme.colorScheme.primary
+                                    color = MaterialTheme.colorScheme.primary,
+                                    textAlign = TextAlign.Center
                                 )
                             }
                         }
@@ -250,7 +256,7 @@ fun MainMenuScreen(
         } else if (connectionState == NetworkAdapter.ConnectionState.CONNECTING) {
             CircularProgressIndicator()
             Spacer(modifier = Modifier.height(8.dp))
-            Text(stringResource(R.string.connecting))
+            Text(stringResource(R.string.connecting), textAlign = TextAlign.Center)
             Spacer(modifier = Modifier.height(8.dp))
             TextButton(onClick = { viewModel.cancelConnection() }) {
                 Text(stringResource(R.string.cancel))

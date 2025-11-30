@@ -72,207 +72,240 @@ fun GameScreen(
         label = "TurnColor"
     )
 
-    Column(
+    BoxWithConstraints(
         modifier = Modifier
             .fillMaxSize()
             .background(backgroundColor)
-            .padding(16.dp)
-            .verticalScroll(rememberScrollState()),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center // Center content vertically if it fits
     ) {
-        // Score
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 16.dp),
-            horizontalArrangement = Arrangement.SpaceEvenly,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(
-                    stringResource(R.string.you), 
-                    style = MaterialTheme.typography.titleMedium, 
-                    color = Color.White
-                )
-                Text(
-                    text = if (viewModel.isHost) gameState.player1Score.toString() else gameState.player2Score.toString(),
-                    style = MaterialTheme.typography.displayLarge,
-                    color = Color.White,
-                    fontWeight = FontWeight.Bold
-                )
-            }
-            
-            Spacer(modifier = Modifier.width(48.dp))
-            
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(
-                    stringResource(R.string.opponent), 
-                    style = MaterialTheme.typography.titleMedium, 
-                    color = Color.White
-                )
-                Text(
-                    text = if (viewModel.isHost) gameState.player2Score.toString() else gameState.player1Score.toString(),
-                    style = MaterialTheme.typography.displayLarge,
-                    color = Color.White,
-                    fontWeight = FontWeight.Bold
-                )
-            }
-        }
+        val minHeight = maxHeight
         
-        Spacer(modifier = Modifier.height(32.dp))
-        
-        // Center Message
         Column(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.SpaceBetween 
         ) {
-            if (gameState.gamePhase == GamePhase.WAITING_FOR_SERVE) {
-                if (gameState.isMyTurn) {
-                    Text(
-                        stringResource(R.string.your_serve),
-                        style = MaterialTheme.typography.headlineLarge,
-                        color = Color.White,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Text(
-                        stringResource(R.string.swing_to_serve),
-                        style = MaterialTheme.typography.titleLarge,
-                        color = Color.White
-                    )
-                } else {
-                    Text(
-                        stringResource(R.string.opponent_serving),
-                        style = MaterialTheme.typography.headlineMedium,
-                        color = Color.White
-                    )
-                }
-            } else if (gameState.gamePhase == GamePhase.POINT_SCORED) {
-                Text(
-                    stringResource(R.string.point_scored),
-                    style = MaterialTheme.typography.headlineMedium,
-                    color = Color.White,
-                    fontWeight = FontWeight.Bold
-                )
-                Text(
-                    stringResource(R.string.get_ready),
-                    style = MaterialTheme.typography.titleMedium,
-                    color = Color.White.copy(alpha = 0.8f)
-                )
-            } else {
-                if (gameState.isMyTurn) {
-                    // Only show HIT! if the ball has bounced (Green state)
-                    if (hasBounced) {
-                        Text(
-                            stringResource(R.string.hit),
-                            style = MaterialTheme.typography.displayLarge,
-                            color = Color.White,
-                            fontWeight = FontWeight.ExtraBold
-                        )
-                    }
-                } else {
-                    Text(
-                        stringResource(R.string.wait),
-                        style = MaterialTheme.typography.displayLarge,
-                        color = Color.White.copy(alpha = 0.7f),
-                        fontWeight = FontWeight.ExtraBold
-                    )
-                }
-            }
-            
-            Spacer(modifier = Modifier.height(32.dp))
-            
-            // Event Log
-            Spacer(modifier = Modifier.height(16.dp))
-            
-            Card(
-                colors = CardDefaults.cardColors(
-                    containerColor = Color.Black.copy(alpha = 0.3f)
-                ),
-                modifier = Modifier.fillMaxWidth(0.9f)
+            // Ensure the column takes up at least the full screen height
+            // so SpaceBetween works even when content is small
+            Column(
+                modifier = Modifier.heightIn(min = minHeight - 32.dp), // Subtract padding
+                verticalArrangement = Arrangement.SpaceBetween,
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Column(
-                    modifier = Modifier.padding(12.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                // --- Top Section: Score ---
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 16.dp),
+                    horizontalArrangement = Arrangement.Center, // Center the row content
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(
-                        stringResource(R.string.action_feed), 
-                        style = MaterialTheme.typography.labelSmall, 
-                        color = Color.White.copy(alpha = 0.6f),
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(bottom = 8.dp)
-                    )
+                    val opponentName by viewModel.connectedPlayerName.collectAsState()
                     
-                    gameState.eventLog.forEachIndexed { index, event ->
-                        val isMostRecent = index == gameState.eventLog.lastIndex
-                        
-                        val eventText = when (event) {
-                            is com.air.pong.core.game.GameEvent.YouServed -> stringResource(R.string.event_you_served, stringResource(getSwingTypeStringId(event.swingType)))
-                            is com.air.pong.core.game.GameEvent.YouHit -> stringResource(R.string.event_you_hit, stringResource(getSwingTypeStringId(event.swingType)))
-                            is com.air.pong.core.game.GameEvent.OpponentHit -> stringResource(R.string.event_opponent_hit, stringResource(getSwingTypeStringId(event.swingType)))
-                            is com.air.pong.core.game.GameEvent.BallBounced -> stringResource(R.string.event_ball_bounced)
-                            is com.air.pong.core.game.GameEvent.FaultNet -> stringResource(R.string.event_fault_net)
-                            is com.air.pong.core.game.GameEvent.FaultOut -> stringResource(R.string.event_fault_out)
-                            is com.air.pong.core.game.GameEvent.HitNet -> stringResource(R.string.event_hit_net, stringResource(getSwingTypeStringId(event.swingType)))
-                            is com.air.pong.core.game.GameEvent.HitOut -> stringResource(R.string.event_hit_out, stringResource(getSwingTypeStringId(event.swingType)))
-                            is com.air.pong.core.game.GameEvent.WhiffEarly -> stringResource(R.string.event_whiff_early)
-                            is com.air.pong.core.game.GameEvent.MissLate -> stringResource(R.string.event_miss_late)
-                            is com.air.pong.core.game.GameEvent.MissNoSwing -> stringResource(R.string.event_miss_no_swing)
-                            is com.air.pong.core.game.GameEvent.OpponentNet -> stringResource(R.string.event_opp_net)
-                            is com.air.pong.core.game.GameEvent.OpponentOut -> stringResource(R.string.event_opp_out)
-                            is com.air.pong.core.game.GameEvent.OpponentWhiff -> stringResource(R.string.event_opp_whiff)
-                            is com.air.pong.core.game.GameEvent.OpponentMissNoSwing -> stringResource(R.string.event_opp_miss_no_swing)
-                            is com.air.pong.core.game.GameEvent.OpponentMiss -> stringResource(R.string.event_opp_miss)
-                            is com.air.pong.core.game.GameEvent.PointScored -> stringResource(R.string.event_point_to, if (event.isYou) stringResource(R.string.you) else stringResource(R.string.opponent))
-                            is com.air.pong.core.game.GameEvent.RawMessage -> event.message
-                        }
-
-                        Text(
-                            text = eventText,
-                            style = if (isMostRecent) MaterialTheme.typography.titleMedium else MaterialTheme.typography.bodyMedium,
-                            color = if (isMostRecent) Color.White else Color.White.copy(alpha = 0.7f),
-                            fontWeight = if (isMostRecent) FontWeight.Bold else FontWeight.Normal,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.fillMaxWidth().padding(vertical = 2.dp)
-                        )
-                    }
-                }
-            }
-            
-            // Debug Overlay
-            if (gameState.isDebugMode) {
-                Spacer(modifier = Modifier.height(32.dp))
-                Card(
-                    colors = CardDefaults.cardColors(
-                        containerColor = Color.Black.copy(alpha = 0.5f)
-                    ),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
                     Column(
-                        modifier = Modifier.padding(8.dp)
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.weight(1f)
                     ) {
                         Text(
-                            stringResource(R.string.debug_info), 
-                            style = MaterialTheme.typography.labelSmall, 
-                            color = Color.Green,
+                            stringResource(R.string.you), 
+                            style = MaterialTheme.typography.titleMedium, 
+                            color = Color.White
+                        )
+                        Text(
+                            text = if (viewModel.isHost) gameState.player1Score.toString() else gameState.player2Score.toString(),
+                            style = MaterialTheme.typography.displayLarge,
+                            color = Color.White,
                             fontWeight = FontWeight.Bold
                         )
-                        Text(stringResource(R.string.phase_fmt, gameState.gamePhase), color = Color.White, style = MaterialTheme.typography.bodySmall)
-                        Text(stringResource(R.string.arrival_fmt, gameState.ballArrivalTimestamp), color = Color.White, style = MaterialTheme.typography.bodySmall)
-                        Text(stringResource(R.string.now_fmt, System.currentTimeMillis()), color = Color.White, style = MaterialTheme.typography.bodySmall)
-                        Text(stringResource(R.string.delta_fmt, gameState.ballArrivalTimestamp - System.currentTimeMillis()), color = Color.White, style = MaterialTheme.typography.bodySmall)
-                        Text(stringResource(R.string.difficulty_fmt, gameState.difficulty), color = Color.White, style = MaterialTheme.typography.bodySmall)
-                        Text(stringResource(R.string.flight_time_fmt, gameState.flightTime), color = Color.White, style = MaterialTheme.typography.bodySmall)
-                        
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(stringResource(R.string.last_swing), color = Color.Yellow, style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold)
-                        gameState.lastSwingType?.let {
-                             Text(stringResource(R.string.type_fmt, it), color = Color.White, style = MaterialTheme.typography.bodySmall)
+                    }
+                    
+                    // Small spacer for visual separation between the two weighted columns
+                    Spacer(modifier = Modifier.width(16.dp))
+                    
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text(
+                            text = opponentName ?: stringResource(R.string.opponent), 
+                            style = MaterialTheme.typography.titleMedium, 
+                            color = Color.White,
+                            maxLines = 1,
+                            overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+                        )
+                        Text(
+                            text = if (viewModel.isHost) gameState.player2Score.toString() else gameState.player1Score.toString(),
+                            style = MaterialTheme.typography.displayLarge,
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                }
+                
+                // --- Middle Section: Status Message ---
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    if (gameState.gamePhase == GamePhase.WAITING_FOR_SERVE) {
+                        if (gameState.isMyTurn) {
+                            Text(
+                                stringResource(R.string.your_serve),
+                                style = MaterialTheme.typography.headlineLarge,
+                                color = Color.White,
+                                fontWeight = FontWeight.Bold,
+                                textAlign = TextAlign.Center
+                            )
+                            Text(
+                                stringResource(R.string.swing_to_serve),
+                                style = MaterialTheme.typography.titleLarge,
+                                color = Color.White,
+                                textAlign = TextAlign.Center
+                            )
+                        } else {
+                            Text(
+                                stringResource(R.string.opponent_serving),
+                                style = MaterialTheme.typography.headlineMedium,
+                                color = Color.White,
+                                textAlign = TextAlign.Center
+                            )
                         }
-                        gameState.lastSwingData?.let {
-                             Text(stringResource(R.string.force_fmt, it.force), color = Color.White, style = MaterialTheme.typography.bodySmall)
-                             Text(stringResource(R.string.grav_z_fmt, "%.2f".format(it.gravZ)), color = Color.White, style = MaterialTheme.typography.bodySmall)
+                    } else if (gameState.gamePhase == GamePhase.POINT_SCORED) {
+                        Text(
+                            stringResource(R.string.point_scored),
+                            style = MaterialTheme.typography.headlineMedium,
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold,
+                            textAlign = TextAlign.Center
+                        )
+                        Text(
+                            stringResource(R.string.get_ready),
+                            style = MaterialTheme.typography.titleMedium,
+                            color = Color.White.copy(alpha = 0.8f),
+                            textAlign = TextAlign.Center
+                        )
+                    } else {
+                        if (gameState.isMyTurn) {
+                            // Only show HIT! if the ball has bounced (Green state)
+                            if (hasBounced) {
+                                Text(
+                                    stringResource(R.string.hit),
+                                    style = MaterialTheme.typography.displayLarge,
+                                    color = Color.White,
+                                    fontWeight = FontWeight.ExtraBold,
+                                    textAlign = TextAlign.Center
+                                )
+                            }
+                        } else {
+                            Text(
+                                stringResource(R.string.wait),
+                                style = MaterialTheme.typography.displayLarge,
+                                color = Color.White.copy(alpha = 0.7f),
+                                fontWeight = FontWeight.ExtraBold,
+                                textAlign = TextAlign.Center
+                            )
+                        }
+                    }
+                }
+                
+                // --- Bottom Section: Event Log & Debug ---
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    // Event Log
+                    Card(
+                        colors = CardDefaults.cardColors(
+                            containerColor = Color.Black.copy(alpha = 0.3f)
+                        ),
+                        modifier = Modifier.fillMaxWidth(0.9f)
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(12.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                stringResource(R.string.action_feed), 
+                                style = MaterialTheme.typography.labelSmall, 
+                                color = Color.White.copy(alpha = 0.6f),
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier.padding(bottom = 8.dp)
+                            )
+                            
+                            gameState.eventLog.forEachIndexed { index, event ->
+                                val isMostRecent = index == gameState.eventLog.lastIndex
+                                
+                                val eventText = when (event) {
+                                    is com.air.pong.core.game.GameEvent.YouServed -> stringResource(R.string.event_you_served, stringResource(getSwingTypeStringId(event.swingType)))
+                                    is com.air.pong.core.game.GameEvent.YouHit -> stringResource(R.string.event_you_hit, stringResource(getSwingTypeStringId(event.swingType)))
+                                    is com.air.pong.core.game.GameEvent.OpponentHit -> stringResource(R.string.event_opponent_hit, stringResource(getSwingTypeStringId(event.swingType)))
+                                    is com.air.pong.core.game.GameEvent.BallBounced -> stringResource(R.string.event_ball_bounced)
+                                    is com.air.pong.core.game.GameEvent.FaultNet -> stringResource(R.string.event_fault_net)
+                                    is com.air.pong.core.game.GameEvent.FaultOut -> stringResource(R.string.event_fault_out)
+                                    is com.air.pong.core.game.GameEvent.HitNet -> stringResource(R.string.event_hit_net, stringResource(getSwingTypeStringId(event.swingType)))
+                                    is com.air.pong.core.game.GameEvent.HitOut -> stringResource(R.string.event_hit_out, stringResource(getSwingTypeStringId(event.swingType)))
+                                    is com.air.pong.core.game.GameEvent.WhiffEarly -> stringResource(R.string.event_whiff_early)
+                                    is com.air.pong.core.game.GameEvent.MissLate -> stringResource(R.string.event_miss_late)
+                                    is com.air.pong.core.game.GameEvent.MissNoSwing -> stringResource(R.string.event_miss_no_swing)
+                                    is com.air.pong.core.game.GameEvent.OpponentNet -> stringResource(R.string.event_opp_net)
+                                    is com.air.pong.core.game.GameEvent.OpponentOut -> stringResource(R.string.event_opp_out)
+                                    is com.air.pong.core.game.GameEvent.OpponentWhiff -> stringResource(R.string.event_opp_whiff)
+                                    is com.air.pong.core.game.GameEvent.OpponentMissNoSwing -> stringResource(R.string.event_opp_miss_no_swing)
+                                    is com.air.pong.core.game.GameEvent.OpponentMiss -> stringResource(R.string.event_opp_miss)
+                                    is com.air.pong.core.game.GameEvent.PointScored -> stringResource(R.string.event_point_to, if (event.isYou) stringResource(R.string.you) else stringResource(R.string.opponent))
+                                    is com.air.pong.core.game.GameEvent.RawMessage -> event.message
+                                }
+
+                                Text(
+                                    text = eventText,
+                                    style = if (isMostRecent) MaterialTheme.typography.titleMedium else MaterialTheme.typography.bodyMedium,
+                                    color = if (isMostRecent) Color.White else Color.White.copy(alpha = 0.7f),
+                                    fontWeight = if (isMostRecent) FontWeight.Bold else FontWeight.Normal,
+                                    textAlign = TextAlign.Center,
+                                    modifier = Modifier.fillMaxWidth().padding(vertical = 2.dp)
+                                )
+                            }
+                        }
+                    }
+                    
+                    // Debug Overlay
+                    if (gameState.isDebugMode) {
+                        Spacer(modifier = Modifier.height(32.dp))
+                        Card(
+                            colors = CardDefaults.cardColors(
+                                containerColor = Color.Black.copy(alpha = 0.5f)
+                            ),
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Column(
+                                modifier = Modifier.padding(8.dp)
+                            ) {
+                                Text(
+                                    stringResource(R.string.debug_info), 
+                                    style = MaterialTheme.typography.labelSmall, 
+                                    color = Color.Green,
+                                    fontWeight = FontWeight.Bold
+                                )
+                                Text(stringResource(R.string.phase_fmt, gameState.gamePhase), color = Color.White, style = MaterialTheme.typography.bodySmall)
+                                Text(stringResource(R.string.arrival_fmt, gameState.ballArrivalTimestamp), color = Color.White, style = MaterialTheme.typography.bodySmall)
+                                Text(stringResource(R.string.now_fmt, System.currentTimeMillis()), color = Color.White, style = MaterialTheme.typography.bodySmall)
+                                Text(stringResource(R.string.delta_fmt, gameState.ballArrivalTimestamp - System.currentTimeMillis()), color = Color.White, style = MaterialTheme.typography.bodySmall)
+                                Text(stringResource(R.string.difficulty_fmt, gameState.difficulty), color = Color.White, style = MaterialTheme.typography.bodySmall)
+                                Text(stringResource(R.string.flight_time_fmt, gameState.flightTime), color = Color.White, style = MaterialTheme.typography.bodySmall)
+                                
+                                Spacer(modifier = Modifier.height(8.dp))
+                                Text(stringResource(R.string.last_swing), color = Color.Yellow, style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold)
+                                gameState.lastSwingType?.let {
+                                     Text(stringResource(R.string.type_fmt, it), color = Color.White, style = MaterialTheme.typography.bodySmall)
+                                }
+                                gameState.lastSwingData?.let {
+                                     Text(stringResource(R.string.force_fmt, it.force), color = Color.White, style = MaterialTheme.typography.bodySmall)
+                                     Text(stringResource(R.string.grav_z_fmt, "%.2f".format(it.gravZ)), color = Color.White, style = MaterialTheme.typography.bodySmall)
+                                }
+                            }
                         }
                     }
                 }
