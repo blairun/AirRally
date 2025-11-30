@@ -174,8 +174,8 @@
     <string name="swing_soft_spike">ソフト スマッシュ</string>
     <string name="swing_medium_spike">ミディアム スマッシュ</string>
     <string name="swing_hard_spike">ハード スマッシュ</string>
-    <string name="swing_sensitivity_label">Swing Sensitivity: %1$.1f</string>
-    <string name="info_sensitivity_title">Swing Sensitivity</string>
-    <string name="info_sensitivity_text">Adjusts the minimum force required to register a swing.\n\nLower = More Sensitive (Easier to trigger)\nHigher = Less Sensitive (Harder to trigger)\n\n(Local only)</string>
-    <string name="debug_settings">Debug Settings</string>
+    <string name="swing_sensitivity_label">スイング感度: %1$.1f</string>
+    <string name="info_sensitivity_title">スイング感度</string>
+    <string name="info_sensitivity_text">スイングを検知するために必要な最小の力を調整します。\n\n低い = 感度が高い（反応しやすい）\n高い = 感度が低い（反応しにくい）\n\n（ローカルのみ）</string>
+    <string name="debug_settings">デバッグ設定</string>
 </resources>
