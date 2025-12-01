@@ -26,6 +26,9 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
     private val messageHandler = NetworkMessageHandler(networkAdapter.observeMessages())
     private val audioManager = com.air.pong.audio.AudioManager(application.applicationContext)
     private val hapticManager = com.air.pong.haptics.HapticManager(application.applicationContext)
+    
+    // Simulation
+    private val simulatedGameEngine = com.air.pong.core.game.SimulatedGameEngine(gameEngine.gameState, viewModelScope)
 
     // State
     val gameState = gameEngine.gameState
@@ -96,6 +99,21 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
                 handleMessage(msg)
             }
         }
+        
+        // Observe Simulated Messages
+        viewModelScope.launch {
+            simulatedGameEngine.messages.collect { msg ->
+                handleMessage(msg)
+            }
+        }
+        
+        // Observe Simulated Swing Events
+        viewModelScope.launch {
+            simulatedGameEngine.simulatedSwingEvents.collect { event ->
+                handleSwing(event)
+            }
+        }
+
         // Observe Sensor Events
         viewModelScope.launch {
             sensorProvider.swingEvents.collect { event ->
@@ -138,14 +156,13 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
                     kotlinx.coroutines.delay(2000) // 2 second cooldown
                     gameEngine.startNextServe()
                 } else if (state.gamePhase == GamePhase.WAITING_FOR_SERVE) {
-                    // Auto-Serve Logic
-                    if (isDebugGameSession && _isAutoPlayEnabled.value) {
-                        kotlinx.coroutines.delay(1000) // Wait a bit before serving
-                        if (state.isMyTurn) {
-                            simulateLocalSwing()
-                        } else {
-                            simulateOpponentSwing()
-                        }
+                    // Auto-Serve Logic handled by SimulatedGameEngine
+                    simulatedGameEngine.onGamePhaseChanged(state.gamePhase)
+                    
+                    // Local Auto-Play (if enabled and my turn)
+                    if (isDebugGameSession && _isAutoPlayEnabled.value && state.isMyTurn) {
+                        kotlinx.coroutines.delay(1000)
+                        simulateLocalSwing()
                     }
                 } else if (state.gamePhase == GamePhase.GAME_OVER) {
                     // ...
@@ -369,34 +386,8 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
                 }
 
                 // Auto-Play Logic for Debug Mode (Opponent's Turn)
-                // Runs for both Serves and Rallies
-                if (isDebugGameSession && _isAutoPlayEnabled.value) {
-                     viewModelScope.launch {
-                         // 5% chance to NOT swing (Timeout Miss)
-                         if (kotlin.random.Random.nextFloat() < 0.05f) {
-                             return@launch
-                         }
-
-                         // Wait for flight time + random delay to simulate reaction
-                         // We want to hit near the arrival time.
-                         
-                         // Wait a bit for the state to update (it happens in processSwing before we get here)
-                         val arrivalTime = gameEngine.gameState.value.ballArrivalTimestamp
-                         val window = gameEngine.getHitWindow()
-                         
-                         // Safe window: +/- (window / 2) * 0.8
-                         val safeHalfWindow = (window / 2) * 0.8
-                         val randomOffset = (kotlin.random.Random.nextDouble(-safeHalfWindow, safeHalfWindow)).toLong()
-                         
-                         val targetTime = arrivalTime + randomOffset
-                         val delay = targetTime - System.currentTimeMillis()
-                         
-                         if (delay > 0) {
-                             kotlinx.coroutines.delay(delay)
-                         }
-                         simulateOpponentSwing()
-                     }
-                }
+                // Handled by SimulatedGameEngine
+                simulatedGameEngine.onLocalSwing(HitResult.HIT)
             } else if (result == HitResult.PENDING) {
                 // Delayed Miss Logic
                 // 1. Play HIT sound and haptic immediately (simulating contact)
@@ -535,6 +526,35 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
                             }
                         }
                     }
+                }
+
+                // Auto-Play Logic for Local Player (Debug Mode)
+                if (isDebugGameSession && _isAutoPlayEnabled.value) {
+                     viewModelScope.launch {
+                         // 5% chance to NOT swing (Timeout Miss)
+                         if (kotlin.random.Random.nextFloat() < 0.05f) {
+                             return@launch
+                         }
+
+                         // Wait for flight time + random delay to simulate reaction
+                         // We want to hit near the arrival time.
+                         
+                         // Wait a bit for the state to update (it happens in processSwing before we get here)
+                         val arrivalTime = gameEngine.gameState.value.ballArrivalTimestamp
+                         val window = gameEngine.getHitWindow()
+                         
+                         // Safe window: +/- (window / 2) * 0.8
+                         val safeHalfWindow = (window / 2) * 0.8
+                         val randomOffset = (kotlin.random.Random.nextDouble(-safeHalfWindow, safeHalfWindow)).toLong()
+                         
+                         val targetTime = arrivalTime + randomOffset
+                         val delay = targetTime - System.currentTimeMillis()
+                         
+                         if (delay > 0) {
+                             kotlinx.coroutines.delay(delay)
+                         }
+                         simulateLocalSwing()
+                     }
                 }
             }
             is GameMessage.Result -> {
@@ -730,6 +750,7 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
 
     fun setAutoPlay(enabled: Boolean) {
         _isAutoPlayEnabled.value = enabled
+        simulatedGameEngine.setAutoPlay(enabled)
     }
 
     fun startDebugGame() {
@@ -752,158 +773,19 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
 
     fun stopDebugGame() {
         isDebugGameSession = false
-        gameEngine.onPeerLeft()
+        gameEngine.resetGame()
         _isOpponentInLobby.value = false
         networkAdapter.setConnectedEndpointName(null)
     }
 
     fun simulateOpponentSwing() {
         if (!isDebugGameSession) return
-
-        viewModelScope.launch {
-            // Simulate a swing happening "now" (minus latency)
-            val estimatedLatency = 50L
-            val localSwingTime = System.currentTimeMillis() - estimatedLatency
-            
-            // 20% Chance of Opponent Miss
-            if (kotlin.random.Random.nextFloat() < 0.20f) {
-                // Determine Miss Type
-                val missTypeRoll = kotlin.random.Random.nextFloat()
-                val missResult = when {
-                    missTypeRoll < 0.33f -> HitResult.MISS_NET
-                    missTypeRoll < 0.66f -> HitResult.MISS_OUT
-                    else -> HitResult.MISS_TIMEOUT
-                }
-                
-                // Calculate delay for the miss event
-                // Net: Immediate (at swing time)
-                // Out: After flight time (approx)
-                // Timeout: After hit window expires
-                val delay = when (missResult) {
-                    HitResult.MISS_NET -> 0L
-                    HitResult.MISS_OUT -> gameEngine.gameState.value.flightTime
-                    HitResult.MISS_TIMEOUT -> gameEngine.gameState.value.flightTime + gameEngine.getHitWindow() + 200L
-                    else -> 0L
-                }
-                
-                if (delay > 0) {
-                    kotlinx.coroutines.delay(delay)
-                }
-                
-                // Send Result to self (simulating receiving it from opponent)
-                handleMessage(GameMessage.Result(missResult, null))
-                return@launch
-            }
-
-            // Valid Hit Logic
-            // Randomize swing type
-            val swingTypes = com.air.pong.core.game.SwingType.values()
-            val swingType = swingTypes[kotlin.random.Random.nextInt(swingTypes.size)]
-            
-            gameEngine.onOpponentHit(localSwingTime, swingType.ordinal)
-            
-            // 1. Schedule Bounce on My Side (Receiver)
-            val timeToArrival = gameEngine.gameState.value.ballArrivalTimestamp - System.currentTimeMillis()
-            val bounceDelay = timeToArrival - GameEngine.BOUNCE_OFFSET_MS
-            
-            viewModelScope.launch {
-                if (bounceDelay > 0) {
-                    kotlinx.coroutines.delay(bounceDelay)
-                    audioManager.play(com.air.pong.audio.AudioManager.SoundEvent.BOUNCE, gameEngine.gameState.value.useDebugTones)
-                }
-                gameEngine.onBounce()
-            }
-            
-            // 2. Schedule Auto-Miss Check
-            val hitWindow = gameEngine.getHitWindow()
-            val autoMissDelay = timeToArrival + hitWindow + 500
-            
-            viewModelScope.launch {
-                if (autoMissDelay > 0) {
-                    kotlinx.coroutines.delay(autoMissDelay)
-                    if (gameEngine.checkAutoMiss()) {
-                        // We missed!
-                        // Local Sound: I didn't swing, ball passed me.
-                        audioManager.play(com.air.pong.audio.AudioManager.SoundEvent.MISS_NO_SWING, gameEngine.gameState.value.useDebugTones)
-                        hapticManager.playMiss()
-                        
-                        kotlinx.coroutines.delay(1000)
-                        audioManager.play(com.air.pong.audio.AudioManager.SoundEvent.LOSE_POINT, gameEngine.gameState.value.useDebugTones)
-                    }
-                }
-            }
-
-            // 3. Auto-Play Logic for Debug Mode (Player's Turn)
-            if (isDebugGameSession && _isAutoPlayEnabled.value) {
-                 viewModelScope.launch {
-                     // 5% chance to NOT swing (Timeout Miss)
-                     if (kotlin.random.Random.nextFloat() < 0.05f) {
-                         return@launch
-                     }
-
-                     // Wait for flight time + random delay to simulate reaction
-                     // We want to hit near the arrival time.
-                     
-                     // Wait a bit for the state to update (it happens in processSwing before we get here)
-                     val arrivalTime = gameEngine.gameState.value.ballArrivalTimestamp
-                     val window = gameEngine.getHitWindow()
-                     
-                     // Safe window: +/- (window / 2) * 0.8
-                     val safeHalfWindow = (window / 2) * 0.8
-                     val randomOffset = (kotlin.random.Random.nextDouble(-safeHalfWindow, safeHalfWindow)).toLong()
-                     
-                     val targetTime = arrivalTime + randomOffset
-                     val delay = targetTime - System.currentTimeMillis()
-                     
-                     if (delay > 0) {
-                         kotlinx.coroutines.delay(delay)
-                     }
-                     simulateLocalSwing()
-                 }
-            }
-        }
+        simulatedGameEngine.simulateOpponentSwing()
     }
 
     fun simulateLocalSwing() {
         if (!isDebugGameSession) return
-
-        viewModelScope.launch {
-            // Simulate a local swing
-            val timestamp = System.currentTimeMillis()
-            
-            // Randomize Force (Soft: <17, Medium: 17-20, Hard: >20)
-            val force = kotlin.random.Random.nextDouble(14.0, 25.0).toFloat()
-            
-            val x = 0f
-            val y = 0f
-            val z = 0f
-            val gx = 0f
-            val gy = 0f
-            val gz = 0f
-            val gravX = 0f
-            val gravY = 0f
-            
-            // Randomize GravZ for Swing Type (Flat: ~0, Lob: >5, Spike: <-5)
-            // But we need to be careful to match the classification logic if we want specific types.
-            // Let's just pick a random type and reverse engineer the gravZ?
-            // Or just randomize gravZ directly.
-            // Flat: -3 to 3
-            // Lob: > 5
-            // Spike: < -5
-            val swingTypeRoll = kotlin.random.Random.nextInt(3)
-            val gravZ = when (swingTypeRoll) {
-                0 -> 0f // Flat
-                1 -> 7f // Lob
-                else -> -7f // Spike
-            }
-
-            // Create a mock event
-            val event = com.air.pong.core.sensors.SensorProvider.SwingEvent(
-                timestamp, force, x, y, z, gx, gy, gz, gravX, gravY, gravZ
-            )
-            
-            handleSwing(event)
-        }
+        simulatedGameEngine.simulateLocalSwing()
     }
 
 

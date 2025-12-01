@@ -33,21 +33,25 @@ class GameEngineTest {
 
         // 1-0, P1 serves
         gameEngine.handleMiss(Player.PLAYER_2) // P2 missed, P1 scores
+        gameEngine.startNextServe()
         assertEquals(1, gameEngine.gameState.value.player1Score)
         assertEquals(Player.PLAYER_1, gameEngine.gameState.value.servingPlayer)
 
         // 2-0, P2 serves
         gameEngine.handleMiss(Player.PLAYER_2) // P2 missed, P1 scores
+        gameEngine.startNextServe()
         assertEquals(2, gameEngine.gameState.value.player1Score)
         assertEquals(Player.PLAYER_2, gameEngine.gameState.value.servingPlayer)
 
         // 2-1, P2 serves
         gameEngine.handleMiss(Player.PLAYER_1) // P1 missed, P2 scores
+        gameEngine.startNextServe()
         assertEquals(1, gameEngine.gameState.value.player2Score)
         assertEquals(Player.PLAYER_2, gameEngine.gameState.value.servingPlayer)
 
         // 2-2, P1 serves
         gameEngine.handleMiss(Player.PLAYER_1) // P1 missed, P2 scores
+        gameEngine.startNextServe()
         assertEquals(2, gameEngine.gameState.value.player2Score)
         assertEquals(Player.PLAYER_1, gameEngine.gameState.value.servingPlayer)
     }
@@ -55,8 +59,14 @@ class GameEngineTest {
     @Test
     fun `test deuce serve rotation`() {
         // Fast forward to 10-10
-        repeat(10) { gameEngine.handleMiss(Player.PLAYER_2) } // P1: 10
-        repeat(10) { gameEngine.handleMiss(Player.PLAYER_1) } // P2: 10
+        repeat(10) { 
+            gameEngine.handleMiss(Player.PLAYER_2) 
+            gameEngine.startNextServe()
+        } // P1: 10
+        repeat(10) { 
+            gameEngine.handleMiss(Player.PLAYER_1) 
+            gameEngine.startNextServe()
+        } // P2: 10
         
         assertEquals(10, gameEngine.gameState.value.player1Score)
         assertEquals(10, gameEngine.gameState.value.player2Score)
@@ -66,11 +76,13 @@ class GameEngineTest {
 
         // 11-10, P2 serves (Deuce: rotate every 1)
         gameEngine.handleMiss(Player.PLAYER_2)
+        gameEngine.startNextServe()
         assertEquals(11, gameEngine.gameState.value.player1Score)
         assertEquals(Player.PLAYER_2, gameEngine.gameState.value.servingPlayer)
 
         // 11-11, P1 serves
         gameEngine.handleMiss(Player.PLAYER_1)
+        gameEngine.startNextServe()
         assertEquals(11, gameEngine.gameState.value.player2Score)
         assertEquals(Player.PLAYER_1, gameEngine.gameState.value.servingPlayer)
     }

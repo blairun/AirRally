@@ -535,4 +535,20 @@ class GameEngine {
         handleMiss(if (isHost) Player.PLAYER_1 else Player.PLAYER_2)
         return pending.type
     }
+
+    fun resetGame() {
+        _gameState.update {
+            it.copy(
+                gamePhase = GamePhase.IDLE,
+                player1Score = 0,
+                player2Score = 0,
+                lastEvent = "Game Reset",
+                eventLog = emptyList(),
+                lastSwingType = null,
+                lastSwingData = null,
+                currentPointShots = emptyList(),
+                currentRallyLength = 0
+            )
+        }
+    }
 }

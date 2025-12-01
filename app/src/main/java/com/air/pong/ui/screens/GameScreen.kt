@@ -42,7 +42,14 @@ fun GameScreen(
     
     LaunchedEffect(gameState.gamePhase) {
         if (gameState.gamePhase == GamePhase.GAME_OVER) {
-            onGameOver()
+            if (gameState.isDebugMode) {
+                // In Debug Mode, we don't go to GameOver screen.
+                // We just stop the game (reset to IDLE) and go back to Debug Menu.
+                viewModel.stopDebugGame()
+                onStopDebug()
+            } else {
+                onGameOver()
+            }
         }
     }
     
@@ -277,7 +284,7 @@ fun GameScreen(
             DebugGameControls(
                 viewModel = viewModel,
                 onStopDebug = onStopDebug,
-                modifier = Modifier.align(Alignment.TopCenter).padding(top = 120.dp)
+                modifier = Modifier.align(Alignment.TopCenter).padding(top = 130.dp)
             )
         }
     }
