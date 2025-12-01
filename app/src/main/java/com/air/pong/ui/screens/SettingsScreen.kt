@@ -17,6 +17,8 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.saveable.Saver
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -45,9 +47,14 @@ fun SettingsScreen(
     viewModel: GameViewModel,
     currentTheme: ThemeMode,
     onThemeChange: (ThemeMode) -> Unit,
-    onNavigateBack: () -> Unit
+    onNavigateBack: () -> Unit,
+    onNavigateToGame: () -> Unit
 ) {
-    var currentScreen by remember { mutableStateOf(SettingsScreenType.Main) }
+    val SettingsScreenTypeSaver = Saver<SettingsScreenType, String>(
+        save = { it.name },
+        restore = { SettingsScreenType.valueOf(it) }
+    )
+    var currentScreen by rememberSaveable(stateSaver = SettingsScreenTypeSaver) { mutableStateOf(SettingsScreenType.Main) }
     val gameState by viewModel.gameState.collectAsState()
     val playerName by viewModel.playerName.collectAsState()
     val context = LocalContext.current
@@ -122,10 +129,6 @@ fun SettingsScreen(
                             )
                         }
                     } else {
-                        // Optional: Show back button to exit settings entirely if desired, 
-                        // but usually handled by system back or a specific exit button.
-                        // Here we rely on the parent to handle exit if we are at root.
-                        // But wait, we have onNavigateBack passed in.
                         IconButton(onClick = onNavigateBack) {
                              Icon(
                                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -199,6 +202,10 @@ fun SettingsScreen(
                             infoTitle = title
                             infoText = text
                             showInfoDialog = true
+                        },
+                        onEnterDebugGame = {
+                            viewModel.startDebugGame()
+                            onNavigateToGame()
                         }
                     )
                     SettingsScreenType.About -> AboutSettingsScreen()
@@ -220,7 +227,7 @@ fun SettingsMainScreen(
     ) {
         SettingsCategoryItem(
             title = stringResource(R.string.appearance),
-            icon = Icons.Default.Face, // Assuming Face icon exists or similar
+            icon = Icons.Default.Face,
             onClick = { onNavigate(SettingsScreenType.Appearance) }
         )
         SettingsCategoryItem(
@@ -245,7 +252,7 @@ fun SettingsMainScreen(
         )
         SettingsCategoryItem(
             title = stringResource(R.string.about_airrally),
-            icon = Icons.Default.Person, // Or Info
+            icon = Icons.Default.Person,
             onClick = { onNavigate(SettingsScreenType.About) }
         )
     }
@@ -272,10 +279,6 @@ fun SettingsCategoryItem(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                // Icon(imageVector = icon, contentDescription = null, modifier = Modifier.padding(end = 16.dp))
-                // Keeping it simple without icons for now if they are not readily available in Default set, 
-                // or use text only to match previous style but cleaner.
-                // Let's stick to text for now to be safe on imports, or use standard icons.
                 Text(
                     text = title,
                     style = MaterialTheme.typography.titleMedium,

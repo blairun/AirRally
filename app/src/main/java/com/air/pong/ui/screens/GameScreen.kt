@@ -16,6 +16,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.stringResource
@@ -32,7 +33,8 @@ import com.air.pong.ui.GameViewModel
 @Composable
 fun GameScreen(
     viewModel: GameViewModel,
-    onGameOver: () -> Unit
+    onGameOver: () -> Unit,
+    onStopDebug: () -> Unit = {}
 ) {
     com.air.pong.ui.components.KeepScreenOn()
 
@@ -269,6 +271,84 @@ fun GameScreen(
             events = gameState.eventLog,
             modifier = Modifier.align(Alignment.BottomCenter)
         )
+        
+        // Debug Game Controls
+        if (viewModel.isDebugGameSession) {
+            DebugGameControls(
+                viewModel = viewModel,
+                onStopDebug = onStopDebug,
+                modifier = Modifier.align(Alignment.TopCenter).padding(top = 120.dp)
+            )
+        }
+    }
+}
+
+@Composable
+fun DebugGameControls(
+    viewModel: GameViewModel,
+    onStopDebug: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val isAutoPlay by viewModel.isAutoPlayEnabled.collectAsState()
+    
+    Card(
+        modifier = modifier.fillMaxWidth(0.9f),
+        colors = CardDefaults.cardColors(containerColor = Color.Black.copy(alpha = 0.6f))
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text("Debug Controls", color = Color.White, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
+            Spacer(modifier = Modifier.height(16.dp))
+            
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                // Simulate Local Hit (Left)
+                Button(
+                    onClick = { viewModel.simulateLocalSwing() },
+                    modifier = Modifier.height(48.dp).width(100.dp),
+                    contentPadding = PaddingValues(horizontal = 4.dp)
+                ) {
+                    Text("Simulate\nMy Hit", fontSize = 12.sp, textAlign = TextAlign.Center, lineHeight = 14.sp)
+                }
+
+                // Auto-Play (Center)
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text("Auto-Play", color = Color.White, style = MaterialTheme.typography.labelSmall)
+                    Switch(
+                        checked = isAutoPlay,
+                        onCheckedChange = { viewModel.setAutoPlay(it) },
+                        modifier = Modifier.scale(0.8f)
+                    )
+                }
+
+                // Simulate Opponent Hit (Right)
+                Button(
+                    onClick = { viewModel.simulateOpponentSwing() },
+                    modifier = Modifier.height(48.dp).width(100.dp),
+                    contentPadding = PaddingValues(horizontal = 4.dp)
+                ) {
+                    Text("Simulate\nOpp Hit", fontSize = 12.sp, textAlign = TextAlign.Center, lineHeight = 14.sp)
+                }
+            }
+            
+            Spacer(modifier = Modifier.height(16.dp))
+            
+            Button(
+                onClick = { 
+                    viewModel.stopDebugGame() 
+                    onStopDebug()
+                },
+                modifier = Modifier.fillMaxWidth(0.5f).height(48.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
+            ) {
+                Text("Stop Game")
+            }
+        }
     }
 }
 

@@ -228,4 +228,8 @@ class NearbyConnectionsAdapter(
      * Exposes received messages as a Flow for easier consumption.
      */
     fun observeMessages(): Flow<ByteArray> = _receivedMessages
+
+    fun setConnectedEndpointName(name: String?) {
+        _connectedEndpointName.update { name }
+    }
 }

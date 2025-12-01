@@ -128,6 +128,9 @@ class MainActivity : ComponentActivity() {
                                 },
                                 onNavigateBack = {
                                     navController.popBackStack()
+                                },
+                                onNavigateToGame = {
+                                    navController.navigate("game")
                                 }
                             )
                         }
@@ -155,6 +158,9 @@ class MainActivity : ComponentActivity() {
                                     navController.navigate("game_over") {
                                         popUpTo("main_menu") { inclusive = false }
                                     }
+                                },
+                                onStopDebug = {
+                                    navController.popBackStack()
                                 }
                             )
                         }

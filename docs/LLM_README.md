@@ -113,3 +113,8 @@ To see what will happen without making changes:
 ```powershell
 .\release.ps1 -DryRun
 ```
+
+## 7. Debugging
+-   **Debug Mode**: Accessible via Settings -> Debug Settings.
+    -   Allows entering a single-player "Debug Game" to test UI and logic.
+    -   Includes "Simulate Hit" and "Auto-Play" controls to simulate opponent behavior.

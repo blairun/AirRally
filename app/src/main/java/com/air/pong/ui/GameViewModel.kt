@@ -58,6 +58,13 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
     val longestRally = statsRepository.longestRally
     val totalHits = statsRepository.totalHits
 
+    // Debug State
+    var isDebugGameSession = false
+        private set
+        
+    private val _isAutoPlayEnabled = kotlinx.coroutines.flow.MutableStateFlow(false)
+    val isAutoPlayEnabled = _isAutoPlayEnabled.asStateFlow()
+
     init {
         // Load saved settings
         val savedFlightTime = sharedPrefs.getLong("flight_time", 700L)
@@ -118,7 +125,7 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
             }
         }
 
-        // Observe Game Phase for Cooldown and Stats
+        // Observe Game Phase for Cooldown, Stats, and Auto-Serve
         viewModelScope.launch {
             gameState.collect { state ->
                 if (state.gamePhase == GamePhase.POINT_SCORED) {
@@ -130,15 +137,18 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
                     
                     kotlinx.coroutines.delay(2000) // 2 second cooldown
                     gameEngine.startNextServe()
+                } else if (state.gamePhase == GamePhase.WAITING_FOR_SERVE) {
+                    // Auto-Serve Logic
+                    if (isDebugGameSession && _isAutoPlayEnabled.value) {
+                        kotlinx.coroutines.delay(1000) // Wait a bit before serving
+                        if (state.isMyTurn) {
+                            simulateLocalSwing()
+                        } else {
+                            simulateOpponentSwing()
+                        }
+                    }
                 } else if (state.gamePhase == GamePhase.GAME_OVER) {
-                    // Check if we just finished a game (and haven't saved the last point yet)
-                    // This is tricky because GAME_OVER is a steady state.
-                    // We need to ensure we only save once.
-                    // But for now, let's rely on the fact that GAME_OVER usually comes from a point end.
-                    // However, we don't have a "just entered" trigger here easily without distinctUntilChanged.
-                    // But since this collect block runs on every emission, we need to be careful.
-                    
-                    // Actually, let's use a separate observer with distinctUntilChanged for stats saving to be safe.
+                    // ...
                 }
             }
         }
@@ -175,10 +185,41 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
                             saveGame(state, iWonGame)
                         }
                     }
+
+
                 }
         }
     }
     
+    private fun fetchDeviceName(): String {
+        val context = getApplication<Application>().applicationContext
+        
+        // 1. Try Settings.Global.DEVICE_NAME (API 25+)
+        try {
+            val deviceName = android.provider.Settings.Global.getString(
+                context.contentResolver,
+                android.provider.Settings.Global.DEVICE_NAME
+            )
+            if (!deviceName.isNullOrBlank()) return deviceName
+        } catch (e: Exception) {
+            // Ignore
+        }
+
+        // 2. Try Bluetooth Adapter Name (requires permission, but we might have it or it might be cached)
+        try {
+            val bluetoothManager = context.getSystemService(android.content.Context.BLUETOOTH_SERVICE) as? android.bluetooth.BluetoothManager
+            val adapter = bluetoothManager?.adapter
+            if (adapter != null && !adapter.name.isNullOrBlank()) {
+                return adapter.name
+            }
+        } catch (e: SecurityException) {
+            // Ignore if we don't have permission yet
+        }
+
+        // 3. Fallback to Model
+        return android.os.Build.MODEL
+    }
+
     private fun savePoint(state: com.air.pong.core.game.GameState, iWon: Boolean) {
         // Determine End Reason
         // Look at the event log. The last event is usually PointScored.
@@ -325,6 +366,36 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
                             gameEngine.onBounce()
                         }
                     }
+                }
+
+                // Auto-Play Logic for Debug Mode (Opponent's Turn)
+                // Runs for both Serves and Rallies
+                if (isDebugGameSession && _isAutoPlayEnabled.value) {
+                     viewModelScope.launch {
+                         // 5% chance to NOT swing (Timeout Miss)
+                         if (kotlin.random.Random.nextFloat() < 0.05f) {
+                             return@launch
+                         }
+
+                         // Wait for flight time + random delay to simulate reaction
+                         // We want to hit near the arrival time.
+                         
+                         // Wait a bit for the state to update (it happens in processSwing before we get here)
+                         val arrivalTime = gameEngine.gameState.value.ballArrivalTimestamp
+                         val window = gameEngine.getHitWindow()
+                         
+                         // Safe window: +/- (window / 2) * 0.8
+                         val safeHalfWindow = (window / 2) * 0.8
+                         val randomOffset = (kotlin.random.Random.nextDouble(-safeHalfWindow, safeHalfWindow)).toLong()
+                         
+                         val targetTime = arrivalTime + randomOffset
+                         val delay = targetTime - System.currentTimeMillis()
+                         
+                         if (delay > 0) {
+                             kotlinx.coroutines.delay(delay)
+                         }
+                         simulateOpponentSwing()
+                     }
                 }
             } else if (result == HitResult.PENDING) {
                 // Delayed Miss Logic
@@ -549,6 +620,8 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
     }
     
     private fun sendMessage(msg: GameMessage) {
+        if (isDebugGameSession) return // Do not send network messages in debug mode
+
         viewModelScope.launch {
             try {
                 networkAdapter.sendMessage(MessageCodec.encode(msg))
@@ -562,6 +635,8 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             networkAdapter.stopAll()
         }
+        isDebugGameSession = false
+        _isAutoPlayEnabled.value = false
     }
 
     fun cancelConnection() {
@@ -650,35 +725,186 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun playTestSound(event: com.air.pong.audio.AudioManager.SoundEvent) {
-        audioManager.play(event, gameState.value.useDebugTones)
+        audioManager.play(event, gameEngine.gameState.value.useDebugTones)
     }
 
-    private fun fetchDeviceName(): String {
-        val context = getApplication<Application>().applicationContext
+    fun setAutoPlay(enabled: Boolean) {
+        _isAutoPlayEnabled.value = enabled
+    }
+
+    fun startDebugGame() {
+        // Ensure we are disconnected from any real peers
+        disconnect()
         
-        // 1. Try Settings.Global.DEVICE_NAME (API 25+)
-        try {
-            val deviceName = android.provider.Settings.Global.getString(
-                context.contentResolver,
-                android.provider.Settings.Global.DEVICE_NAME
-            )
-            if (!deviceName.isNullOrBlank()) return deviceName
-        } catch (e: Exception) {
-            // Ignore
-        }
-
-        // 2. Try Bluetooth Adapter Name (requires permission, but we might have it or it might be cached)
-        try {
-            val bluetoothManager = context.getSystemService(android.content.Context.BLUETOOTH_SERVICE) as? android.bluetooth.BluetoothManager
-            val adapter = bluetoothManager?.adapter
-            if (adapter != null && !adapter.name.isNullOrBlank()) {
-                return adapter.name
-            }
-        } catch (e: SecurityException) {
-            // Ignore if we don't have permission yet
-        }
-
-        // 3. Fallback to Model
-        return android.os.Build.MODEL
+        isDebugGameSession = true
+        isHost = true
+        gameEngine.setLocalPlayer(true)
+        _playerName.value = "Debug Player"
+        _isOpponentInLobby.value = true
+        // Mock opponent name
+        networkAdapter.setConnectedEndpointName("Simulated Opponent")
+        
+        gameEngine.startGame()
+        audioManager.play(com.air.pong.audio.AudioManager.SoundEvent.GAME_START, gameEngine.gameState.value.useDebugTones)
     }
+
+
+
+    fun stopDebugGame() {
+        isDebugGameSession = false
+        gameEngine.onPeerLeft()
+        _isOpponentInLobby.value = false
+        networkAdapter.setConnectedEndpointName(null)
+    }
+
+    fun simulateOpponentSwing() {
+        if (!isDebugGameSession) return
+
+        viewModelScope.launch {
+            // Simulate a swing happening "now" (minus latency)
+            val estimatedLatency = 50L
+            val localSwingTime = System.currentTimeMillis() - estimatedLatency
+            
+            // 20% Chance of Opponent Miss
+            if (kotlin.random.Random.nextFloat() < 0.20f) {
+                // Determine Miss Type
+                val missTypeRoll = kotlin.random.Random.nextFloat()
+                val missResult = when {
+                    missTypeRoll < 0.33f -> HitResult.MISS_NET
+                    missTypeRoll < 0.66f -> HitResult.MISS_OUT
+                    else -> HitResult.MISS_TIMEOUT
+                }
+                
+                // Calculate delay for the miss event
+                // Net: Immediate (at swing time)
+                // Out: After flight time (approx)
+                // Timeout: After hit window expires
+                val delay = when (missResult) {
+                    HitResult.MISS_NET -> 0L
+                    HitResult.MISS_OUT -> gameEngine.gameState.value.flightTime
+                    HitResult.MISS_TIMEOUT -> gameEngine.gameState.value.flightTime + gameEngine.getHitWindow() + 200L
+                    else -> 0L
+                }
+                
+                if (delay > 0) {
+                    kotlinx.coroutines.delay(delay)
+                }
+                
+                // Send Result to self (simulating receiving it from opponent)
+                handleMessage(GameMessage.Result(missResult, null))
+                return@launch
+            }
+
+            // Valid Hit Logic
+            // Randomize swing type
+            val swingTypes = com.air.pong.core.game.SwingType.values()
+            val swingType = swingTypes[kotlin.random.Random.nextInt(swingTypes.size)]
+            
+            gameEngine.onOpponentHit(localSwingTime, swingType.ordinal)
+            
+            // 1. Schedule Bounce on My Side (Receiver)
+            val timeToArrival = gameEngine.gameState.value.ballArrivalTimestamp - System.currentTimeMillis()
+            val bounceDelay = timeToArrival - GameEngine.BOUNCE_OFFSET_MS
+            
+            viewModelScope.launch {
+                if (bounceDelay > 0) {
+                    kotlinx.coroutines.delay(bounceDelay)
+                    audioManager.play(com.air.pong.audio.AudioManager.SoundEvent.BOUNCE, gameEngine.gameState.value.useDebugTones)
+                }
+                gameEngine.onBounce()
+            }
+            
+            // 2. Schedule Auto-Miss Check
+            val hitWindow = gameEngine.getHitWindow()
+            val autoMissDelay = timeToArrival + hitWindow + 500
+            
+            viewModelScope.launch {
+                if (autoMissDelay > 0) {
+                    kotlinx.coroutines.delay(autoMissDelay)
+                    if (gameEngine.checkAutoMiss()) {
+                        // We missed!
+                        // Local Sound: I didn't swing, ball passed me.
+                        audioManager.play(com.air.pong.audio.AudioManager.SoundEvent.MISS_NO_SWING, gameEngine.gameState.value.useDebugTones)
+                        hapticManager.playMiss()
+                        
+                        kotlinx.coroutines.delay(1000)
+                        audioManager.play(com.air.pong.audio.AudioManager.SoundEvent.LOSE_POINT, gameEngine.gameState.value.useDebugTones)
+                    }
+                }
+            }
+
+            // 3. Auto-Play Logic for Debug Mode (Player's Turn)
+            if (isDebugGameSession && _isAutoPlayEnabled.value) {
+                 viewModelScope.launch {
+                     // 5% chance to NOT swing (Timeout Miss)
+                     if (kotlin.random.Random.nextFloat() < 0.05f) {
+                         return@launch
+                     }
+
+                     // Wait for flight time + random delay to simulate reaction
+                     // We want to hit near the arrival time.
+                     
+                     // Wait a bit for the state to update (it happens in processSwing before we get here)
+                     val arrivalTime = gameEngine.gameState.value.ballArrivalTimestamp
+                     val window = gameEngine.getHitWindow()
+                     
+                     // Safe window: +/- (window / 2) * 0.8
+                     val safeHalfWindow = (window / 2) * 0.8
+                     val randomOffset = (kotlin.random.Random.nextDouble(-safeHalfWindow, safeHalfWindow)).toLong()
+                     
+                     val targetTime = arrivalTime + randomOffset
+                     val delay = targetTime - System.currentTimeMillis()
+                     
+                     if (delay > 0) {
+                         kotlinx.coroutines.delay(delay)
+                     }
+                     simulateLocalSwing()
+                 }
+            }
+        }
+    }
+
+    fun simulateLocalSwing() {
+        if (!isDebugGameSession) return
+
+        viewModelScope.launch {
+            // Simulate a local swing
+            val timestamp = System.currentTimeMillis()
+            
+            // Randomize Force (Soft: <17, Medium: 17-20, Hard: >20)
+            val force = kotlin.random.Random.nextDouble(14.0, 25.0).toFloat()
+            
+            val x = 0f
+            val y = 0f
+            val z = 0f
+            val gx = 0f
+            val gy = 0f
+            val gz = 0f
+            val gravX = 0f
+            val gravY = 0f
+            
+            // Randomize GravZ for Swing Type (Flat: ~0, Lob: >5, Spike: <-5)
+            // But we need to be careful to match the classification logic if we want specific types.
+            // Let's just pick a random type and reverse engineer the gravZ?
+            // Or just randomize gravZ directly.
+            // Flat: -3 to 3
+            // Lob: > 5
+            // Spike: < -5
+            val swingTypeRoll = kotlin.random.Random.nextInt(3)
+            val gravZ = when (swingTypeRoll) {
+                0 -> 0f // Flat
+                1 -> 7f // Lob
+                else -> -7f // Spike
+            }
+
+            // Create a mock event
+            val event = com.air.pong.core.sensors.SensorProvider.SwingEvent(
+                timestamp, force, x, y, z, gx, gy, gz, gravX, gravY, gravZ
+            )
+            
+            handleSwing(event)
+        }
+    }
+
+
 }

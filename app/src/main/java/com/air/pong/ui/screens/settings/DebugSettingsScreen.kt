@@ -28,7 +28,8 @@ fun DebugSettingsScreen(
     lastSwingType: SwingType?,
     lastSwingData: SwingData?,
     onPlayTestSound: (AudioManager.SoundEvent) -> Unit,
-    onShowInfo: (String, String) -> Unit
+    onShowInfo: (String, String) -> Unit,
+    onEnterDebugGame: () -> Unit
 ) {
     val context = LocalContext.current
     Column(
@@ -37,6 +38,7 @@ fun DebugSettingsScreen(
             .padding(16.dp)
             .verticalScroll(rememberScrollState())
     ) {
+
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -76,6 +78,7 @@ fun DebugSettingsScreen(
         }
 
         if (isDebugMode) {
+
             Spacer(modifier = Modifier.height(16.dp))
             HorizontalDivider()
             Spacer(modifier = Modifier.height(16.dp))
@@ -119,6 +122,14 @@ fun DebugSettingsScreen(
                     )
                 }
             }
+        }
+
+                Spacer(modifier = Modifier.height(24.dp))
+        Button(
+            onClick = onEnterDebugGame,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Enter Debug Game")
         }
     }
 }
