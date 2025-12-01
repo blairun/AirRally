@@ -120,6 +120,7 @@
     <string name="hit">HIT!</string>
     <string name="wait">WAIT...</string>
     <string name="action_feed">ACTION FEED</string>
+    <string name="no_events_yet">No events yet</string>
     <string name="debug_info">DEBUG INFO</string>
     <string name="phase_fmt">Phase: %1$s</string>
     <string name="arrival_fmt">Arrival: %1$d</string>

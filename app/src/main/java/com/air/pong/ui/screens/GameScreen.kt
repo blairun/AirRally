@@ -1,23 +1,33 @@
 package com.air.pong.ui.screens
 
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.air.pong.R
+import com.air.pong.core.game.GameEvent
 import com.air.pong.core.game.GamePhase
+import com.air.pong.core.game.SwingType
 import com.air.pong.ui.GameViewModel
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 
 @Composable
 fun GameScreen(
@@ -79,18 +89,20 @@ fun GameScreen(
     ) {
         val minHeight = maxHeight
         
+        // Main Content Layer
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
-                .padding(16.dp),
+                .padding(16.dp)
+                .padding(bottom = 100.dp), // Add padding for the bottom panel
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceBetween 
         ) {
             // Ensure the column takes up at least the full screen height
             // so SpaceBetween works even when content is small
             Column(
-                modifier = Modifier.heightIn(min = minHeight - 32.dp), // Subtract padding
+                modifier = Modifier.heightIn(min = minHeight - 132.dp), // Subtract padding + bottom panel buffer
                 verticalArrangement = Arrangement.SpaceBetween,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -211,120 +223,249 @@ fun GameScreen(
                     }
                 }
                 
-                // --- Bottom Section: Event Log & Debug ---
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    // Event Log
+                // --- Debug Overlay (Optional) ---
+                if (gameState.isDebugMode) {
                     Card(
                         colors = CardDefaults.cardColors(
-                            containerColor = Color.Black.copy(alpha = 0.3f)
+                            containerColor = Color.Black.copy(alpha = 0.5f)
                         ),
-                        modifier = Modifier.fillMaxWidth(0.9f)
+                        modifier = Modifier.fillMaxWidth()
                     ) {
                         Column(
-                            modifier = Modifier.padding(12.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally
+                            modifier = Modifier.padding(8.dp)
                         ) {
                             Text(
-                                stringResource(R.string.action_feed), 
+                                stringResource(R.string.debug_info), 
                                 style = MaterialTheme.typography.labelSmall, 
-                                color = Color.White.copy(alpha = 0.6f),
-                                fontWeight = FontWeight.Bold,
-                                modifier = Modifier.padding(bottom = 8.dp)
+                                color = Color.Green,
+                                fontWeight = FontWeight.Bold
                             )
+                            Text(stringResource(R.string.phase_fmt, gameState.gamePhase), color = Color.White, style = MaterialTheme.typography.bodySmall)
+                            Text(stringResource(R.string.arrival_fmt, gameState.ballArrivalTimestamp), color = Color.White, style = MaterialTheme.typography.bodySmall)
+                            Text(stringResource(R.string.now_fmt, System.currentTimeMillis()), color = Color.White, style = MaterialTheme.typography.bodySmall)
+                            Text(stringResource(R.string.delta_fmt, gameState.ballArrivalTimestamp - System.currentTimeMillis()), color = Color.White, style = MaterialTheme.typography.bodySmall)
+                            Text(stringResource(R.string.difficulty_fmt, gameState.difficulty), color = Color.White, style = MaterialTheme.typography.bodySmall)
+                            Text(stringResource(R.string.flight_time_fmt, gameState.flightTime), color = Color.White, style = MaterialTheme.typography.bodySmall)
                             
-                            gameState.eventLog.forEachIndexed { index, event ->
-                                val isMostRecent = index == gameState.eventLog.lastIndex
-                                
-                                val eventText = when (event) {
-                                    is com.air.pong.core.game.GameEvent.YouServed -> stringResource(R.string.event_you_served, stringResource(getSwingTypeStringId(event.swingType)))
-                                    is com.air.pong.core.game.GameEvent.YouHit -> stringResource(R.string.event_you_hit, stringResource(getSwingTypeStringId(event.swingType)))
-                                    is com.air.pong.core.game.GameEvent.OpponentHit -> stringResource(R.string.event_opponent_hit, stringResource(getSwingTypeStringId(event.swingType)))
-                                    is com.air.pong.core.game.GameEvent.BallBounced -> stringResource(R.string.event_ball_bounced)
-                                    is com.air.pong.core.game.GameEvent.FaultNet -> stringResource(R.string.event_fault_net)
-                                    is com.air.pong.core.game.GameEvent.FaultOut -> stringResource(R.string.event_fault_out)
-                                    is com.air.pong.core.game.GameEvent.HitNet -> stringResource(R.string.event_hit_net, stringResource(getSwingTypeStringId(event.swingType)))
-                                    is com.air.pong.core.game.GameEvent.HitOut -> stringResource(R.string.event_hit_out, stringResource(getSwingTypeStringId(event.swingType)))
-                                    is com.air.pong.core.game.GameEvent.WhiffEarly -> stringResource(R.string.event_whiff_early)
-                                    is com.air.pong.core.game.GameEvent.MissLate -> stringResource(R.string.event_miss_late)
-                                    is com.air.pong.core.game.GameEvent.MissNoSwing -> stringResource(R.string.event_miss_no_swing)
-                                    is com.air.pong.core.game.GameEvent.OpponentNet -> stringResource(R.string.event_opp_net)
-                                    is com.air.pong.core.game.GameEvent.OpponentOut -> stringResource(R.string.event_opp_out)
-                                    is com.air.pong.core.game.GameEvent.OpponentWhiff -> stringResource(R.string.event_opp_whiff)
-                                    is com.air.pong.core.game.GameEvent.OpponentMissNoSwing -> stringResource(R.string.event_opp_miss_no_swing)
-                                    is com.air.pong.core.game.GameEvent.OpponentMiss -> stringResource(R.string.event_opp_miss)
-                                    is com.air.pong.core.game.GameEvent.PointScored -> stringResource(R.string.event_point_to, if (event.isYou) stringResource(R.string.you) else stringResource(R.string.opponent))
-                                    is com.air.pong.core.game.GameEvent.RawMessage -> event.message
-                                }
-
-                                Text(
-                                    text = eventText,
-                                    style = if (isMostRecent) MaterialTheme.typography.titleMedium else MaterialTheme.typography.bodyMedium,
-                                    color = if (isMostRecent) Color.White else Color.White.copy(alpha = 0.7f),
-                                    fontWeight = if (isMostRecent) FontWeight.Bold else FontWeight.Normal,
-                                    textAlign = TextAlign.Center,
-                                    modifier = Modifier.fillMaxWidth().padding(vertical = 2.dp)
-                                )
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Text(stringResource(R.string.last_swing), color = Color.Yellow, style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold)
+                            gameState.lastSwingType?.let {
+                                    Text(stringResource(R.string.type_fmt, it), color = Color.White, style = MaterialTheme.typography.bodySmall)
+                            }
+                            gameState.lastSwingData?.let {
+                                    Text(stringResource(R.string.force_fmt, it.force), color = Color.White, style = MaterialTheme.typography.bodySmall)
+                                    Text(stringResource(R.string.grav_z_fmt, "%.2f".format(it.gravZ)), color = Color.White, style = MaterialTheme.typography.bodySmall)
                             }
                         }
                     }
-                    
-                    // Debug Overlay
-                    if (gameState.isDebugMode) {
-                        Spacer(modifier = Modifier.height(32.dp))
-                        Card(
-                            colors = CardDefaults.cardColors(
-                                containerColor = Color.Black.copy(alpha = 0.5f)
-                            ),
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Column(
-                                modifier = Modifier.padding(8.dp)
-                            ) {
-                                Text(
-                                    stringResource(R.string.debug_info), 
-                                    style = MaterialTheme.typography.labelSmall, 
-                                    color = Color.Green,
-                                    fontWeight = FontWeight.Bold
-                                )
-                                Text(stringResource(R.string.phase_fmt, gameState.gamePhase), color = Color.White, style = MaterialTheme.typography.bodySmall)
-                                Text(stringResource(R.string.arrival_fmt, gameState.ballArrivalTimestamp), color = Color.White, style = MaterialTheme.typography.bodySmall)
-                                Text(stringResource(R.string.now_fmt, System.currentTimeMillis()), color = Color.White, style = MaterialTheme.typography.bodySmall)
-                                Text(stringResource(R.string.delta_fmt, gameState.ballArrivalTimestamp - System.currentTimeMillis()), color = Color.White, style = MaterialTheme.typography.bodySmall)
-                                Text(stringResource(R.string.difficulty_fmt, gameState.difficulty), color = Color.White, style = MaterialTheme.typography.bodySmall)
-                                Text(stringResource(R.string.flight_time_fmt, gameState.flightTime), color = Color.White, style = MaterialTheme.typography.bodySmall)
-                                
-                                Spacer(modifier = Modifier.height(8.dp))
-                                Text(stringResource(R.string.last_swing), color = Color.Yellow, style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold)
-                                gameState.lastSwingType?.let {
-                                     Text(stringResource(R.string.type_fmt, it), color = Color.White, style = MaterialTheme.typography.bodySmall)
-                                }
-                                gameState.lastSwingData?.let {
-                                     Text(stringResource(R.string.force_fmt, it.force), color = Color.White, style = MaterialTheme.typography.bodySmall)
-                                     Text(stringResource(R.string.grav_z_fmt, "%.2f".format(it.gravZ)), color = Color.White, style = MaterialTheme.typography.bodySmall)
-                                }
+                } else {
+                    Spacer(modifier = Modifier.height(1.dp)) // Placeholder
+                }
+            }
+        }
+        
+        // Action Feed Panel (Bottom Sheet)
+        ActionFeedPanel(
+            events = gameState.eventLog,
+            modifier = Modifier.align(Alignment.BottomCenter)
+        )
+    }
+}
+
+enum class PanelState {
+    COLLAPSED,
+    HALF_EXPANDED,
+    FULL_EXPANDED
+}
+
+@Composable
+fun ActionFeedPanel(
+    events: List<GameEvent>,
+    modifier: Modifier = Modifier
+) {
+    var panelState by remember { mutableStateOf(PanelState.COLLAPSED) }
+    var hasChangedState by remember { mutableStateOf(false) }
+    
+    // Reverse events to show newest first
+    val reversedEvents = remember(events) { events.reversed() }
+    
+    // Split into always visible and expandable
+    val topEvents = reversedEvents.take(2)
+    val moreEvents = reversedEvents.drop(2) 
+
+    // Gesture Detector for Dragging (Applied to Header)
+    val gestureModifier = Modifier.pointerInput(Unit) {
+        detectVerticalDragGestures(
+            onDragStart = { hasChangedState = false },
+            onDragEnd = { hasChangedState = false },
+            onVerticalDrag = { change, dragAmount ->
+                change.consume()
+                if (!hasChangedState) {
+                    val threshold = 20f // Sensitivity threshold
+                    if (dragAmount < -threshold) { // Dragging Up
+                        when (panelState) {
+                            PanelState.COLLAPSED -> {
+                                panelState = PanelState.HALF_EXPANDED
+                                hasChangedState = true
                             }
+                            PanelState.HALF_EXPANDED -> {
+                                panelState = PanelState.FULL_EXPANDED
+                                hasChangedState = true
+                            }
+                            else -> {}
+                        }
+                    } else if (dragAmount > threshold) { // Dragging Down
+                        when (panelState) {
+                            PanelState.FULL_EXPANDED -> {
+                                panelState = PanelState.HALF_EXPANDED
+                                hasChangedState = true
+                            }
+                            PanelState.HALF_EXPANDED -> {
+                                panelState = PanelState.COLLAPSED
+                                hasChangedState = true
+                            }
+                            else -> {}
                         }
                     }
                 }
+            }
+        )
+    }
+
+    Card(
+        modifier = modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = Color.Black.copy(alpha = 0.8f)
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+    ) {
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            // --- Header Section (Draggable) ---
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .then(gestureModifier) // Drag gesture works here
+                    .padding(top = 12.dp, start = 16.dp, end = 16.dp, bottom = 4.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                // Handle Bar
+                Box(
+                    modifier = Modifier
+                        .width(36.dp)
+                        .height(4.dp)
+                        .background(Color.White.copy(alpha = 0.3f), RoundedCornerShape(2.dp))
+                )
+                
+                Spacer(modifier = Modifier.height(12.dp))
+                
+                if (reversedEvents.isEmpty()) {
+                    Text(
+                        text = stringResource(R.string.no_events_yet),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = Color.White.copy(alpha = 0.5f),
+                        modifier = Modifier.padding(vertical = 8.dp)
+                    )
+                } else {
+                    // Render top events (always visible)
+                    topEvents.forEachIndexed { index, event ->
+                        val isMostRecent = index == 0
+                        EventItem(event, isMostRecent)
+                    }
+                }
+            }
+            
+            // --- Expanded Content Section ---
+            androidx.compose.animation.AnimatedVisibility(
+                visible = panelState != PanelState.COLLAPSED,
+                enter = androidx.compose.animation.expandVertically() + androidx.compose.animation.fadeIn(),
+                exit = androidx.compose.animation.shrinkVertically() + androidx.compose.animation.fadeOut()
+            ) {
+                // Determine height and content based on state
+                val targetHeight = if (panelState == PanelState.HALF_EXPANDED) 150.dp else 400.dp
+                val animatedHeight by androidx.compose.animation.core.animateDpAsState(targetValue = targetHeight, label = "PanelHeight")
+                
+                val displayEvents = if (panelState == PanelState.HALF_EXPANDED) {
+                    moreEvents.take(4) // Show 4 more items (Total 6 visible)
+                } else {
+                    moreEvents // Show all
+                }
+                
+                androidx.compose.foundation.lazy.LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(animatedHeight)
+                        .padding(horizontal = 16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    contentPadding = PaddingValues(bottom = 12.dp),
+                    userScrollEnabled = panelState == PanelState.FULL_EXPANDED
+                ) {
+                    items(displayEvents.size) { index ->
+                        EventItem(displayEvents[index], isMostRecent = false)
+                    }
+                }
+            }
+            
+            if (panelState == PanelState.COLLAPSED) {
+                 Spacer(modifier = Modifier.height(8.dp))
             }
         }
     }
 }
 
 @Composable
-fun getSwingTypeStringId(swingType: com.air.pong.core.game.SwingType): Int {
+fun EventItem(event: GameEvent, isMostRecent: Boolean) {
+    val eventText = getEventText(event)
+    Text(
+        text = eventText,
+        style = if (isMostRecent) MaterialTheme.typography.titleMedium else MaterialTheme.typography.bodyMedium,
+        color = if (isMostRecent) Color.White else Color.White.copy(alpha = 0.7f),
+        fontWeight = if (isMostRecent) FontWeight.Bold else FontWeight.Normal,
+        textAlign = TextAlign.Center,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp)
+    )
+}
+
+@Composable
+fun getEventText(event: GameEvent): String {
+    return when (event) {
+        is GameEvent.YouServed -> stringResource(R.string.event_you_served, stringResource(getSwingTypeStringId(event.swingType)))
+        is GameEvent.YouHit -> stringResource(R.string.event_you_hit, stringResource(getSwingTypeStringId(event.swingType)))
+        is GameEvent.OpponentHit -> stringResource(R.string.event_opponent_hit, stringResource(getSwingTypeStringId(event.swingType)))
+        is GameEvent.BallBounced -> stringResource(R.string.event_ball_bounced)
+        is GameEvent.FaultNet -> stringResource(R.string.event_fault_net)
+        is GameEvent.FaultOut -> stringResource(R.string.event_fault_out)
+        is GameEvent.HitNet -> stringResource(R.string.event_hit_net, stringResource(getSwingTypeStringId(event.swingType)))
+        is GameEvent.HitOut -> stringResource(R.string.event_hit_out, stringResource(getSwingTypeStringId(event.swingType)))
+        is GameEvent.WhiffEarly -> stringResource(R.string.event_whiff_early)
+        is GameEvent.MissLate -> stringResource(R.string.event_miss_late)
+        is GameEvent.MissNoSwing -> stringResource(R.string.event_miss_no_swing)
+        is GameEvent.OpponentNet -> stringResource(R.string.event_opp_net)
+        is GameEvent.OpponentOut -> stringResource(R.string.event_opp_out)
+        is GameEvent.OpponentWhiff -> stringResource(R.string.event_opp_whiff)
+        is GameEvent.OpponentMissNoSwing -> stringResource(R.string.event_opp_miss_no_swing)
+        is GameEvent.OpponentMiss -> stringResource(R.string.event_opp_miss)
+        is GameEvent.PointScored -> stringResource(R.string.event_point_to, if (event.isYou) stringResource(R.string.you) else stringResource(R.string.opponent))
+        is GameEvent.RawMessage -> event.message
+    }
+}
+
+@Composable
+fun getSwingTypeStringId(swingType: SwingType): Int {
     return when (swingType) {
-        com.air.pong.core.game.SwingType.SOFT_FLAT -> R.string.swing_soft_flat
-        com.air.pong.core.game.SwingType.MEDIUM_FLAT -> R.string.swing_medium_flat
-        com.air.pong.core.game.SwingType.HARD_FLAT -> R.string.swing_hard_flat
-        com.air.pong.core.game.SwingType.SOFT_LOB -> R.string.swing_soft_lob
-        com.air.pong.core.game.SwingType.MEDIUM_LOB -> R.string.swing_medium_lob
-        com.air.pong.core.game.SwingType.HARD_LOB -> R.string.swing_hard_lob
-        com.air.pong.core.game.SwingType.SOFT_SPIKE -> R.string.swing_soft_spike
-        com.air.pong.core.game.SwingType.MEDIUM_SPIKE -> R.string.swing_medium_spike
-        com.air.pong.core.game.SwingType.HARD_SPIKE -> R.string.swing_hard_spike
+        SwingType.SOFT_FLAT -> R.string.swing_soft_flat
+        SwingType.MEDIUM_FLAT -> R.string.swing_medium_flat
+        SwingType.HARD_FLAT -> R.string.swing_hard_flat
+        SwingType.SOFT_LOB -> R.string.swing_soft_lob
+        SwingType.MEDIUM_LOB -> R.string.swing_medium_lob
+        SwingType.HARD_LOB -> R.string.swing_hard_lob
+        SwingType.SOFT_SPIKE -> R.string.swing_soft_spike
+        SwingType.MEDIUM_SPIKE -> R.string.swing_medium_spike
+        SwingType.HARD_SPIKE -> R.string.swing_hard_spike
     }
 }

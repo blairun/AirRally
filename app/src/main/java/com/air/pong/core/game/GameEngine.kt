@@ -194,7 +194,7 @@ class GameEngine {
                      gamePhase = GamePhase.RALLY,
                      isMyTurn = false,
                      lastEvent = "You Served!",
-                     eventLog = (it.eventLog + GameEvent.YouServed(swingType)).takeLast(5),
+                     eventLog = (it.eventLog + GameEvent.YouServed(swingType)).takeLast(50),
                      currentPointShots = it.currentPointShots + swingType,
                      currentRallyLength = 1
                  )
@@ -223,7 +223,7 @@ class GameEngine {
                         isMyTurn = false,
                         ballArrivalTimestamp = nextArrival,
                         lastEvent = "You Hit!",
-                        eventLog = (it.eventLog + GameEvent.YouHit(swingType)).takeLast(5),
+                        eventLog = (it.eventLog + GameEvent.YouHit(swingType)).takeLast(50),
                         currentPointShots = it.currentPointShots + swingType,
                         currentRallyLength = it.currentRallyLength + 1,
                         ballState = BallState.IN_AIR
@@ -255,7 +255,7 @@ class GameEngine {
             // Timing Miss
             val event = if (timingResult == HitResult.MISS_EARLY) GameEvent.WhiffEarly else GameEvent.MissLate
             _gameState.update {
-                it.copy(eventLog = (it.eventLog + event).takeLast(5))
+                it.copy(eventLog = (it.eventLog + event).takeLast(50))
             }
             handleMiss(if (isHost) Player.PLAYER_1 else Player.PLAYER_2)
             return timingResult
@@ -277,7 +277,7 @@ class GameEngine {
         _gameState.update {
             it.copy(
                 ballState = if (it.isMyTurn) BallState.BOUNCED_MY_SIDE else BallState.BOUNCED_OPP_SIDE,
-                eventLog = (it.eventLog + GameEvent.BallBounced).takeLast(5)
+                eventLog = (it.eventLog + GameEvent.BallBounced).takeLast(50)
             )
         }
     }
@@ -302,7 +302,7 @@ class GameEngine {
                  isMyTurn = true, // Now it's my turn to hit
                  ballArrivalTimestamp = nextArrival,
                  lastEvent = "Opponent Hit!",
-                 eventLog = (it.eventLog + GameEvent.OpponentHit(swingType)).takeLast(5),
+                 eventLog = (it.eventLog + GameEvent.OpponentHit(swingType)).takeLast(50),
                  ballState = BallState.IN_AIR,
                  lastSwingType = swingType, // Store this so we can calculate window shrink later
                  currentRallyLength = it.currentRallyLength + 1
@@ -321,7 +321,7 @@ class GameEngine {
         }
         
         _gameState.update {
-            it.copy(eventLog = (it.eventLog + event).takeLast(5))
+            it.copy(eventLog = (it.eventLog + event).takeLast(50))
         }
         handleMiss(if (isHost) Player.PLAYER_1 else Player.PLAYER_2)
     }
@@ -339,7 +339,7 @@ class GameEngine {
         }
         
         _gameState.update {
-            it.copy(eventLog = (it.eventLog + event).takeLast(5))
+            it.copy(eventLog = (it.eventLog + event).takeLast(50))
         }
         handleMiss(if (isHost) Player.PLAYER_2 else Player.PLAYER_1)
     }
@@ -365,7 +365,7 @@ class GameEngine {
         // If we are past the arrival time + window, it's a miss
         if (currentTime > state.ballArrivalTimestamp + endWindow) {
             _gameState.update {
-                it.copy(eventLog = (it.eventLog + GameEvent.MissNoSwing).takeLast(5))
+                it.copy(eventLog = (it.eventLog + GameEvent.MissNoSwing).takeLast(50))
             }
             handleMiss(if (isHost) Player.PLAYER_1 else Player.PLAYER_2)
             return true
@@ -413,7 +413,7 @@ class GameEngine {
                     player2Score = p2Score,
                     servingPlayer = nextServer,
                     isMyTurn = (isHost && nextServer == Player.PLAYER_1) || (!isHost && nextServer == Player.PLAYER_2),
-                    eventLog = (state.eventLog + GameEvent.PointScored(iWon)).takeLast(5),
+                    eventLog = (state.eventLog + GameEvent.PointScored(iWon)).takeLast(50),
                     gamePhase = GamePhase.POINT_SCORED // Enter cooldown
                 )
             }
@@ -529,7 +529,7 @@ class GameEngine {
         }
         
         _gameState.update {
-            it.copy(eventLog = (it.eventLog + event).takeLast(5))
+            it.copy(eventLog = (it.eventLog + event).takeLast(50))
         }
         
         handleMiss(if (isHost) Player.PLAYER_1 else Player.PLAYER_2)
