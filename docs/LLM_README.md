@@ -1,10 +1,27 @@
 # LLM README: Ping Project Context
 
 > **CRITICAL FOR AI AGENTS:** Read this file FIRST before making any architectural changes or implementing new features.
->
-> **NOTE:** The user will handle project sync and building in Android Studio. Do NOT attempt to run `./gradlew` commands or build the project yourself! Assume the environment is set up correctly.
 
 > **NOTE:** Respect the .llmignore file!
+
+> **NOTE:** After making updates, if appropriate, you can run these commands to test changes.
+
+```powershell
+# Sync Project with Gradle Files (only if they have changed)
+.\gradlew --refresh-dependencies
+
+# Run Test Suite
+.\gradlew :app:testDebugUnitTest --tests "*GameEngineTest"
+
+# Build, Install
+.\gradlew installDebug
+# Lanuch on all devices
+adb devices | Select-String "\tdevice" | ForEach-Object {
+    $deviceId = $_.ToString().Split("`t")[0]
+    Write-Host "Starting app on: $deviceId"
+    adb -s $deviceId shell am start -n com.air.pong/.ui.MainActivity
+}
+```
 
 ## 1. Project Map
 This project is a two-player Bluetooth table tennis game.
