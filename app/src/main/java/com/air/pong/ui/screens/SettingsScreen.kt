@@ -13,6 +13,7 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -38,6 +39,7 @@ enum class SettingsScreenType {
     Main,
     Appearance,
     GameParams,
+    Stats,
     Help,
     Debug,
     About
@@ -110,6 +112,7 @@ fun SettingsScreen(
                             SettingsScreenType.Main -> stringResource(R.string.settings)
                             SettingsScreenType.Appearance -> stringResource(R.string.appearance)
                             SettingsScreenType.GameParams -> stringResource(R.string.game_parameters)
+                            SettingsScreenType.Stats -> "Game Stats"
                             SettingsScreenType.Help -> stringResource(R.string.how_to_play_safety)
                             SettingsScreenType.Debug -> stringResource(R.string.debug_settings)
                             SettingsScreenType.About -> stringResource(R.string.about_airrally)
@@ -181,6 +184,9 @@ fun SettingsScreen(
                             showInfoDialog = true
                         }
                     )
+                    SettingsScreenType.Stats -> StatsScreen(
+                        viewModel = viewModel
+                    )
                     SettingsScreenType.Help -> HelpSettingsScreen()
                     SettingsScreenType.Debug -> DebugSettingsScreen(
                         isDebugMode = isDebugMode,
@@ -232,6 +238,11 @@ fun SettingsMainScreen(
             title = stringResource(R.string.how_to_play_safety),
             icon = Icons.Default.Info,
             onClick = { onNavigate(SettingsScreenType.Help) }
+        )
+        SettingsCategoryItem(
+            title = "Game Stats",
+            icon = Icons.Default.DateRange,
+            onClick = { onNavigate(SettingsScreenType.Stats) }
         )
         SettingsCategoryItem(
             title = stringResource(R.string.debug_settings),

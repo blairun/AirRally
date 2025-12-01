@@ -42,7 +42,9 @@ class GameEngine {
                 lastEvent = "Game Started",
                 eventLog = emptyList(),
                 lastSwingType = null,
-                lastSwingData = null
+                lastSwingData = null,
+                currentPointShots = emptyList(),
+                currentRallyLength = 0
             )
         }
     }
@@ -82,6 +84,43 @@ class GameEngine {
         }
     }
 
+    private fun checkRisk(swingType: SwingType): HitResult {
+        val (netRisk, outRisk) = getRiskPercentages(swingType)
+        val roll = Random.nextInt(100) // 0 to 99
+        
+        return when {
+            roll < netRisk -> HitResult.MISS_NET
+            roll < (netRisk + outRisk) -> HitResult.MISS_OUT
+            else -> HitResult.HIT
+        }
+    }
+    
+    private fun getRiskPercentages(swingType: SwingType): Pair<Int, Int> {
+        // Returns (NetRisk, OutRisk)
+        return when (swingType) {
+            SwingType.SOFT_FLAT -> 0 to 0
+            SwingType.MEDIUM_FLAT -> 0 to 5
+            SwingType.HARD_FLAT -> 5 to 15
+            SwingType.SOFT_LOB -> 0 to 0
+            SwingType.MEDIUM_LOB -> 0 to 5
+            SwingType.HARD_LOB -> 0 to 20
+            SwingType.SOFT_SPIKE -> 50 to 0
+            SwingType.MEDIUM_SPIKE -> 15 to 5
+            SwingType.HARD_SPIKE -> 30 to 10
+        }
+    }
+
+    /**
+     * Returns the start and end offsets (in ms) relative to ballArrivalTimestamp for the valid hit window.
+     */
+    private fun getHitWindowBounds(): Pair<Long, Long> {
+        val halfWindow = getHitWindow()
+        // Shift the window so it starts at the bounce (BOUNCE_OFFSET_MS before arrival)
+        val startWindow = -BOUNCE_OFFSET_MS
+        val endWindow = startWindow + (2 * halfWindow)
+        return startWindow to endWindow
+    }
+
     /**
      * Checks if a swing at the given timestamp hits the ball.
      */
@@ -89,15 +128,8 @@ class GameEngine {
         // Note: swingTimestamp is expected to be in the local time domain.
         val arrival = _gameState.value.ballArrivalTimestamp
         val delta = swingTimestamp - arrival
-        val halfWindow = getHitWindow()
         
-        // Shift the window so it starts at the bounce (BOUNCE_OFFSET_MS before arrival)
-        // Original Window: [-halfWindow, +halfWindow]
-        // New Window Start: -BOUNCE_OFFSET_MS
-        // New Window End: -BOUNCE_OFFSET_MS + (2 * halfWindow)
-        
-        val startWindow = -BOUNCE_OFFSET_MS
-        val endWindow = startWindow + (2 * halfWindow)
+        val (startWindow, endWindow) = getHitWindowBounds()
         
         return when {
             delta < startWindow -> HitResult.MISS_EARLY
@@ -126,6 +158,11 @@ class GameEngine {
             return null
         }
         lastSwingTimestamp = timestamp
+
+        // Prevent swinging if we are already waiting for a pending miss resolution
+        if (_gameState.value.pendingMiss != null) {
+            return null
+        }
 
         val swingType = classifySwing(force, gravZ)
         
@@ -172,7 +209,8 @@ class GameEngine {
                          pendingMiss = PendingMiss(riskResult, System.currentTimeMillis(), delay),
                          // We still update lastSwingType so UI can show the swing
                          lastSwingType = swingType,
-                         lastSwingData = SwingData(force, x, y, z, gx, gy, gz, gravX, gravY, gravZ)
+                         lastSwingData = SwingData(force, x, y, z, gx, gy, gz, gravX, gravY, gravZ),
+                         currentPointShots = it.currentPointShots + swingType // Add to stats even if miss
                      )
                  }
                  return HitResult.PENDING
@@ -181,18 +219,20 @@ class GameEngine {
              val nextArrival = timestamp + currentState.flightTime
              _gameState.update {
                  it.copy(
+                     ballArrivalTimestamp = nextArrival,
+                     ballState = BallState.IN_AIR,
                      gamePhase = GamePhase.RALLY,
                      isMyTurn = false,
-                     ballArrivalTimestamp = nextArrival,
                      lastEvent = "You Served!",
                      eventLog = (it.eventLog + GameEvent.YouServed(swingType)).takeLast(5),
-                     ballState = BallState.IN_AIR
+                     currentPointShots = it.currentPointShots + swingType,
+                     currentRallyLength = 1
                  )
              }
              return HitResult.HIT
         }
-        
-        // If Rallying
+
+        // RALLY Logic
         val timingResult = checkHitTiming(timestamp)
         
         if (timingResult == HitResult.HIT) {
@@ -203,12 +243,19 @@ class GameEngine {
                 // Success!
                 val nextArrival = timestamp + currentState.flightTime 
                 _gameState.update {
+                    // Concurrency Guard: Ensure game is still in progress
+                    if (it.gamePhase != GamePhase.RALLY && it.gamePhase != GamePhase.WAITING_FOR_SERVE) {
+                        return@update it
+                    }
+                    
                     it.copy(
                         gamePhase = GamePhase.RALLY,
                         isMyTurn = false,
                         ballArrivalTimestamp = nextArrival,
                         lastEvent = "You Hit!",
                         eventLog = (it.eventLog + GameEvent.YouHit(swingType)).takeLast(5),
+                        currentPointShots = it.currentPointShots + swingType,
+                        currentRallyLength = it.currentRallyLength + 1,
                         ballState = BallState.IN_AIR
                     )
                 }
@@ -228,7 +275,8 @@ class GameEngine {
                         pendingMiss = PendingMiss(riskResult, System.currentTimeMillis(), delay),
                         // We still update lastSwingType so UI can show the swing
                         lastSwingType = swingType,
-                        lastSwingData = SwingData(force, x, y, z, gx, gy, gz, gravX, gravY, gravZ)
+                        lastSwingData = SwingData(force, x, y, z, gx, gy, gz, gravX, gravY, gravZ),
+                        currentPointShots = it.currentPointShots + swingType // Add to stats even if miss
                     )
                 }
                 return HitResult.PENDING
@@ -243,39 +291,30 @@ class GameEngine {
             return timingResult
         }
     }
-    
-    private fun checkRisk(swingType: SwingType): HitResult {
-        val (netRisk, outRisk) = getRiskPercentages(swingType)
-        val roll = Random.nextInt(100) // 0 to 99
+
+    fun onBounce() {
+        // This prevents "Ball Bounced" from appearing after the point has ended.
+        val phase = _gameState.value.gamePhase
+        if (phase != GamePhase.RALLY && phase != GamePhase.WAITING_FOR_SERVE) {
+            return
+        }
         
-        return when {
-            roll < netRisk -> HitResult.MISS_NET
-            roll < (netRisk + outRisk) -> HitResult.MISS_OUT
-            else -> HitResult.HIT
+        // Prevent duplicate bounce events (e.g. if called multiple times rapidly)
+        if (_gameState.value.eventLog.lastOrNull() == GameEvent.BallBounced) {
+            return
+        }
+        
+        _gameState.update {
+            it.copy(
+                ballState = if (it.isMyTurn) BallState.BOUNCED_MY_SIDE else BallState.BOUNCED_OPP_SIDE,
+                eventLog = (it.eventLog + GameEvent.BallBounced).takeLast(5)
+            )
         }
     }
-    
-    private fun getRiskPercentages(swingType: SwingType): Pair<Int, Int> {
-        // Returns (NetRisk, OutRisk)
-        return when (swingType) {
-            SwingType.SOFT_FLAT -> 0 to 0
-            SwingType.MEDIUM_FLAT -> 0 to 5
-            SwingType.HARD_FLAT -> 5 to 15
-            SwingType.SOFT_LOB -> 0 to 0
-            SwingType.MEDIUM_LOB -> 0 to 5
-            SwingType.HARD_LOB -> 0 to 20
-            SwingType.SOFT_SPIKE -> 50 to 0
-            SwingType.MEDIUM_SPIKE -> 15 to 5
-            SwingType.HARD_SPIKE -> 30 to 10
-        }
-    }
-    
-    /**
-     * Called when opponent sends an ActionSwing (they hit the ball).
-     */
+
     fun onOpponentHit(timestamp: Long, swingTypeOrdinal: Int) {
          val swingType = try {
-             SwingType.entries[swingTypeOrdinal]
+             SwingType.values().getOrElse(swingTypeOrdinal) { SwingType.MEDIUM_FLAT }
          } catch (e: Exception) {
              SwingType.MEDIUM_FLAT
          }
@@ -300,30 +339,31 @@ class GameEngine {
          _gameState.update {
              it.copy(
                  gamePhase = GamePhase.RALLY,
-                 isMyTurn = true, // Now it's my turn
+                 isMyTurn = true, // Now it's my turn to hit
                  ballArrivalTimestamp = nextArrival,
-                 lastEvent = "Opponent Hit: $swingType",
+                 lastEvent = "Opponent Hit!",
                  eventLog = (it.eventLog + GameEvent.OpponentHit(swingType)).takeLast(5),
                  ballState = BallState.IN_AIR,
-                 lastSwingType = swingType // Store this so we can calculate window shrink later
+                 lastSwingType = swingType, // Store this so we can calculate window shrink later
+                 currentRallyLength = it.currentRallyLength + 1
              )
          }
     }
-    
-    fun onBounce() {
-        // Only log bounce if we are in a valid phase (Rally or Waiting for Serve)
-        // This prevents "Ball Bounced" from appearing after the point has ended.
-        val phase = _gameState.value.gamePhase
-        if (phase != GamePhase.RALLY && phase != GamePhase.WAITING_FOR_SERVE) {
-            return
+
+    /**
+     * Called when I miss locally (Early, Late, etc).
+     */
+    fun onLocalMiss(reason: HitResult) {
+        val event = when (reason) {
+            HitResult.MISS_EARLY -> GameEvent.WhiffEarly
+            HitResult.MISS_LATE -> GameEvent.MissLate
+            else -> GameEvent.MissLate // Default
         }
         
         _gameState.update {
-            it.copy(
-                ballState = if (it.isMyTurn) BallState.BOUNCED_MY_SIDE else BallState.BOUNCED_OPP_SIDE,
-                eventLog = (it.eventLog + GameEvent.BallBounced).takeLast(5)
-            )
+            it.copy(eventLog = (it.eventLog + event).takeLast(5))
         }
+        handleMiss(if (isHost) Player.PLAYER_1 else Player.PLAYER_2)
     }
 
     /**
@@ -360,9 +400,10 @@ class GameEngine {
         }
 
         val currentTime = System.currentTimeMillis()
-        val window = getHitWindow()
+        val (_, endWindow) = getHitWindowBounds()
+        
         // If we are past the arrival time + window, it's a miss
-        if (currentTime > state.ballArrivalTimestamp + window) {
+        if (currentTime > state.ballArrivalTimestamp + endWindow) {
             _gameState.update {
                 it.copy(eventLog = (it.eventLog + GameEvent.MissNoSwing).takeLast(5))
             }
@@ -376,6 +417,11 @@ class GameEngine {
         lastPointEndedTimestamp = System.currentTimeMillis()
         // Update Score
         _gameState.update { state ->
+            // Concurrency Guard: If point already scored, ignore
+            if (state.gamePhase == GamePhase.POINT_SCORED || state.gamePhase == GamePhase.GAME_OVER) {
+                return@update state
+            }
+            
             val p1Score = if (whoMissed == Player.PLAYER_2) state.player1Score + 1 else state.player1Score
             val p2Score = if (whoMissed == Player.PLAYER_1) state.player2Score + 1 else state.player2Score
             
@@ -419,7 +465,9 @@ class GameEngine {
             if (state.gamePhase == GamePhase.POINT_SCORED) {
                 state.copy(
                     gamePhase = GamePhase.WAITING_FOR_SERVE,
-                    lastEvent = "Your Serve" // Or "Opponent Serving" - UI handles this text usually but good to reset
+                    lastEvent = "Your Serve", // Or "Opponent Serving" - UI handles this text usually but good to reset
+                    currentPointShots = emptyList(),
+                    currentRallyLength = 0
                 )
             } else {
                 state
@@ -500,7 +548,9 @@ class GameEngine {
                 lastEvent = "Rematch Started",
                 eventLog = emptyList(),
                 lastSwingType = null,
-                lastSwingData = null
+                lastSwingData = null,
+                currentPointShots = emptyList(),
+                currentRallyLength = 0
             )
         }
     }

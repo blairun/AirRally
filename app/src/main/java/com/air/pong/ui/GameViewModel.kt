@@ -13,6 +13,8 @@ import com.air.pong.network.NearbyConnectionsAdapter
 import com.air.pong.sensors.AccelerometerSensorProvider
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
 class GameViewModel(application: Application) : AndroidViewModel(application) {
@@ -45,6 +47,16 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
         private set
     
     private val sharedPrefs = application.getSharedPreferences("airrally_prefs", android.content.Context.MODE_PRIVATE)
+
+    // Stats
+    private val database = com.air.pong.data.db.AppDatabase.getDatabase(application)
+    private val statsRepository = com.air.pong.data.StatsRepository(database.statsDao())
+    
+    val gameStats = statsRepository.allPoints
+    val winCount = statsRepository.winCount
+    val lossCount = statsRepository.lossCount
+    val longestRally = statsRepository.longestRally
+    val totalHits = statsRepository.totalHits
 
     init {
         // Load saved settings
@@ -106,17 +118,129 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
             }
         }
 
-        // Observe Game Phase for Cooldown
+        // Observe Game Phase for Cooldown and Stats
         viewModelScope.launch {
             gameState.collect { state ->
                 if (state.gamePhase == GamePhase.POINT_SCORED) {
+                    // Save Stats
+                    val lastEvent = state.eventLog.lastOrNull()
+                    if (lastEvent is com.air.pong.core.game.GameEvent.PointScored) {
+                        savePoint(state, lastEvent.isYou)
+                    }
+                    
                     kotlinx.coroutines.delay(2000) // 2 second cooldown
                     gameEngine.startNextServe()
+                } else if (state.gamePhase == GamePhase.GAME_OVER) {
+                    // Check if we just finished a game (and haven't saved the last point yet)
+                    // This is tricky because GAME_OVER is a steady state.
+                    // We need to ensure we only save once.
+                    // But for now, let's rely on the fact that GAME_OVER usually comes from a point end.
+                    // However, we don't have a "just entered" trigger here easily without distinctUntilChanged.
+                    // But since this collect block runs on every emission, we need to be careful.
+                    
+                    // Actually, let's use a separate observer with distinctUntilChanged for stats saving to be safe.
                 }
             }
         }
+        
+        // Dedicated Stats Observer
+        viewModelScope.launch {
+            gameState
+                .map { it.gamePhase }
+                .distinctUntilChanged()
+                .collect { phase ->
+                    if (phase == GamePhase.GAME_OVER) {
+                        val state = gameState.value
+                        // Determine winner of the game (and thus the last point)
+                        val iWonGame = (isHost && state.player1Score > state.player2Score) || 
+                                     (!isHost && state.player2Score > state.player1Score)
+                        
+                        // Save the last point (for heatmap/rally stats)
+                        if (state.currentRallyLength > 0 || state.currentPointShots.isNotEmpty()) {
+                            savePoint(state, iWonGame)
+                        }
+                        
+                        // Save the Game Result (for Win/Loss stats)
+                        // Only save if the game actually finished (reached score limit)
+                        // or if we want to count forfeits? User said "wins/losses should refer to games that have been won or lost"
+                        // Assuming "won or lost" implies a completed game or a valid forfeit.
+                        // Let's save it if the score is significant or if it's a clear end.
+                        // Ideally check if someone reached 11 (or win by 2).
+                        
+                        val p1 = state.player1Score
+                        val p2 = state.player2Score
+                        val isFinished = (p1 >= 11 || p2 >= 11) && kotlin.math.abs(p1 - p2) >= 2
+                        
+                        if (isFinished) {
+                            saveGame(state, iWonGame)
+                        }
+                    }
+                }
+        }
     }
     
+    private fun savePoint(state: com.air.pong.core.game.GameState, iWon: Boolean) {
+        // Determine End Reason
+        // Look at the event log. The last event is usually PointScored.
+        // We want the event BEFORE that, or the one that caused the point to end.
+        val events = state.eventLog
+        val endReason = if (events.isNotEmpty()) {
+            // Filter out PointScored and BallBounced to find the cause
+            val relevantEvents = events.filter { 
+                it !is com.air.pong.core.game.GameEvent.PointScored && 
+                it !is com.air.pong.core.game.GameEvent.BallBounced 
+            }
+            
+            val lastRelevant = relevantEvents.lastOrNull()
+            when (lastRelevant) {
+                is com.air.pong.core.game.GameEvent.HitNet -> "NET"
+                is com.air.pong.core.game.GameEvent.HitOut -> "OUT"
+                is com.air.pong.core.game.GameEvent.WhiffEarly, 
+                is com.air.pong.core.game.GameEvent.MissLate -> "WHIFF"
+                is com.air.pong.core.game.GameEvent.MissNoSwing -> "TIMEOUT"
+                
+                is com.air.pong.core.game.GameEvent.OpponentNet -> "OPPONENT_NET"
+                is com.air.pong.core.game.GameEvent.OpponentOut -> "OPPONENT_OUT"
+                is com.air.pong.core.game.GameEvent.OpponentWhiff -> "OPPONENT_WHIFF"
+                is com.air.pong.core.game.GameEvent.OpponentMissNoSwing -> "OPPONENT_TIMEOUT"
+                is com.air.pong.core.game.GameEvent.OpponentMiss -> "OPPONENT_MISS"
+                
+                else -> if (iWon) "WIN" else "LOSS"
+            }
+        } else {
+            if (iWon) "WIN" else "LOSS"
+        }
+
+        viewModelScope.launch {
+            statsRepository.recordPoint(
+                timestamp = System.currentTimeMillis(),
+                opponentName = connectedPlayerName.value ?: "Opponent",
+                didIWin = iWon,
+                rallyLength = state.currentRallyLength,
+                myShots = state.currentPointShots,
+                endReason = endReason
+            )
+        }
+    }
+
+    private fun saveGame(state: com.air.pong.core.game.GameState, iWon: Boolean) {
+        viewModelScope.launch {
+            statsRepository.recordGame(
+                timestamp = System.currentTimeMillis(),
+                opponentName = connectedPlayerName.value ?: "Opponent",
+                myScore = if (isHost) state.player1Score else state.player2Score,
+                opponentScore = if (isHost) state.player2Score else state.player1Score,
+                didIWin = iWon
+            )
+        }
+    }
+    
+    fun resetStats() {
+        viewModelScope.launch {
+            statsRepository.resetStats()
+        }
+    }
+
     fun resetGameSettings() {
         gameEngine.updateSettings(700L, 400, false, false, GameEngine.DEFAULT_SWING_THRESHOLD)
         sensorProvider.setSwingThreshold(GameEngine.DEFAULT_SWING_THRESHOLD)
@@ -184,10 +308,23 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
                     viewModelScope.launch {
                         kotlinx.coroutines.delay(250)
                         audioManager.play(com.air.pong.audio.AudioManager.SoundEvent.BOUNCE, gameEngine.gameState.value.useDebugTones)
+                        gameEngine.onBounce()
                     }
                 } else {
                     audioManager.play(com.air.pong.audio.AudioManager.SoundEvent.HIT_HARD, gameEngine.gameState.value.useDebugTones)
                     hapticManager.playHit()
+                    
+                    // Schedule Bounce on Opponent's side
+                    val flightTime = gameEngine.gameState.value.flightTime
+                    val bounceDelay = flightTime - GameEngine.BOUNCE_OFFSET_MS
+                    
+                    if (bounceDelay > 0) {
+                        viewModelScope.launch {
+                            kotlinx.coroutines.delay(bounceDelay)
+                            // We don't play bounce sound for opponent side bounce (too far), but we log it.
+                            gameEngine.onBounce()
+                        }
+                    }
                 }
             } else if (result == HitResult.PENDING) {
                 // Delayed Miss Logic
@@ -232,6 +369,8 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
                 }
             } else {
                 sendMessage(GameMessage.Result(result, null)) 
+                
+                // Redundant call removed: gameEngine.onLocalMiss(result) is NOT needed because processSwing already logs the miss event.
                 
                 // Local Sound Logic (Spatial Audio):
                 // We only play sounds for events happening on OUR side of the table.
@@ -328,6 +467,14 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
                 }
             }
             is GameMessage.Result -> {
+                // Deduplication: If we are already in POINT_SCORED or GAME_OVER, ignore this result
+                // This prevents double sounds and double state updates if network sends duplicates
+                // or if we processed a local miss and then received a remote confirmation.
+                val currentPhase = gameEngine.gameState.value.gamePhase
+                if (currentPhase == GamePhase.POINT_SCORED || currentPhase == GamePhase.GAME_OVER) {
+                    return
+                }
+
                 if (msg.hitOrMiss != HitResult.HIT) {
                     gameEngine.onOpponentMiss(msg.hitOrMiss)
                     

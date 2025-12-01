@@ -25,7 +25,11 @@ data class GameState(
     val lastSwingType: SwingType? = null,
     val lastSwingData: SwingData? = null,
     val pendingMiss: PendingMiss? = null,
-    val minSwingThreshold: Float = GameEngine.DEFAULT_SWING_THRESHOLD
+    val minSwingThreshold: Float = GameEngine.DEFAULT_SWING_THRESHOLD,
+
+    // Stats Tracking for current point
+    val currentPointShots: List<SwingType> = emptyList(),
+    val currentRallyLength: Int = 0
 )
 
 data class PendingMiss(
