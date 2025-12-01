@@ -34,7 +34,7 @@ This plan addresses the gaps identified in the current implementation and provid
 - **Sound Effects Refinement**: Distinct tones for serve, bounce, hit, miss, score.
 
 ### ❌ What's Missing / To Do
-- **UI Polish**: Animations (Settings done), graphics, themes.
+- **UI Polish**: Animations (Settings, Avatars done), graphics, themes.
 
 ### ✅ Recently Completed
 - **Permissions Fix**: Added `ACCESS_COARSE_LOCATION` for older Android versions.

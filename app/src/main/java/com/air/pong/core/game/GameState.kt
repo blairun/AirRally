@@ -29,7 +29,8 @@ data class GameState(
 
     // Stats Tracking for current point
     val currentPointShots: List<SwingType> = emptyList(),
-    val currentRallyLength: Int = 0
+    val currentRallyLength: Int = 0,
+    val longestRally: Int = 0
 )
 
 data class PendingMiss(

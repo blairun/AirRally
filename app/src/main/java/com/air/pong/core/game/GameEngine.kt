@@ -44,7 +44,8 @@ class GameEngine {
                 lastSwingType = null,
                 lastSwingData = null,
                 currentPointShots = emptyList(),
-                currentRallyLength = 0
+                currentRallyLength = 0,
+                longestRally = 0
             )
         }
     }
@@ -414,7 +415,8 @@ class GameEngine {
                     servingPlayer = nextServer,
                     isMyTurn = (isHost && nextServer == Player.PLAYER_1) || (!isHost && nextServer == Player.PLAYER_2),
                     eventLog = (state.eventLog + GameEvent.PointScored(iWon)).takeLast(50),
-                    gamePhase = GamePhase.POINT_SCORED // Enter cooldown
+                    gamePhase = GamePhase.POINT_SCORED, // Enter cooldown
+                    longestRally = kotlin.math.max(state.longestRally, state.currentRallyLength)
                 )
             }
         }
@@ -510,7 +512,8 @@ class GameEngine {
                 lastSwingType = null,
                 lastSwingData = null,
                 currentPointShots = emptyList(),
-                currentRallyLength = 0
+                currentRallyLength = 0,
+                longestRally = 0
             )
         }
     }
@@ -531,9 +534,17 @@ class GameEngine {
         _gameState.update {
             it.copy(eventLog = (it.eventLog + event).takeLast(50))
         }
-        
         handleMiss(if (isHost) Player.PLAYER_1 else Player.PLAYER_2)
         return pending.type
+    }
+
+    fun clearDebugData() {
+        _gameState.update {
+            it.copy(
+                lastSwingType = null,
+                lastSwingData = null
+            )
+        }
     }
 
     fun resetGame() {
@@ -547,7 +558,19 @@ class GameEngine {
                 lastSwingType = null,
                 lastSwingData = null,
                 currentPointShots = emptyList(),
-                currentRallyLength = 0
+                currentRallyLength = 0,
+                longestRally = 0
+            )
+        }
+    }
+
+    fun forceGameOver(p1Score: Int, p2Score: Int) {
+        _gameState.update {
+            it.copy(
+                gamePhase = GamePhase.GAME_OVER,
+                player1Score = p1Score,
+                player2Score = p2Score,
+                lastEvent = "Debug Game Over"
             )
         }
     }

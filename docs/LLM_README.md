@@ -10,6 +10,9 @@
 # Sync Project with Gradle Files (only if they have changed)
 .\gradlew --refresh-dependencies
 
+# Test build
+.\gradlew assembleDebug
+
 # Run Test Suite
 .\gradlew :app:testDebugUnitTest --tests "*GameEngineTest"
 

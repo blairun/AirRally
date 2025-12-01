@@ -20,13 +20,17 @@ import androidx.compose.ui.res.stringResource
 import com.air.pong.R
 
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.foundation.border
+import androidx.compose.ui.draw.clip
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.clickable
 
 @Composable
 fun MainMenuScreen(
     viewModel: GameViewModel,
     permissionsManager: PermissionsManager,
     onNavigateToLobby: () -> Unit,
-    onNavigateToSettings: () -> Unit
+    onNavigateToSettings: (com.air.pong.ui.screens.SettingsScreenType) -> Unit
 ) {
     val permissionState by permissionsManager.permissionState.collectAsState()
     val connectionState by viewModel.connectionState.collectAsState()
@@ -81,6 +85,24 @@ fun MainMenuScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
+        val avatarIndex by viewModel.avatarIndex.collectAsState()
+        val avatarResId = com.air.pong.ui.AvatarUtils.avatarResources.getOrElse(avatarIndex) { com.air.pong.ui.AvatarUtils.avatarResources.first() }
+        
+        androidx.compose.foundation.Image(
+            painter = androidx.compose.ui.res.painterResource(id = avatarResId),
+            contentDescription = "User Avatar",
+            contentScale = androidx.compose.ui.layout.ContentScale.Crop,
+            modifier = Modifier
+                .size(120.dp)
+                .padding(bottom = 16.dp)
+                .clip(androidx.compose.foundation.shape.CircleShape)
+                .border(2.dp, MaterialTheme.colorScheme.primary, androidx.compose.foundation.shape.CircleShape)
+                .clickable { 
+                    isNavigatingToSettings = true
+                    onNavigateToSettings(com.air.pong.ui.screens.SettingsScreenType.Appearance) 
+                }
+        )
+
         Text(
             text = stringResource(R.string.app_name),
             style = MaterialTheme.typography.displayLarge
@@ -173,7 +195,7 @@ fun MainMenuScreen(
         OutlinedButton(
             onClick = {
                 isNavigatingToSettings = true
-                onNavigateToSettings()
+                onNavigateToSettings(com.air.pong.ui.screens.SettingsScreenType.Main)
             },
             modifier = Modifier.fillMaxWidth().height(56.dp)
         ) {

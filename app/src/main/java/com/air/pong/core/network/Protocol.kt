@@ -83,6 +83,14 @@ sealed class GameMessage {
      * Sent when a player enters the Lobby screen.
      */
     object PlayerReady : GameMessage()
+
+    /**
+     * Sent to exchange player profile information (name, avatar).
+     */
+    data class PlayerProfile(
+        val name: String,
+        val avatarIndex: Int
+    ) : GameMessage()
 }
 
 
@@ -103,6 +111,7 @@ object MessageType {
     const val PEER_LEFT: Byte = 0x09
     const val REMATCH: Byte = 0x0A
     const val PLAYER_READY: Byte = 0x0B
+    const val PLAYER_PROFILE: Byte = 0x0C
 }
 
 /**

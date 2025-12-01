@@ -31,6 +31,7 @@ object MessageCodec {
             is GameMessage.PeerLeft -> encodeSimple(MessageType.PEER_LEFT)
             is GameMessage.Rematch -> encodeSimple(MessageType.REMATCH)
             is GameMessage.PlayerReady -> encodeSimple(MessageType.PLAYER_READY)
+            is GameMessage.PlayerProfile -> encodePlayerProfile(message)
         }
     }
     
@@ -58,6 +59,7 @@ object MessageCodec {
             MessageType.PEER_LEFT -> GameMessage.PeerLeft
             MessageType.REMATCH -> GameMessage.Rematch
             MessageType.PLAYER_READY -> GameMessage.PlayerReady
+            MessageType.PLAYER_PROFILE -> decodePlayerProfile(payload)
             else -> throw IllegalArgumentException("Unknown message type: 0x${type.toString(16)}")
         }
     }
@@ -114,6 +116,17 @@ object MessageCodec {
         buffer.put(msg.servingPlayer.ordinal.toByte())
         return buffer.array()
     }
+
+    private fun encodePlayerProfile(msg: GameMessage.PlayerProfile): ByteArray {
+        // [Type: 1][NameLength: 4][NameBytes: N][AvatarIndex: 4]
+        val nameBytes = msg.name.toByteArray(Charsets.UTF_8)
+        val buffer = ByteBuffer.allocate(1 + 4 + nameBytes.size + 4).order(ByteOrder.BIG_ENDIAN)
+        buffer.put(MessageType.PLAYER_PROFILE)
+        buffer.putInt(nameBytes.size)
+        buffer.put(nameBytes)
+        buffer.putInt(msg.avatarIndex)
+        return buffer.array()
+    }
     
     // ========== Decoding Functions ==========
     
@@ -157,5 +170,15 @@ object MessageCodec {
         val phase = GamePhase.entries[buffer.get().toInt()]
         val servingPlayer = Player.entries[buffer.get().toInt()]
         return GameMessage.GameStateSync(p1Score, p2Score, phase, servingPlayer)
+    }
+
+    private fun decodePlayerProfile(payload: ByteArray): GameMessage.PlayerProfile {
+        val buffer = ByteBuffer.wrap(payload).order(ByteOrder.BIG_ENDIAN)
+        val nameLength = buffer.int
+        val nameBytes = ByteArray(nameLength)
+        buffer.get(nameBytes)
+        val name = String(nameBytes, Charsets.UTF_8)
+        val avatarIndex = buffer.int
+        return GameMessage.PlayerProfile(name, avatarIndex)
     }
 }

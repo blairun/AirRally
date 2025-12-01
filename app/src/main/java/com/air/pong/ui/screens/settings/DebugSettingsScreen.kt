@@ -7,6 +7,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,15 +30,43 @@ fun DebugSettingsScreen(
     lastSwingData: SwingData?,
     onPlayTestSound: (AudioManager.SoundEvent) -> Unit,
     onShowInfo: (String, String) -> Unit,
-    onEnterDebugGame: () -> Unit
+    onEnterDebugGame: () -> Unit,
+    onEnterDebugEndGame: () -> Unit,
+    onClearDebugData: () -> Unit
 ) {
     val context = LocalContext.current
+
+    DisposableEffect(Unit) {
+        onDispose {
+            onClearDebugData()
+        }
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
             .verticalScroll(rememberScrollState())
     ) {
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text("Game Debug Overlay", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                IconButton(onClick = {
+                    onShowInfo(context.getString(R.string.info_debug_mode_title), context.getString(R.string.info_debug_mode_text))
+                }) {
+                    Icon(Icons.Default.Info, contentDescription = "Info", modifier = Modifier.size(20.dp))
+                }
+            }
+            Switch(
+                checked = isDebugMode,
+                onCheckedChange = onDebugModeChange
+            )
+        }
 
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -58,37 +87,23 @@ fun DebugSettingsScreen(
             )
         }
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+        Spacer(modifier = Modifier.height(16.dp))
+        HorizontalDivider()
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(
+            stringResource(R.string.sensor_hit_test),
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.Bold
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+
+        // Fixed height container for sensor test to prevent layout jumps
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(140.dp),
+            contentAlignment = Alignment.Center
         ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(stringResource(R.string.debug_mode), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-                IconButton(onClick = {
-                    onShowInfo(context.getString(R.string.info_debug_mode_title), context.getString(R.string.info_debug_mode_text))
-                }) {
-                    Icon(Icons.Default.Info, contentDescription = "Info", modifier = Modifier.size(20.dp))
-                }
-            }
-            Switch(
-                checked = isDebugMode,
-                onCheckedChange = onDebugModeChange
-            )
-        }
-
-        if (isDebugMode) {
-
-            Spacer(modifier = Modifier.height(16.dp))
-            HorizontalDivider()
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                stringResource(R.string.sensor_hit_test),
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-
             Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
                 if (lastSwingType != null) {
                     Text(
@@ -124,12 +139,24 @@ fun DebugSettingsScreen(
             }
         }
 
-                Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(8.dp))
+        HorizontalDivider()
+        Spacer(modifier = Modifier.height(24.dp))
+
         Button(
             onClick = onEnterDebugGame,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Enter Debug Game")
+            Text("Open Debug Game")
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Button(
+            onClick = onEnterDebugEndGame,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Open Debug End Game")
         }
     }
 }

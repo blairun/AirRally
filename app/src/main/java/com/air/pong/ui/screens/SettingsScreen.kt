@@ -47,16 +47,20 @@ fun SettingsScreen(
     viewModel: GameViewModel,
     currentTheme: ThemeMode,
     onThemeChange: (ThemeMode) -> Unit,
+
     onNavigateBack: () -> Unit,
-    onNavigateToGame: () -> Unit
+    onNavigateToGame: () -> Unit,
+    onNavigateToGameOver: () -> Unit,
+    initialScreen: SettingsScreenType = SettingsScreenType.Main
 ) {
     val SettingsScreenTypeSaver = Saver<SettingsScreenType, String>(
         save = { it.name },
         restore = { SettingsScreenType.valueOf(it) }
     )
-    var currentScreen by rememberSaveable(stateSaver = SettingsScreenTypeSaver) { mutableStateOf(SettingsScreenType.Main) }
+    var currentScreen by rememberSaveable(stateSaver = SettingsScreenTypeSaver) { mutableStateOf(initialScreen) }
     val gameState by viewModel.gameState.collectAsState()
     val playerName by viewModel.playerName.collectAsState()
+    val avatarIndex by viewModel.avatarIndex.collectAsState()
     val context = LocalContext.current
 
     // Local state for UI before saving
@@ -162,7 +166,9 @@ fun SettingsScreen(
                         currentTheme = currentTheme,
                         onThemeChange = onThemeChange,
                         playerName = playerName,
-                        onPlayerNameChange = { viewModel.updatePlayerName(it) }
+                        onPlayerNameChange = { viewModel.updatePlayerName(it) },
+                        avatarIndex = avatarIndex,
+                        onAvatarChange = { viewModel.updateAvatarIndex(it) }
                     )
                     SettingsScreenType.GameParams -> GameParamsSettingsScreen(
                         flightTime = flightTime,
@@ -206,7 +212,12 @@ fun SettingsScreen(
                         onEnterDebugGame = {
                             viewModel.startDebugGame()
                             onNavigateToGame()
-                        }
+                        },
+                        onEnterDebugEndGame = {
+                            viewModel.startDebugEndGame()
+                            onNavigateToGameOver()
+                        },
+                        onClearDebugData = { viewModel.clearDebugData() }
                     )
                     SettingsScreenType.About -> AboutSettingsScreen()
                 }

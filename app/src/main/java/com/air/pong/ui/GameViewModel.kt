@@ -40,11 +40,17 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
     private val _playerName = kotlinx.coroutines.flow.MutableStateFlow(android.os.Build.MODEL)
     val playerName = _playerName.asStateFlow()
     
+    private val _avatarIndex = kotlinx.coroutines.flow.MutableStateFlow(0)
+    val avatarIndex = _avatarIndex.asStateFlow()
+    
     private val _isOpponentInLobby = kotlinx.coroutines.flow.MutableStateFlow(false)
     val isOpponentInLobby = _isOpponentInLobby.asStateFlow()
     
     private val _connectingEndpointId = kotlinx.coroutines.flow.MutableStateFlow<String?>(null)
     val connectingEndpointId = _connectingEndpointId.asStateFlow()
+    
+    private val _opponentAvatarIndex = kotlinx.coroutines.flow.MutableStateFlow(0)
+    val opponentAvatarIndex = _opponentAvatarIndex.asStateFlow()
     
     var isHost = false
         private set
@@ -69,6 +75,8 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
     val isAutoPlayEnabled = _isAutoPlayEnabled.asStateFlow()
 
     init {
+        com.air.pong.ui.AvatarUtils.initialize(application.applicationContext)
+
         // Load saved settings
         val savedFlightTime = sharedPrefs.getLong("flight_time", 700L)
         var savedDifficulty = sharedPrefs.getInt("difficulty", 400)
@@ -87,6 +95,18 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
         val savedDebugTones = sharedPrefs.getBoolean("debug_tones", false)
         val savedPlayerName = sharedPrefs.getString("player_name", null) ?: fetchDeviceName()
         val savedMinSwingThreshold = sharedPrefs.getFloat("min_swing_threshold", GameEngine.DEFAULT_SWING_THRESHOLD)
+        
+        // Avatar Logic
+        val savedAvatarIndex = sharedPrefs.getInt("avatar_index", -1)
+        val initialAvatarIndex = if (savedAvatarIndex != -1 && savedAvatarIndex in AvatarUtils.avatarResources.indices) {
+            savedAvatarIndex
+        } else {
+            // Random default
+            val random = kotlin.random.Random.nextInt(AvatarUtils.avatarResources.size)
+            sharedPrefs.edit().putInt("avatar_index", random).apply()
+            random
+        }
+        _avatarIndex.value = initialAvatarIndex
 
         _playerName.value = savedPlayerName
 
@@ -625,6 +645,12 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
             }
             is GameMessage.PlayerReady -> {
                 _isOpponentInLobby.value = true
+                // Send my profile when opponent is ready (or when I join)
+                sendMessage(GameMessage.PlayerProfile(playerName.value, _avatarIndex.value))
+            }
+            is GameMessage.PlayerProfile -> {
+                networkAdapter.setConnectedEndpointName(msg.name)
+                _opponentAvatarIndex.value = msg.avatarIndex
             }
             else -> {
                 // Handle other messages
@@ -714,9 +740,22 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
         _playerName.value = name
         sharedPrefs.edit().putString("player_name", name).apply()
     }
+    
+    fun updateAvatarIndex(index: Int) {
+        if (index in AvatarUtils.avatarResources.indices) {
+            _avatarIndex.value = index
+            sharedPrefs.edit().putInt("avatar_index", index).apply()
+            
+            // If connected, sync new avatar
+            if (connectionState.value == com.air.pong.core.network.NetworkAdapter.ConnectionState.CONNECTED) {
+                sendMessage(GameMessage.PlayerProfile(playerName.value, index))
+            }
+        }
+    }
 
     fun notifyInLobby() {
         sendMessage(GameMessage.PlayerReady)
+        sendMessage(GameMessage.PlayerProfile(playerName.value, _avatarIndex.value))
         // If I am host, sync my settings to the guest
         if (isHost) {
             val state = gameState.value
@@ -746,6 +785,10 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
 
     fun playTestSound(event: com.air.pong.audio.AudioManager.SoundEvent) {
         audioManager.play(event, gameEngine.gameState.value.useDebugTones)
+    }
+
+    fun playWinSound() {
+        audioManager.playRandomWinSound(getApplication<Application>().applicationContext)
     }
 
     fun setAutoPlay(enabled: Boolean) {
@@ -778,6 +821,65 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
         networkAdapter.setConnectedEndpointName(null)
     }
 
+    fun startDebugEndGame() {
+        // Ensure we are disconnected from any real peers
+        disconnect()
+        
+        isDebugGameSession = true
+        isHost = true
+        _playerName.value = "Debug Player"
+        networkAdapter.setConnectedEndpointName("Simulated Opponent")
+        
+        simulateRandomEndGame()
+    }
+
+    fun simulateRandomEndGame() {
+        if (!isDebugGameSession) return
+        
+        // Generate random scores where one player has >= 11 and wins by >= 2
+        val winner = if (kotlin.random.Random.nextBoolean()) 1 else 2
+        val loserScore = kotlin.random.Random.nextInt(0, 10)
+        val winnerScore = 11
+        
+        // Occasional deuce scenario
+        val isDeuce = kotlin.random.Random.nextFloat() < 0.3f
+        val finalP1Score: Int
+        val finalP2Score: Int
+        
+        if (isDeuce) {
+             val base = kotlin.random.Random.nextInt(10, 15)
+             if (winner == 1) {
+                 finalP1Score = base + 2
+                 finalP2Score = base
+             } else {
+                 finalP1Score = base
+                 finalP2Score = base + 2
+             }
+        } else {
+            if (winner == 1) {
+                finalP1Score = winnerScore
+                finalP2Score = loserScore
+            } else {
+                finalP1Score = loserScore
+                finalP2Score = winnerScore
+            }
+        }
+        
+        gameEngine.forceGameOver(finalP1Score, finalP2Score)
+        
+        // Play appropriate sound
+        val iWon = (winner == 1) // Since we are always P1 in debug
+        if (iWon) {
+             audioManager.playRandomWinSound(getApplication<Application>().applicationContext)
+        } else {
+             audioManager.play(com.air.pong.audio.AudioManager.SoundEvent.LOSE_POINT, gameEngine.gameState.value.useDebugTones)
+        }
+    }
+
+    fun stopDebugEndGame() {
+        stopDebugGame()
+    }
+
     fun simulateOpponentSwing() {
         if (!isDebugGameSession) return
         simulatedGameEngine.simulateOpponentSwing()
@@ -786,6 +888,10 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
     fun simulateLocalSwing() {
         if (!isDebugGameSession) return
         simulatedGameEngine.simulateLocalSwing()
+    }
+
+    fun clearDebugData() {
+        gameEngine.clearDebugData()
     }
 
 

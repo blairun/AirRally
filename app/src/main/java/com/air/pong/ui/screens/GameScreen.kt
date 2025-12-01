@@ -5,6 +5,7 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -16,9 +17,13 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.border
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -29,6 +34,7 @@ import com.air.pong.core.game.GameEvent
 import com.air.pong.core.game.GamePhase
 import com.air.pong.core.game.SwingType
 import com.air.pong.ui.GameViewModel
+import kotlinx.coroutines.launch
 
 @Composable
 fun GameScreen(
@@ -98,33 +104,22 @@ fun GameScreen(
     ) {
         val minHeight = maxHeight
         
-        // Main Content Layer
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(16.dp)
-                .padding(bottom = 100.dp), // Add padding for the bottom panel
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.SpaceBetween 
-        ) {
-            // Ensure the column takes up at least the full screen height
-            // so SpaceBetween works even when content is small
-            Column(
-                modifier = Modifier.heightIn(min = minHeight - 132.dp), // Subtract padding + bottom panel buffer
-                verticalArrangement = Arrangement.SpaceBetween,
-                horizontalAlignment = Alignment.CenterHorizontally
+        Box(modifier = Modifier.fillMaxSize()) {
+            // Main Content Layer
+            // Score Section (Top)
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.TopCenter)
+                    .padding(top = 16.dp),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                // --- Top Section: Score ---
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 16.dp),
-                    horizontalArrangement = Arrangement.Center, // Center the row content
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
                     val opponentName by viewModel.connectedPlayerName.collectAsState()
+                    val myAvatarIndex by viewModel.avatarIndex.collectAsState()
+                    val opponentAvatarIndex by viewModel.opponentAvatarIndex.collectAsState()
                     
+                    // My Score Column
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier.weight(1f)
@@ -140,11 +135,28 @@ fun GameScreen(
                             color = Color.White,
                             fontWeight = FontWeight.Bold
                         )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        // My Avatar
+                        val myAvatarResId = com.air.pong.ui.AvatarUtils.avatarResources.getOrElse(myAvatarIndex) { com.air.pong.ui.AvatarUtils.avatarResources.first() }
+                        
+                        // Determine My Avatar State
+                        val (myOutlineColor, myAnimation) = getAvatarState(
+                            isMe = true,
+                            gameState = gameState
+                        )
+
+                        AvatarView(
+                            avatarResId = myAvatarResId,
+                            outlineColor = myOutlineColor,
+                            animationType = myAnimation,
+                            modifier = Modifier.size(120.dp)
+                        )
                     }
                     
                     // Small spacer for visual separation between the two weighted columns
                     Spacer(modifier = Modifier.width(16.dp))
                     
+                    // Opponent Score Column
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier.weight(1f)
@@ -162,15 +174,33 @@ fun GameScreen(
                             color = Color.White,
                             fontWeight = FontWeight.Bold
                         )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        // Opponent Avatar
+                        val oppAvatarResId = com.air.pong.ui.AvatarUtils.avatarResources.getOrElse(opponentAvatarIndex) { com.air.pong.ui.AvatarUtils.avatarResources.first() }
+                        
+                        // Determine Opponent Avatar State
+                        val (oppOutlineColor, oppAnimation) = getAvatarState(
+                            isMe = false,
+                            gameState = gameState
+                        )
+
+                        AvatarView(
+                            avatarResId = oppAvatarResId,
+                            outlineColor = oppOutlineColor,
+                            animationType = oppAnimation,
+                            modifier = Modifier.size(120.dp)
+                        )
                     }
                 }
-                
-                // --- Middle Section: Status Message ---
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
+
+            // Status Message (Center)
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.Center),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
                     if (gameState.gamePhase == GamePhase.WAITING_FOR_SERVE) {
                         if (gameState.isMyTurn) {
                             Text(
@@ -267,17 +297,8 @@ fun GameScreen(
                             }
                         }
                     }
-                } else {
-                    Spacer(modifier = Modifier.height(1.dp)) // Placeholder
                 }
-            }
-        }
         
-        // Action Feed Panel (Bottom Sheet)
-        ActionFeedPanel(
-            events = gameState.eventLog,
-            modifier = Modifier.align(Alignment.BottomCenter)
-        )
         
         // Debug Game Controls
         if (viewModel.isDebugGameSession) {
@@ -286,6 +307,13 @@ fun GameScreen(
                 onStopDebug = onStopDebug,
                 modifier = Modifier.align(Alignment.TopCenter).padding(top = 130.dp)
             )
+        }
+        
+        // Action Feed Panel (Bottom Sheet)
+        ActionFeedPanel(
+            events = gameState.eventLog,
+            modifier = Modifier.align(Alignment.BottomCenter)
+        )
         }
     }
 }
@@ -306,7 +334,7 @@ fun DebugGameControls(
             modifier = Modifier.padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text("Debug Controls", color = Color.White, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
+            Text("DEBUG CONTROLS", color = Color.White, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
             Spacer(modifier = Modifier.height(16.dp))
             
             Row(
@@ -345,15 +373,16 @@ fun DebugGameControls(
             
             Spacer(modifier = Modifier.height(16.dp))
             
-            Button(
+            OutlinedButton(
                 onClick = { 
                     viewModel.stopDebugGame() 
                     onStopDebug()
                 },
-                modifier = Modifier.fillMaxWidth(0.5f).height(48.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
+                // modifier = Modifier.fillMaxWidth(0.5f).height(48.dp),
+                colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.White),
+                border = BorderStroke(1.dp, Color.White)
             ) {
-                Text("Stop Game")
+                Text("Return")
             }
         }
     }
@@ -555,4 +584,128 @@ fun getSwingTypeStringId(swingType: SwingType): Int {
         SwingType.MEDIUM_SPIKE -> R.string.swing_medium_spike
         SwingType.HARD_SPIKE -> R.string.swing_hard_spike
     }
+}
+
+enum class AvatarAnimation {
+    NONE,
+    HAPPY_BOUNCE,
+    SAD_SHAKE,
+    SPIN
+}
+
+@Composable
+fun getAvatarState(isMe: Boolean, gameState: com.air.pong.core.game.GameState): Pair<Color, AvatarAnimation> {
+    if (gameState.gamePhase != GamePhase.POINT_SCORED) {
+        return Color.White to AvatarAnimation.NONE
+    }
+
+    // Find the PointScored event to see who won
+    // We look at the last event. If it's PointScored, use it.
+    val lastPointEvent = gameState.eventLog.lastOrNull { it is GameEvent.PointScored } as? GameEvent.PointScored
+    
+    val didIWin = lastPointEvent?.isYou == true
+    
+    return if (isMe) {
+        if (didIWin) {
+            Color(0xFF4CAF50) to AvatarAnimation.HAPPY_BOUNCE // Green, Happy
+        } else {
+            Color(0xFFF44336) to AvatarAnimation.SAD_SHAKE // Red, Sad
+        }
+    } else {
+        // Opponent
+        if (didIWin) {
+            Color(0xFFF44336) to AvatarAnimation.NONE // Red (They lost)
+        } else {
+            Color(0xFF4CAF50) to AvatarAnimation.NONE // Green (They won)
+        }
+    }
+}
+
+@Composable
+fun AvatarView(
+    avatarResId: Int,
+    outlineColor: Color,
+    animationType: AvatarAnimation,
+    modifier: Modifier = Modifier
+) {
+    // Animation State
+    val offsetY = remember { androidx.compose.animation.core.Animatable(0f) }
+    val offsetX = remember { androidx.compose.animation.core.Animatable(0f) }
+    val rotation = remember { androidx.compose.animation.core.Animatable(0f) }
+
+    LaunchedEffect(animationType) {
+        if (animationType == AvatarAnimation.HAPPY_BOUNCE) {
+            // Reset other states
+            rotation.snapTo(0f)
+            offsetX.snapTo(0f)
+            
+            // Happy Bounce: Up and down
+            // Loop indefinitely
+            launch {
+                while (true) {
+                    // Initial jump
+                    offsetY.animateTo(-30f, animationSpec = androidx.compose.animation.core.tween(300, easing = androidx.compose.animation.core.FastOutSlowInEasing))
+                    offsetY.animateTo(0f, animationSpec = androidx.compose.animation.core.tween(300, easing = androidx.compose.animation.core.LinearOutSlowInEasing))
+                    // Second jump
+                    offsetY.animateTo(-20f, animationSpec = androidx.compose.animation.core.tween(250))
+                    offsetY.animateTo(0f, animationSpec = androidx.compose.animation.core.tween(250))
+                     // Third jump
+                    offsetY.animateTo(-10f, animationSpec = androidx.compose.animation.core.tween(200))
+                    offsetY.animateTo(0f, animationSpec = androidx.compose.animation.core.tween(200))
+                    
+                    // Pause between cycles
+                    kotlinx.coroutines.delay(500)
+                }
+            }
+        } else if (animationType == AvatarAnimation.SAD_SHAKE) {
+            // Reset other states
+            rotation.snapTo(0f)
+            offsetY.snapTo(0f)
+            
+            // Sad Shake: Sideways
+            launch {
+                val duration = 50
+                val shakeOffset = 10f
+                // Shake sequence
+                repeat(3) {
+                    offsetX.animateTo(-shakeOffset, animationSpec = androidx.compose.animation.core.tween(duration))
+                    offsetX.animateTo(shakeOffset, animationSpec = androidx.compose.animation.core.tween(duration * 2))
+                }
+                offsetX.animateTo(0f, animationSpec = androidx.compose.animation.core.tween(duration))
+            }
+        } else if (animationType == AvatarAnimation.SPIN) {
+            // Reset other states
+            offsetY.snapTo(0f)
+            offsetX.snapTo(0f)
+            
+            // Spin: Rotate 360 degrees continuously
+            launch {
+                rotation.animateTo(
+                    targetValue = 360f,
+                    animationSpec = androidx.compose.animation.core.infiniteRepeatable(
+                        animation = androidx.compose.animation.core.tween(2000, easing = androidx.compose.animation.core.LinearEasing),
+                        repeatMode = androidx.compose.animation.core.RepeatMode.Restart
+                    )
+                )
+            }
+        } else {
+            // Reset
+            offsetY.snapTo(0f)
+            offsetX.snapTo(0f)
+            rotation.snapTo(0f)
+        }
+    }
+
+    val outlineWidth = 6.dp // Avatar outline
+
+    androidx.compose.foundation.Image(
+        painter = androidx.compose.ui.res.painterResource(id = avatarResId),
+        contentDescription = "Avatar",
+        contentScale = androidx.compose.ui.layout.ContentScale.Crop,
+        modifier = modifier
+            .offset(x = offsetX.value.dp, y = offsetY.value.dp)
+            .rotate(rotation.value)
+            .clip(androidx.compose.foundation.shape.CircleShape)
+            .border(outlineWidth, outlineColor, androidx.compose.foundation.shape.CircleShape)
+    )
 }

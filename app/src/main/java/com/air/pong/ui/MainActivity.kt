@@ -112,13 +112,28 @@ class MainActivity : ComponentActivity() {
                                 onNavigateToLobby = {
                                     navController.navigate("lobby")
                                 },
-                                onNavigateToSettings = {
-                                    navController.navigate("settings")
+                                onNavigateToSettings = { screenType ->
+                                    navController.navigate("settings?screen=${screenType.name}")
                                 }
                             )
                         }
                         
-                        composable("settings") {
+                        composable(
+                            route = "settings?screen={screen}",
+                            arguments = listOf(
+                                androidx.navigation.navArgument("screen") {
+                                    type = androidx.navigation.NavType.StringType
+                                    defaultValue = com.air.pong.ui.screens.SettingsScreenType.Main.name
+                                }
+                            )
+                        ) { backStackEntry ->
+                            val screenName = backStackEntry.arguments?.getString("screen")
+                            val initialScreen = try {
+                                com.air.pong.ui.screens.SettingsScreenType.valueOf(screenName ?: com.air.pong.ui.screens.SettingsScreenType.Main.name)
+                            } catch (e: IllegalArgumentException) {
+                                com.air.pong.ui.screens.SettingsScreenType.Main
+                            }
+
                             com.air.pong.ui.screens.SettingsScreen(
                                 viewModel = viewModel,
                                 currentTheme = themeMode,
@@ -131,7 +146,11 @@ class MainActivity : ComponentActivity() {
                                 },
                                 onNavigateToGame = {
                                     navController.navigate("game")
-                                }
+                                },
+                                onNavigateToGameOver = {
+                                    navController.navigate("game_over")
+                                },
+                                initialScreen = initialScreen
                             )
                         }
                         
@@ -180,6 +199,9 @@ class MainActivity : ComponentActivity() {
                                 viewModel = viewModel,
                                 onNavigateToSettings = {
                                     navController.navigate("settings")
+                                },
+                                onReturnToDebug = {
+                                    navController.popBackStack()
                                 },
                                 onReturnToMenu = {
                                     viewModel.disconnect()
