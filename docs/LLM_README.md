@@ -12,7 +12,11 @@ This project is a two-player Bluetooth table tennis game.
     -   `network/`: Bluetooth implementation (Nearby Connections).
     -   `sensors/`: Raw sensor data processing.
     -   `game/`: The State Machine. **Source of Truth**.
+        -   `GameEngine.kt`: Main state machine.
+        -   `SwingExtensions.kt`: Swing physics and classification logic.
 -   **`app/src/main/java/.../ui`**: The "Face". Android Views/Composables.
+    -   `screens/`: Top-level screens.
+        -   `settings/`: Settings sub-screens (Appearance, Debug, etc.).
     -   Observes `GameState` from `core`.
     -   Sends `UserIntent` (e.g., "Serve Button Pressed") to `core`.
 

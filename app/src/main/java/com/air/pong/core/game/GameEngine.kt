@@ -63,50 +63,20 @@ class GameEngine {
         
         // Apply Window Shrink based on the LAST swing type (the incoming shot)
         // If lastSwingType is null (e.g. first serve), no shrink.
-        val shrinkPercentage = getWindowShrinkPercentage(_gameState.value.lastSwingType)
+        val shrinkPercentage = _gameState.value.lastSwingType?.getWindowShrinkPercentage() ?: 0f
         val shrinkFactor = 1.0f - shrinkPercentage
         
         return (baseWindow * shrinkFactor).roundToLong()
     }
-    
-    private fun getWindowShrinkPercentage(swingType: SwingType?): Float {
-        if (swingType == null) return 0f
-        return when (swingType) {
-            SwingType.SOFT_FLAT -> 0.0f
-            SwingType.MEDIUM_FLAT -> 0.20f
-            SwingType.HARD_FLAT -> 0.35f
-            SwingType.SOFT_LOB -> 0.0f
-            SwingType.MEDIUM_LOB -> 0.0f
-            SwingType.HARD_LOB -> 0.0f
-            SwingType.SOFT_SPIKE -> 0.0f
-            SwingType.MEDIUM_SPIKE -> 0.40f
-            SwingType.HARD_SPIKE -> 0.60f
-        }
-    }
 
     private fun checkRisk(swingType: SwingType): HitResult {
-        val (netRisk, outRisk) = getRiskPercentages(swingType)
+        val (netRisk, outRisk) = swingType.getRiskPercentages()
         val roll = Random.nextInt(100) // 0 to 99
         
         return when {
             roll < netRisk -> HitResult.MISS_NET
             roll < (netRisk + outRisk) -> HitResult.MISS_OUT
             else -> HitResult.HIT
-        }
-    }
-    
-    private fun getRiskPercentages(swingType: SwingType): Pair<Int, Int> {
-        // Returns (NetRisk, OutRisk)
-        return when (swingType) {
-            SwingType.SOFT_FLAT -> 0 to 0
-            SwingType.MEDIUM_FLAT -> 0 to 5
-            SwingType.HARD_FLAT -> 5 to 15
-            SwingType.SOFT_LOB -> 0 to 0
-            SwingType.MEDIUM_LOB -> 0 to 5
-            SwingType.HARD_LOB -> 0 to 20
-            SwingType.SOFT_SPIKE -> 50 to 0
-            SwingType.MEDIUM_SPIKE -> 15 to 5
-            SwingType.HARD_SPIKE -> 30 to 10
         }
     }
 
@@ -164,7 +134,7 @@ class GameEngine {
             return null
         }
 
-        val swingType = classifySwing(force, gravZ)
+        val swingType = classifySwing(force, gravZ, _gameState.value.minSwingThreshold)
         
         // Store raw values for debug
         _gameState.update {
@@ -321,17 +291,7 @@ class GameEngine {
          
          // Adjust flight time based on SwingType
          val baseFlightTime = _gameState.value.flightTime
-         val modifier = when (swingType) {
-             SwingType.SOFT_FLAT -> 1.2f
-             SwingType.MEDIUM_FLAT -> 1.0f
-             SwingType.HARD_FLAT -> 0.8f
-             SwingType.SOFT_LOB -> 1.4f
-             SwingType.MEDIUM_LOB -> 1.5f
-             SwingType.HARD_LOB -> 1.6f
-             SwingType.SOFT_SPIKE -> 0.8f
-             SwingType.MEDIUM_SPIKE -> 0.6f
-             SwingType.HARD_SPIKE -> 0.4f
-         }
+         val modifier = swingType.getFlightTimeModifier()
          
          val actualFlightTime = (baseFlightTime * modifier).toLong()
          val nextArrival = timestamp + actualFlightTime
@@ -574,31 +534,5 @@ class GameEngine {
         
         handleMiss(if (isHost) Player.PLAYER_1 else Player.PLAYER_2)
         return pending.type
-    }
-
-    private fun classifySwing(force: Float, gravZ: Float): SwingType {
-        // Classification based on Gravity Z (Tilt)
-        // Gravity Z > 3.0 -> Screen Tilted Up -> LOB
-        // Gravity Z < -3.0 -> Screen Tilted Down -> SPIKE
-        // Else -> Screen Vertical -> FLAT
-        
-        val type = when {
-            gravZ > 3.0f -> "LOB"
-            gravZ < -3.0f -> "SPIKE"
-            else -> "FLAT"
-        }
-        
-        val minThreshold = _gameState.value.minSwingThreshold
-        val intensity = when {
-            force > (minThreshold + 8.0f) -> "HARD"   // e.g. 12+8 = 20
-            force > (minThreshold + 5.0f) -> "MEDIUM" // e.g. 12+5 = 17
-            else -> "SOFT"
-        }
-        
-        return try {
-            SwingType.valueOf("${intensity}_${type}")
-        } catch (e: IllegalArgumentException) {
-            SwingType.MEDIUM_FLAT
-        }
     }
 }
