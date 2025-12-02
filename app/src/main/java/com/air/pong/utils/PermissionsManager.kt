@@ -46,12 +46,21 @@ class PermissionsManager(private val context: Context) {
                     Manifest.permission.BLUETOOTH_CONNECT
                 )
             }
-            else -> { // Android 11 and below
-                // ACCESS_COARSE_LOCATION is required for Bluetooth discovery on older Android versions
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q -> { // Android 10 (API 29) & 11 (API 30)
+                // Android 10+ requires FINE_LOCATION for Bluetooth Scan.
+                // We only request FINE, which implicitly covers COARSE if granted.
                 listOf(
                     Manifest.permission.BLUETOOTH,
                     Manifest.permission.BLUETOOTH_ADMIN,
-                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                )
+            }
+            else -> { // Android 9 (API 28) and below
+                // Older versions often only needed COARSE, but FINE covers both.
+                // However, some devices explicitly demand COARSE.
+                listOf(
+                    Manifest.permission.BLUETOOTH,
+                    Manifest.permission.BLUETOOTH_ADMIN,
                     Manifest.permission.ACCESS_COARSE_LOCATION
                 )
             }
