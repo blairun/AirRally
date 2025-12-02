@@ -18,5 +18,6 @@ AirRally is a motion-controlled table tennis game that turns your Android phone 
 
 ## License
 
-MIT License
+Creative Commons Attribution-NonCommercial 4.0 International License
+[CC BY-NC 4.0](http://creativecommons.org/licenses/by-nc/4.0/)
 
