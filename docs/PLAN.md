@@ -236,7 +236,7 @@ SensorProvider → GameViewModel → GameEngine
 #### [NEW] [LobbyScreen.kt](../app/src/main/java/com/air/pong/ui/screens/LobbyScreen.kt)
 
 **Components**:
-- "Connected to: [opponent name]" display
+- "Connected to: [opponent name]" display with Avatars (Local & Opponent)
 - Settings display (host can adjust, client sees read-only)
 - "Start Game" button (host only)
 - "Leave" button
