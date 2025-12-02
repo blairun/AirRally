@@ -699,9 +699,19 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
         // Stop sensors to save battery
         sensorProvider.stopListening()
 
-        if (gameState.value.gamePhase == GamePhase.RALLY || gameState.value.gamePhase == GamePhase.WAITING_FOR_SERVE) {
+        val phase = gameState.value.gamePhase
+        if (phase == GamePhase.RALLY || phase == GamePhase.WAITING_FOR_SERVE) {
             gameEngine.onPause()
             sendMessage(GameMessage.Pause)
+        }
+        
+        // Stop Advertising/Discovery if we are just in the lobby (not connected yet)
+        // This prevents the "ghost lobby" issue where the phone keeps advertising 
+        // even after the user has backgrounded the app.
+        val connState = connectionState.value
+        if (connState == com.air.pong.core.network.NetworkAdapter.ConnectionState.ADVERTISING || 
+            connState == com.air.pong.core.network.NetworkAdapter.ConnectionState.DISCOVERING) {
+            disconnect()
         }
     }
     
