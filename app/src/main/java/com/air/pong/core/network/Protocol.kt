@@ -91,6 +91,11 @@ sealed class GameMessage {
         val name: String,
         val avatarIndex: Int
     ) : GameMessage()
+
+    /**
+     * Sent when a player leaves the Lobby (e.g. to Settings).
+     */
+    object PlayerBusy : GameMessage()
 }
 
 
@@ -112,6 +117,7 @@ object MessageType {
     const val REMATCH: Byte = 0x0A
     const val PLAYER_READY: Byte = 0x0B
     const val PLAYER_PROFILE: Byte = 0x0C
+    const val PLAYER_BUSY: Byte = 0x0D
 }
 
 /**

@@ -9,6 +9,10 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -36,10 +40,19 @@ fun DebugSettingsScreen(
 ) {
     val context = LocalContext.current
 
+    var isReady by remember { mutableStateOf(false) }
+
     DisposableEffect(Unit) {
         onDispose {
             onClearDebugData()
         }
+    }
+    
+    LaunchedEffect(Unit) {
+        onClearDebugData()
+        // Small delay to ensure state propagation if needed, though usually not required if onClearDebugData updates state immediately.
+        // But to be safe and ensure we don't render the old state for one frame:
+        isReady = true
     }
 
     Column(
@@ -102,40 +115,45 @@ fun DebugSettingsScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(140.dp),
-            contentAlignment = Alignment.Center
+                contentAlignment = Alignment.Center
         ) {
-            Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
-                if (lastSwingType != null) {
-                    Text(
-                        text = lastSwingType.name.replace("_", " "),
-                        style = MaterialTheme.typography.headlineMedium,
-                        color = MaterialTheme.colorScheme.primary
-                    )
+            if (isReady) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
+                    if (lastSwingType != null) {
+                        Text(
+                            text = lastSwingType.name.replace("_", " "),
+                            style = MaterialTheme.typography.headlineMedium,
+                            color = MaterialTheme.colorScheme.primary
+                        )
 
-                    lastSwingData?.let { data ->
-                        Spacer(modifier = Modifier.height(4.dp))
-                        Text(stringResource(R.string.force_fmt, data.force), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-                        Text(stringResource(R.string.accel_fmt, data.accelX, data.accelY, data.accelZ), style = MaterialTheme.typography.labelSmall)
-                        Text(stringResource(R.string.gyro_fmt, data.gyroX, data.gyroY, data.gyroZ), style = MaterialTheme.typography.labelSmall)
-                        Text(stringResource(R.string.grav_fmt, data.gravX, data.gravY, data.gravZ), style = MaterialTheme.typography.labelSmall)
+                        lastSwingData?.let { data ->
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(stringResource(R.string.force_fmt, data.force), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                            Text(stringResource(R.string.accel_fmt, data.accelX, data.accelY, data.accelZ), style = MaterialTheme.typography.labelSmall)
+                            Text(stringResource(R.string.gyro_fmt, data.gyroX, data.gyroY, data.gyroZ), style = MaterialTheme.typography.labelSmall)
+                            Text(stringResource(R.string.grav_fmt, data.gravX, data.gravY, data.gravZ), style = MaterialTheme.typography.labelSmall)
 
-                        // Play sound based on force for testing
-                        LaunchedEffect(data) {
-                            val soundEvent = when {
-                                data.force > 20.0f -> AudioManager.SoundEvent.HIT_HARD
-                                data.force > 17.0f -> AudioManager.SoundEvent.HIT_MEDIUM
-                                else -> AudioManager.SoundEvent.HIT_SOFT
+                            // Play sound based on force for testing
+                            LaunchedEffect(data) {
+                                val soundEvent = when {
+                                    data.force > 20.0f -> AudioManager.SoundEvent.HIT_HARD
+                                    data.force > 17.0f -> AudioManager.SoundEvent.HIT_MEDIUM
+                                    else -> AudioManager.SoundEvent.HIT_SOFT
+                                }
+                                onPlayTestSound(soundEvent)
                             }
-                            onPlayTestSound(soundEvent)
                         }
+                    } else {
+                        Text(
+                            text = stringResource(R.string.swing_test_prompt),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
                     }
-                } else {
-                    Text(
-                        text = stringResource(R.string.swing_test_prompt),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
                 }
+            } else {
+                // Loading state or empty while clearing
+                CircularProgressIndicator()
             }
         }
 

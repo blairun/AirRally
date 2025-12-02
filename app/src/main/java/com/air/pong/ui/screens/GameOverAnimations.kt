@@ -35,12 +35,13 @@ data class Particle(
 )
 
 @Composable
+
 fun GameOverBackground(
     iWon: Boolean,
+    isGameFinished: Boolean,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
-    // Load avatar bitmaps once
     // Load avatar bitmaps once, scaled to 64x64 for performance
     val avatarBitmaps = remember(context) {
         AvatarUtils.avatarResources.mapNotNull { resId ->
@@ -75,10 +76,12 @@ fun GameOverBackground(
 
     if (avatarBitmaps.isEmpty()) return
 
-    if (iWon) {
-        WinnerAnimation(avatarBitmaps, modifier)
-    } else {
-        LoserAnimation(avatarBitmaps, modifier)
+    if (isGameFinished) {
+        if (iWon) {
+            WinnerAnimation(avatarBitmaps, modifier)
+        } else {
+            LoserAnimation(avatarBitmaps, modifier)
+        }
     }
 }
 

@@ -43,6 +43,11 @@ fun GameOverScreen(
         }
     }
     
+    // Notify that we are in the lobby (available) when we enter this screen
+    LaunchedEffect(Unit) {
+        viewModel.notifyInLobby()
+    }
+
     val winner = if (gameState.player1Score > gameState.player2Score) Player.PLAYER_1 else Player.PLAYER_2
     val iWon = (viewModel.isHost && winner == Player.PLAYER_1) || (!viewModel.isHost && winner == Player.PLAYER_2)
     
@@ -55,11 +60,14 @@ fun GameOverScreen(
         isGameFinished && !iWon -> "OPPONENT"
         else -> "UNKNOWN"
     }
+    
+    val isOpponentInLobby by viewModel.isOpponentInLobby.collectAsState()
 
     Box(modifier = Modifier.fillMaxSize()) {
         // Background Animation
         GameOverBackground(
             iWon = iWon,
+            isGameFinished = isGameFinished,
             modifier = Modifier.fillMaxSize()
         )
 
@@ -112,14 +120,14 @@ fun GameOverScreen(
                 val oppAvatarResId = com.air.pong.ui.AvatarUtils.avatarResources.getOrElse(opponentAvatarIndex) { com.air.pong.ui.AvatarUtils.avatarResources.first() }
 
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    val mySize = if (iWon) 120.dp else 80.dp
-                    val myOutline = if (iWon) Color(0xFF4CAF50) else Color(0xFFF44336)
-                    val myAnim = if (iWon) AvatarAnimation.HAPPY_BOUNCE else AvatarAnimation.SPIN
+                    val mySize = if (iWon && isGameFinished) 120.dp else 80.dp
+                    val myOutline = if (iWon && isGameFinished) Color(0xFF4CAF50) else if (isGameFinished) Color(0xFFF44336) else MaterialTheme.colorScheme.outline
+                    val myAnim = if (iWon && isGameFinished) AvatarAnimation.HAPPY_BOUNCE else if (isGameFinished) AvatarAnimation.SPIN else AvatarAnimation.NONE
                     
                     Box(
                         modifier = Modifier
                             .size(120.dp)
-                            .then(if (iWon) Modifier.clickable { viewModel.playWinSound() } else Modifier),
+                            .then(if (iWon && isGameFinished) Modifier.clickable { viewModel.playWinSound() } else Modifier),
                         contentAlignment = Alignment.Center
                     ) {
                         AvatarView(
@@ -136,9 +144,9 @@ fun GameOverScreen(
                 Spacer(modifier = Modifier.width(48.dp))
 
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    val oppSize = if (!iWon) 120.dp else 80.dp
-                    val oppOutline = if (!iWon) Color(0xFF4CAF50) else Color(0xFFF44336)
-                    val oppAnim = if (!iWon) AvatarAnimation.HAPPY_BOUNCE else AvatarAnimation.SPIN
+                    val oppSize = if (!iWon && isGameFinished) 120.dp else 80.dp
+                    val oppOutline = if (!iWon && isGameFinished) Color(0xFF4CAF50) else if (isGameFinished) Color(0xFFF44336) else MaterialTheme.colorScheme.outline
+                    val oppAnim = if (!iWon && isGameFinished) AvatarAnimation.HAPPY_BOUNCE else if (isGameFinished) AvatarAnimation.SPIN else AvatarAnimation.NONE
 
                     Box(
                         modifier = Modifier.size(120.dp),
@@ -161,15 +169,19 @@ fun GameOverScreen(
             Button(
                 onClick = { viewModel.rematch() },
                 modifier = Modifier.fillMaxWidth().height(56.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primaryContainer, contentColor = MaterialTheme.colorScheme.onPrimaryContainer)
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primaryContainer, contentColor = MaterialTheme.colorScheme.onPrimaryContainer),
+                enabled = isOpponentInLobby
             ) {
-                Text(stringResource(R.string.play_again))
+                Text(if (isOpponentInLobby) stringResource(R.string.play_again) else stringResource(R.string.waiting_for_opponent))
             }
 
             Spacer(modifier = Modifier.height(16.dp))
 
             OutlinedButton(
-                onClick = { onNavigateToSettings() },
+                onClick = { 
+                    viewModel.notifyBusy()
+                    onNavigateToSettings() 
+                },
                 modifier = Modifier.fillMaxWidth().height(56.dp)
             ) {
                 Text(stringResource(R.string.settings))

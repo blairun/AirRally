@@ -621,10 +621,19 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
                         android.util.Log.d("GameViewModel", "Checking for Game Over. Phase: $currentPhase")
                         
                         if (currentPhase == GamePhase.GAME_OVER) {
-                            android.util.Log.d("GameViewModel", "Game Over detected! Scheduling winner sound.")
-                            kotlinx.coroutines.delay(1500) // Additional delay for winner sound (wait for screen transition)
-                            android.util.Log.d("GameViewModel", "Playing winner sound now.")
-                            audioManager.playRandomWinSound(getApplication<Application>().applicationContext)
+                            // Only play winner sound if the game actually finished (score limit reached)
+                            // This prevents sound from playing on forfeit/back button
+                            val state = gameEngine.gameState.value
+                            val p1 = state.player1Score
+                            val p2 = state.player2Score
+                            val isFinished = (p1 >= 11 || p2 >= 11) && kotlin.math.abs(p1 - p2) >= 2
+                            
+                            if (isFinished) {
+                                android.util.Log.d("GameViewModel", "Game Over detected! Scheduling winner sound.")
+                                kotlinx.coroutines.delay(1500) // Additional delay for winner sound (wait for screen transition)
+                                android.util.Log.d("GameViewModel", "Playing winner sound now.")
+                                audioManager.playRandomWinSound(getApplication<Application>().applicationContext)
+                            }
                         }
                     }
                 }
@@ -651,6 +660,9 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
             is GameMessage.PlayerProfile -> {
                 networkAdapter.setConnectedEndpointName(msg.name)
                 _opponentAvatarIndex.value = msg.avatarIndex
+            }
+            is GameMessage.PlayerBusy -> {
+                _isOpponentInLobby.value = false
             }
             else -> {
                 // Handle other messages
@@ -773,6 +785,13 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+    fun notifyBusy() {
+        sendMessage(GameMessage.PlayerBusy)
+        // We don't change our local state, but we tell the opponent we are busy
+    }
+
+
+
     override fun onCleared() {
         super.onCleared()
         viewModelScope.launch {
@@ -813,7 +832,9 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
         isDebugGameSession = true
         isHost = true
         gameEngine.setLocalPlayer(true)
-        _playerName.value = "Debug Player"
+        gameEngine.setLocalPlayer(true)
+        // _playerName.value = "Debug Player" // Removed to preserve original name
+        _isOpponentInLobby.value = true
         _isOpponentInLobby.value = true
         // Mock opponent name
         networkAdapter.setConnectedEndpointName("Simulated Opponent")
@@ -837,7 +858,10 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
         
         isDebugGameSession = true
         isHost = true
-        _playerName.value = "Debug Player"
+        isDebugGameSession = true
+        isHost = true
+        // _playerName.value = "Debug Player" // Removed to preserve original name
+        networkAdapter.setConnectedEndpointName("Simulated Opponent")
         networkAdapter.setConnectedEndpointName("Simulated Opponent")
         
         simulateRandomEndGame()

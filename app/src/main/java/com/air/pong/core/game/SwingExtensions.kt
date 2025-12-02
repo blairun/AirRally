@@ -52,8 +52,8 @@ fun classifySwing(force: Float, gravZ: Float, minThreshold: Float): SwingType {
     }
     
     val intensity = when {
-        force > (minThreshold + 8.0f) -> "HARD"   // e.g. 12+8 = 20
-        force > (minThreshold + 5.0f) -> "MEDIUM" // e.g. 12+5 = 17
+        force > (minThreshold + 30.0f) -> "HARD"   // e.g. 14+30 = 44
+        force > (minThreshold + 9.0f) -> "MEDIUM" // e.g. 14+9 = 23
         else -> "SOFT"
     }
     
@@ -69,10 +69,10 @@ fun classifySwing(force: Float, gravZ: Float, minThreshold: Float): SwingType {
  */
 fun SwingType.getFlightTimeModifier(): Float {
     return when (this) {
-        SwingType.SOFT_FLAT -> 1.2f
+        SwingType.SOFT_FLAT -> 1.3f
         SwingType.MEDIUM_FLAT -> 1.0f
-        SwingType.HARD_FLAT -> 0.8f
-        SwingType.SOFT_LOB -> 1.4f
+        SwingType.HARD_FLAT -> 0.7f
+        SwingType.SOFT_LOB -> 1.5f
         SwingType.MEDIUM_LOB -> 1.5f
         SwingType.HARD_LOB -> 1.6f
         SwingType.SOFT_SPIKE -> 0.8f

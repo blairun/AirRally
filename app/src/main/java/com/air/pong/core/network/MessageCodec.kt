@@ -32,6 +32,7 @@ object MessageCodec {
             is GameMessage.Rematch -> encodeSimple(MessageType.REMATCH)
             is GameMessage.PlayerReady -> encodeSimple(MessageType.PLAYER_READY)
             is GameMessage.PlayerProfile -> encodePlayerProfile(message)
+            is GameMessage.PlayerBusy -> encodeSimple(MessageType.PLAYER_BUSY)
         }
     }
     
@@ -60,6 +61,7 @@ object MessageCodec {
             MessageType.REMATCH -> GameMessage.Rematch
             MessageType.PLAYER_READY -> GameMessage.PlayerReady
             MessageType.PLAYER_PROFILE -> decodePlayerProfile(payload)
+            MessageType.PLAYER_BUSY -> GameMessage.PlayerBusy
             else -> throw IllegalArgumentException("Unknown message type: 0x${type.toString(16)}")
         }
     }
