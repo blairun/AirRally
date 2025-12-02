@@ -42,6 +42,13 @@ class AccelerometerSensorProvider(context: Context) : SensorProvider {
     private var lastGravY = 0f
     private var lastGravZ = 0f
 
+    // Peak Detection State
+    private val PEAK_WINDOW_MS = 70L
+    private var isCollectingPeak = false
+    private var peakStartTime = 0L
+    private var peakMagnitude = 0f
+    private var pendingPeakEvent: SwingEvent? = null
+
     private val sensorListener = object : SensorEventListener {
         override fun onSensorChanged(event: SensorEvent?) {
             event?.let {
@@ -52,13 +59,55 @@ class AccelerometerSensorProvider(context: Context) : SensorProvider {
                     
                     // Calculate magnitude of acceleration vector
                     val magnitude = sqrt(x*x + y*y + z*z)
-                    
-                    if (magnitude > swingThreshold) {
-                        val now = System.currentTimeMillis()
-                        if (now - lastSwingTime > DEBOUNCE_MS) {
+                    val now = System.currentTimeMillis()
+
+                    if (isCollectingPeak) {
+                        // We are in the peak collection window
+                        if (now - peakStartTime < PEAK_WINDOW_MS) {
+                            // Still collecting, check for new peak
+                            if (magnitude > peakMagnitude) {
+                                peakMagnitude = magnitude
+                                // Update the pending event with the new peak data
+                                // IMPORTANT: Use peakStartTime as the timestamp to compensate for the detection delay.
+                                // This ensures the game calculates flight time from the START of the swing,
+                                // effectively "pulling back" the bounce sound by ~70ms.
+                                pendingPeakEvent = SwingEvent(peakStartTime, magnitude, x, y, z, lastGyroX, lastGyroY, lastGyroZ, lastGravX, lastGravY, lastGravZ)
+                                
+                                // EARLY EXIT OPTIMIZATION:
+                                // If the force is already "Hard" (> 44.0), we don't need to wait for the window to finish.
+                                // We can emit immediately to reduce audio latency.
+                                if (peakMagnitude > 44.0f) {
+                                    _swingEvents.tryEmit(pendingPeakEvent!!)
+                                    isCollectingPeak = false
+                                    lastSwingTime = now
+                                    pendingPeakEvent = null
+                                }
+                            }
+                        } else {
+                            // Window expired, emit the peak we found
+                            pendingPeakEvent?.let { peakEvent ->
+                                _swingEvents.tryEmit(peakEvent)
+                            }
+                            
+                            // Reset state and start debounce
+                            isCollectingPeak = false
                             lastSwingTime = now
-                            // Emit the swing event with current gyro and gravity data
-                            _swingEvents.tryEmit(SwingEvent(now, magnitude, x, y, z, lastGyroX, lastGyroY, lastGyroZ, lastGravX, lastGravY, lastGravZ))
+                            pendingPeakEvent = null
+                            
+                            // NOTE: We do not process the current sample as a new swing because we just finished one.
+                            // The debounce (lastSwingTime = now) handles this.
+                        }
+                    } else {
+                        // Not collecting, check for trigger
+                        if (magnitude > swingThreshold) {
+                            if (now - lastSwingTime > DEBOUNCE_MS) {
+                                // Start collecting peak
+                                isCollectingPeak = true
+                                peakStartTime = now
+                                peakMagnitude = magnitude
+                                // Use peakStartTime here as well
+                                pendingPeakEvent = SwingEvent(peakStartTime, magnitude, x, y, z, lastGyroX, lastGyroY, lastGyroZ, lastGravX, lastGravY, lastGravZ)
+                            }
                         }
                     }
                 } else if (it.sensor.type == Sensor.TYPE_GYROSCOPE) {
