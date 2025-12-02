@@ -12,7 +12,7 @@ fun SwingType.getWindowShrinkPercentage(): Float {
         SwingType.SOFT_LOB -> 0.0f
         SwingType.MEDIUM_LOB -> 0.0f
         SwingType.HARD_LOB -> 0.0f
-        SwingType.SOFT_SPIKE -> 0.0f
+        SwingType.SOFT_SPIKE -> 0.20f
         SwingType.MEDIUM_SPIKE -> 0.40f
         SwingType.HARD_SPIKE -> 0.60f
     }
@@ -25,14 +25,14 @@ fun SwingType.getWindowShrinkPercentage(): Float {
 fun SwingType.getRiskPercentages(): Pair<Int, Int> {
     return when (this) {
         SwingType.SOFT_FLAT -> 0 to 0
-        SwingType.MEDIUM_FLAT -> 0 to 5
-        SwingType.HARD_FLAT -> 5 to 15
+        SwingType.MEDIUM_FLAT -> 0 to 2
+        SwingType.HARD_FLAT -> 5 to 10
         SwingType.SOFT_LOB -> 0 to 0
         SwingType.MEDIUM_LOB -> 0 to 5
-        SwingType.HARD_LOB -> 0 to 20
-        SwingType.SOFT_SPIKE -> 50 to 0
+        SwingType.HARD_LOB -> 0 to 15
+        SwingType.SOFT_SPIKE -> 10 to 0
         SwingType.MEDIUM_SPIKE -> 15 to 5
-        SwingType.HARD_SPIKE -> 30 to 10
+        SwingType.HARD_SPIKE -> 20 to 10
     }
 }
 

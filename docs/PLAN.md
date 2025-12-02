@@ -418,14 +418,14 @@ Show on first app launch:
 | Swing Type | Description | Flight Time Modifier | Net Risk | Out Risk | Window Shrink |
 |---|---|---|---|---|---|---|
 | **SOFT_FLAT** | Gentle push. | 1.2x (Slower) | 0% | 0% | 0% |
-| **MEDIUM_FLAT** | Standard hit. | 1.0x (Normal) | 0% | 5% | 20% |
-| **HARD_FLAT** | Aggressive drive. | 0.8x (Fast) | 5% | 15% | 35% |
+| **MEDIUM_FLAT** | Standard hit. | 1.0x (Normal) | 0% | 2% | 20% |
+| **HARD_FLAT** | Aggressive drive. | 0.8x (Fast) | 5% | 10% | 35% |
 | **SOFT_LOB** | Low lob. | 1.4x (Slow) | 0% | 0% | 0% |
 | **MEDIUM_LOB** | Standard lob. | 1.5x (Slower) | 0% | 5% | 0% |
-| **HARD_LOB** | High lob. | 1.6x (Slowest) | 0% | 20% | 0% |
-| **SOFT_SPIKE** | Weak spike. | 0.8x (Fast) | 50% | 0% | 0% |
+| **HARD_LOB** | High lob. | 1.6x (Slowest) | 0% | 15% | 0% |
+| **SOFT_SPIKE** | Weak spike. | 0.8x (Fast) | 10% | 0% | 20% |
 | **MEDIUM_SPIKE** | Controlled smash. | 0.6x (Faster) | 15% | 5% | 40% |
-| **HARD_SPIKE** | Full power smash. | 0.4x (Fastest) | 30% | 10% | 60% |
+| **HARD_SPIKE** | Full power smash. | 0.4x (Fastest) | 20% | 10% | 60% |
 
 ### Risk & Difficulty Logic
 

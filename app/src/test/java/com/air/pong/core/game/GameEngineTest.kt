@@ -189,20 +189,20 @@ class GameEngineTest {
         gameEngine.processSwing(1000L, 10f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f)
         assertEquals(SwingType.SOFT_FLAT, gameEngine.gameState.value.lastSwingType)
         
-        // 2. MEDIUM FLAT (Force=22, GravZ=0)
-        gameEngine.processSwing(2000L, 22f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f)
+        // 2. MEDIUM FLAT (Force=25, GravZ=0)
+        gameEngine.processSwing(2000L, 25f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f)
         assertEquals(SwingType.MEDIUM_FLAT, gameEngine.gameState.value.lastSwingType)
         
-        // 3. HARD FLAT (Force=26, GravZ=0)
-        gameEngine.processSwing(3000L, 26f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f)
+        // 3. HARD FLAT (Force=45, GravZ=0)
+        gameEngine.processSwing(3000L, 45f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f)
         assertEquals(SwingType.HARD_FLAT, gameEngine.gameState.value.lastSwingType)
         
         // 4. SOFT LOB (Force=10, GravZ=4.0)
         gameEngine.processSwing(4000L, 10f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 4.0f)
         assertEquals(SwingType.SOFT_LOB, gameEngine.gameState.value.lastSwingType)
         
-        // 5. HARD SPIKE (Force=26, GravZ=-4.0)
-        gameEngine.processSwing(5000L, 26f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, -4.0f)
+        // 5. HARD SPIKE (Force=45, GravZ=-4.0)
+        gameEngine.processSwing(5000L, 45f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, -4.0f)
         assertEquals(SwingType.HARD_SPIKE, gameEngine.gameState.value.lastSwingType)
     }
 
@@ -216,9 +216,9 @@ class GameEngineTest {
         gameEngine.onOpponentHit(0L, SwingType.MEDIUM_FLAT.ordinal)
         assertEquals((baseFlightTime * 1.0f).toLong(), gameEngine.gameState.value.ballArrivalTimestamp)
         
-        // 2. SOFT_LOB (1.4x) -> 1400ms
+        // 2. SOFT_LOB (1.5x) -> 1500ms
         gameEngine.onOpponentHit(0L, SwingType.SOFT_LOB.ordinal)
-        assertEquals((baseFlightTime * 1.4f).toLong(), gameEngine.gameState.value.ballArrivalTimestamp)
+        assertEquals((baseFlightTime * 1.5f).toLong(), gameEngine.gameState.value.ballArrivalTimestamp)
         
         // 3. HARD_SPIKE (0.4x) -> 400ms
         gameEngine.onOpponentHit(0L, SwingType.HARD_SPIKE.ordinal)
@@ -243,6 +243,10 @@ class GameEngineTest {
         // 3. Incoming HARD_SPIKE (60% shrink) -> 200ms
         gameEngine.onOpponentHit(0L, SwingType.HARD_SPIKE.ordinal)
         assertEquals((baseWindow * 0.4f).toLong(), gameEngine.getHitWindow())
+
+        // 4. Incoming SOFT_SPIKE (20% shrink) -> 400ms
+        gameEngine.onOpponentHit(0L, SwingType.SOFT_SPIKE.ordinal)
+        assertEquals((baseWindow * 0.8f).toLong(), gameEngine.getHitWindow())
     }
 
     @Test
@@ -274,7 +278,7 @@ class GameEngineTest {
             engine.startGame()
             
             // Use a valid timestamp > 500ms
-            val result = engine.processSwing(1000L, 25f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, -4.0f)
+            val result = engine.processSwing(1000L, 45f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, -4.0f)
             
             assertNotNull("Swing was ignored (returned null)", result)
             
@@ -298,7 +302,7 @@ class GameEngineTest {
         // Run a large number of simulations to verify probabilities
         val iterations = 10000
         
-        // 1. MEDIUM_FLAT: 0% Net, 5% Out
+        // 1. MEDIUM_FLAT: 0% Net, 2% Out
         var mediumFlatNet = 0
         var mediumFlatOut = 0
         
@@ -306,8 +310,8 @@ class GameEngineTest {
             val engine = GameEngine()
             engine.setLocalPlayer(true)
             engine.startGame()
-            // Force=22 (Medium), GravZ=0 (Flat)
-            var result = engine.processSwing(1000L, 22f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f)
+            // Force=25 (Medium), GravZ=0 (Flat)
+            var result = engine.processSwing(1000L, 25f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f)
             if (result == HitResult.PENDING) {
                 result = engine.resolvePendingMiss()
             }
@@ -316,10 +320,10 @@ class GameEngineTest {
         }
         
         assertEquals("MEDIUM_FLAT should never hit net", 0, mediumFlatNet)
-        // Expected ~500 (5%). Allow margin of error (400-600)
-        assertTrue("MEDIUM_FLAT Out Rate should be ~5% (actual: $mediumFlatOut)", mediumFlatOut in 400..600)
+        // Expected ~200 (2%). Allow margin of error (100-300)
+        assertTrue("MEDIUM_FLAT Out Rate should be ~2% (actual: $mediumFlatOut)", mediumFlatOut in 100..300)
         
-        // 2. HARD_FLAT: 5% Net, 15% Out
+        // 2. HARD_FLAT: 5% Net, 10% Out
         var hardFlatNet = 0
         var hardFlatOut = 0
         
@@ -327,8 +331,8 @@ class GameEngineTest {
             val engine = GameEngine()
             engine.setLocalPlayer(true)
             engine.startGame()
-            // Force=26 (Hard), GravZ=0 (Flat)
-            var result = engine.processSwing(1000L, 26f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f)
+            // Force=45 (Hard), GravZ=0 (Flat)
+            var result = engine.processSwing(1000L, 45f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f)
             if (result == HitResult.PENDING) {
                 result = engine.resolvePendingMiss()
             }
@@ -338,8 +342,51 @@ class GameEngineTest {
         
         // Expected Net ~500 (5%). Allow 400-600
         assertTrue("HARD_FLAT Net Rate should be ~5% (actual: $hardFlatNet)", hardFlatNet in 400..600)
-        // Expected Out ~1500 (15%). Allow 1350-1650
-        assertTrue("HARD_FLAT Out Rate should be ~15% (actual: $hardFlatOut)", hardFlatOut in 1350..1650)
+        // Expected Out ~1000 (10%). Allow 850-1150
+        assertTrue("HARD_FLAT Out Rate should be ~10% (actual: $hardFlatOut)", hardFlatOut in 850..1150)
+
+        // 3. SOFT_SPIKE: 10% Net, 0% Out
+        var softSpikeNet = 0
+        var softSpikeOut = 0
+        
+        repeat(iterations) {
+            val engine = GameEngine()
+            engine.setLocalPlayer(true)
+            engine.startGame()
+            // Force=10 (Soft), GravZ=-4.0 (Spike)
+            var result = engine.processSwing(1000L, 10f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, -4.0f)
+            if (result == HitResult.PENDING) {
+                result = engine.resolvePendingMiss()
+            }
+            if (result == HitResult.MISS_NET) softSpikeNet++
+            if (result == HitResult.MISS_OUT) softSpikeOut++
+        }
+        
+        // Expected Net ~1000 (10%). Allow 850-1150
+        assertTrue("SOFT_SPIKE Net Rate should be ~10% (actual: $softSpikeNet)", softSpikeNet in 850..1150)
+        assertEquals("SOFT_SPIKE should never hit out", 0, softSpikeOut)
+
+        // 4. HARD_SPIKE: 20% Net, 10% Out
+        var hardSpikeNet = 0
+        var hardSpikeOut = 0
+        
+        repeat(iterations) {
+            val engine = GameEngine()
+            engine.setLocalPlayer(true)
+            engine.startGame()
+            // Force=45 (Hard), GravZ=-4.0 (Spike)
+            var result = engine.processSwing(1000L, 45f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, -4.0f)
+            if (result == HitResult.PENDING) {
+                result = engine.resolvePendingMiss()
+            }
+            if (result == HitResult.MISS_NET) hardSpikeNet++
+            if (result == HitResult.MISS_OUT) hardSpikeOut++
+        }
+        
+        // Expected Net ~2000 (20%). Allow 1800-2200
+        assertTrue("HARD_SPIKE Net Rate should be ~20% (actual: $hardSpikeNet)", hardSpikeNet in 1800..2200)
+        // Expected Out ~1000 (10%). Allow 850-1150
+        assertTrue("HARD_SPIKE Out Rate should be ~10% (actual: $hardSpikeOut)", hardSpikeOut in 850..1150)
     }
     @Test
     fun `test dynamic swing threshold`() {
@@ -352,33 +399,33 @@ class GameEngineTest {
         gameEngine.processSwing(1000L, 11.0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f)
         assertEquals(SwingType.SOFT_FLAT, gameEngine.gameState.value.lastSwingType)
         
-        // 2. MEDIUM (Force=16.0) -> > 10.0 + 5.0 = 15.0
-        gameEngine.processSwing(2000L, 16.0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f)
+        // 2. MEDIUM (Force=20.0) -> > 10.0 + 9.0 = 19.0
+        gameEngine.processSwing(2000L, 20.0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f)
         assertEquals(SwingType.MEDIUM_FLAT, gameEngine.gameState.value.lastSwingType)
         
-        // 3. HARD (Force=19.0) -> > 10.0 + 8.0 = 18.0
-        gameEngine.processSwing(3000L, 19.0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f)
+        // 3. HARD (Force=41.0) -> > 10.0 + 30.0 = 40.0
+        gameEngine.processSwing(3000L, 41.0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f)
         assertEquals(SwingType.HARD_FLAT, gameEngine.gameState.value.lastSwingType)
         
         // Set default threshold (14.0f)
         gameEngine.updateSettings(1000L, 500, false, false, GameEngine.DEFAULT_SWING_THRESHOLD)
 
-        // 4. SOFT (Force=15.0) -> > 14.0 (but < 19.0)
-        gameEngine.processSwing(4000L, 15.0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f)
+        // 4. SOFT (Force=20.0) -> > 14.0 (but < 23.0)
+        gameEngine.processSwing(4000L, 20.0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f)
         assertEquals(SwingType.SOFT_FLAT, gameEngine.gameState.value.lastSwingType)
 
-        // 5. MEDIUM (Force=20.0) -> > 14.0 + 5.0 = 19.0
-        gameEngine.processSwing(5000L, 20.0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f)
+        // 5. MEDIUM (Force=24.0) -> > 14.0 + 9.0 = 23.0
+        gameEngine.processSwing(5000L, 24.0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f)
         assertEquals(SwingType.MEDIUM_FLAT, gameEngine.gameState.value.lastSwingType)
 
-        // 6. HARD (Force=23.0) -> > 14.0 + 8.0 = 22.0
-        gameEngine.processSwing(6000L, 23.0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f)
+        // 6. HARD (Force=45.0) -> > 14.0 + 30.0 = 44.0
+        gameEngine.processSwing(6000L, 45.0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f)
         assertEquals(SwingType.HARD_FLAT, gameEngine.gameState.value.lastSwingType)
 
         // Set high threshold (24.0f) - New Max
         gameEngine.updateSettings(1000L, 500, false, false, 24.0f)
         
-        // 7. SOFT (Force=25.0) -> > 24.0
+        // 7. SOFT (Force=25.0) -> > 24.0 (but < 33.0)
         gameEngine.processSwing(7000L, 25.0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f)
         assertEquals(SwingType.SOFT_FLAT, gameEngine.gameState.value.lastSwingType)
     }
