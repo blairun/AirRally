@@ -3,6 +3,9 @@ package com.air.pong.ui.screens
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.ui.draw.clip
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -63,10 +66,86 @@ fun LobbyScreen(
         
         Spacer(modifier = Modifier.height(32.dp))
         
-        Text(
-            text = stringResource(R.string.connected_to, connectedPlayerName ?: stringResource(R.string.unknown)),
-            style = MaterialTheme.typography.titleMedium
-        )
+        // Avatars Row
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // Local Player
+            val myAvatarIndex by viewModel.avatarIndex.collectAsState()
+            val myName by viewModel.playerName.collectAsState()
+            
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                val avatarResId = com.air.pong.ui.AvatarUtils.avatarResources.getOrElse(myAvatarIndex) { com.air.pong.ui.AvatarUtils.avatarResources.first() }
+                androidx.compose.foundation.Image(
+                    painter = androidx.compose.ui.res.painterResource(id = avatarResId),
+                    contentDescription = "My Avatar",
+                    contentScale = androidx.compose.ui.layout.ContentScale.Crop,
+                    modifier = Modifier
+                        .size(100.dp)
+                        .clip(androidx.compose.foundation.shape.CircleShape)
+                        .border(2.dp, MaterialTheme.colorScheme.primary, androidx.compose.foundation.shape.CircleShape)
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = myName ?: stringResource(R.string.unknown),
+                    style = MaterialTheme.typography.bodyMedium,
+                    textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                )
+            }
+
+            // VS Text
+            Text(
+                text = "VS",
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+
+            // Opponent Player
+            if (isOpponentInLobby) {
+                val opponentAvatarIndex by viewModel.opponentAvatarIndex.collectAsState()
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    val avatarResId = com.air.pong.ui.AvatarUtils.avatarResources.getOrElse(opponentAvatarIndex) { com.air.pong.ui.AvatarUtils.avatarResources.first() }
+                    androidx.compose.foundation.Image(
+                        painter = androidx.compose.ui.res.painterResource(id = avatarResId),
+                        contentDescription = "Opponent Avatar",
+                        contentScale = androidx.compose.ui.layout.ContentScale.Crop,
+                        modifier = Modifier
+                            .size(100.dp)
+                            .clip(androidx.compose.foundation.shape.CircleShape)
+                            .border(2.dp, MaterialTheme.colorScheme.error, androidx.compose.foundation.shape.CircleShape) // Red border for opponent
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = connectedPlayerName ?: stringResource(R.string.unknown),
+                        style = MaterialTheme.typography.bodyMedium,
+                        textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                    )
+                }
+            } else {
+                // Placeholder for opponent
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Box(
+                        modifier = Modifier
+                            .size(100.dp)
+                            .clip(androidx.compose.foundation.shape.CircleShape)
+                            .background(MaterialTheme.colorScheme.surfaceVariant)
+                            .border(2.dp, MaterialTheme.colorScheme.outline, androidx.compose.foundation.shape.CircleShape),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text("?", style = MaterialTheme.typography.headlineLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    }
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = stringResource(R.string.waiting_for_opponent),
+                        style = MaterialTheme.typography.bodyMedium,
+                        textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+        }
         
         Spacer(modifier = Modifier.height(48.dp))
         
@@ -86,7 +165,10 @@ fun LobbyScreen(
         Spacer(modifier = Modifier.height(16.dp))
 
         OutlinedButton(
-            onClick = onNavigateToSettings,
+            onClick = {
+                viewModel.notifyBusy()
+                onNavigateToSettings()
+            },
             modifier = Modifier.fillMaxWidth().height(56.dp)
         ) {
             Text(stringResource(R.string.settings))
