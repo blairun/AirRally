@@ -67,10 +67,10 @@
     <string name="shot_lob">• Bildschirm Hoch = LOB</string>
     <string name="shot_lob_desc">  Langsamer, hoher Bogen.</string>
     <string name="shot_lob_safe">  Sicher, gibt dir Zeit zur Erholung.</string>
-    <string name="shot_spike">• Bildschirm Runter = SCHMETTERBALL</string>
-    <string name="shot_spike_desc">  Schnell &amp; Aggressiv!</string>
-    <string name="shot_spike_risk">  Macht das Trefferfenster des Gegners kürzer, aber</string>
-    <string name="shot_spike_net">  Höhere Chance, das Netz zu treffen oder ins Aus zu gehen.</string>
+    <string name="shot_smash">• Bildschirm Runter = SCHMETTERBALL</string>
+    <string name="shot_smash_desc">  Schnell &amp; Aggressiv!</string>
+    <string name="shot_smash_risk">  Macht das Trefferfenster des Gegners kürzer, aber</string>
+    <string name="shot_smash_net">  Höhere Chance, das Netz zu treffen oder ins Aus zu gehen.</string>
     <string name="use_debug_tones">Debug-Töne verwenden</string>
     <string name="info_debug_tones_title">Debug-Töne</string>
     <string name="info_debug_tones_text">Wenn aktiviert, werden einfache Pieptöne anstelle der Spiel-Soundeffekte abgespielt.</string>
@@ -172,11 +172,41 @@
     <string name="swing_soft_lob">LOB WEICH</string>
     <string name="swing_medium_lob">LOB MITTEL</string>
     <string name="swing_hard_lob">LOB HART</string>
-    <string name="swing_soft_spike">SMASH WEICH</string>
-    <string name="swing_medium_spike">SMASH MITTEL</string>
-    <string name="swing_hard_spike">SMASH HART</string>
+    <string name="swing_soft_smash">SMASH WEICH</string>
+    <string name="swing_medium_smash">SMASH MITTEL</string>
+    <string name="swing_hard_smash">SMASH HART</string>
     <string name="swing_sensitivity_label">Schwungempfindlichkeit: %1$.1f</string>
     <string name="info_sensitivity_title">Schwungempfindlichkeit</string>
     <string name="info_sensitivity_text">Passt die Mindestkraft an, die erforderlich ist, um einen Schwung zu registrieren.\n\nNiedriger = Empfindlicher (Leichter auszulösen)\nHöher = Weniger empfindlich (Schwerer auszulösen)\n\n(Nur lokal)</string>
     <string name="debug_settings">Debug-Einstellungen</string>
+
+    <!-- Debug Controls -->
+    <string name="debug_controls_title">DEBUG-STEUERUNG</string>
+    <string name="debug_simulate_my_hit">Mein Schlag\nsimulieren</string>
+    <string name="debug_auto_play">Auto-Play</string>
+    <string name="debug_simulate_opp_hit">Gegner-Schlag\nsimulieren</string>
+    <string name="debug_return">Zurück</string>
+
+    <!-- Stats Screen -->
+    <string name="stats_title">Spielstatistiken</string>
+    <string name="stats_wins">Siege</string>
+    <string name="stats_losses">Niederlagen</string>
+    <string name="stats_total_hits">Gesamtschläge</string>
+    <string name="stats_longest_rally">Längster Ballwechsel</string>
+    <string name="stats_shot_distribution">Schlagverteilung</string>
+    <string name="stats_filter_all">Alle</string>
+    <string name="stats_filter_won">Gewinnschläge</string>
+    <string name="stats_filter_lost">Verlustschläge</string>
+    <string name="stats_reset_title">Statistiken zurücksetzen</string>
+    <string name="stats_reset_message">Möchten Sie wirklich alle Spielstatistiken zurücksetzen? Dies kann nicht rückgängig gemacht werden.</string>
+    <string name="stats_reset_confirm">Zurücksetzen</string>
+    <string name="stats_reset_cancel">Abbrechen</string>
+
+    <!-- Heatmap Labels -->
+    <string name="heatmap_soft">WEICH</string>
+    <string name="heatmap_med">MITTEL</string>
+    <string name="heatmap_hard">HART</string>
+    <string name="heatmap_lob">LOB</string>
+    <string name="heatmap_flat">FLACH</string>
+    <string name="heatmap_smash">SMASH</string>
 </resources>

@@ -9,6 +9,11 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.Abc
+import androidx.compose.material.icons.filled.AppRegistration
+import androidx.compose.material.icons.filled.AutoFixHigh
+import androidx.compose.material.icons.filled.AutoGraph
+import androidx.compose.material.icons.filled.BugReport
 import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Face
@@ -117,7 +122,7 @@ fun SettingsScreen(
                             SettingsScreenType.Main -> stringResource(R.string.settings)
                             SettingsScreenType.Appearance -> stringResource(R.string.appearance)
                             SettingsScreenType.GameParams -> stringResource(R.string.game_parameters)
-                            SettingsScreenType.Stats -> "Game Stats"
+                            SettingsScreenType.Stats -> stringResource(R.string.stats_title)
                             SettingsScreenType.Help -> stringResource(R.string.how_to_play_safety)
                             SettingsScreenType.Debug -> stringResource(R.string.debug_settings)
                             SettingsScreenType.About -> stringResource(R.string.about_airrally)
@@ -243,27 +248,27 @@ fun SettingsMainScreen(
         )
         SettingsCategoryItem(
             title = stringResource(R.string.game_parameters),
-            icon = Icons.Default.Settings,
+            icon = Icons.Default.AppRegistration,
             onClick = { onNavigate(SettingsScreenType.GameParams) }
         )
         SettingsCategoryItem(
             title = stringResource(R.string.how_to_play_safety),
-            icon = Icons.Default.Info,
+            icon = Icons.Default.Abc,
             onClick = { onNavigate(SettingsScreenType.Help) }
         )
         SettingsCategoryItem(
-            title = "Game Stats",
-            icon = Icons.Default.DateRange,
+            title = stringResource(R.string.stats_title),
+            icon = Icons.Default.AutoGraph,
             onClick = { onNavigate(SettingsScreenType.Stats) }
         )
         SettingsCategoryItem(
             title = stringResource(R.string.debug_settings),
-            icon = Icons.Default.Build,
+            icon = Icons.Default.BugReport,
             onClick = { onNavigate(SettingsScreenType.Debug) }
         )
         SettingsCategoryItem(
             title = stringResource(R.string.about_airrally),
-            icon = Icons.Default.Person,
+            icon = Icons.Default.Info,
             onClick = { onNavigate(SettingsScreenType.About) }
         )
     }
@@ -290,6 +295,12 @@ fun SettingsCategoryItem(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    modifier = Modifier.padding(end = 16.dp),
+                    tint = MaterialTheme.colorScheme.primary
+                )
                 Text(
                     text = title,
                     style = MaterialTheme.typography.titleMedium,

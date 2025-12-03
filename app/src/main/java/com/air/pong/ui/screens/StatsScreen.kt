@@ -93,8 +93,8 @@ fun StatsScreen(
     if (showResetDialog) {
         AlertDialog(
             onDismissRequest = { showResetDialog = false },
-            title = { Text("Reset Stats") },
-            text = { Text("Are you sure you want to reset all game statistics? This cannot be undone.") },
+            title = { Text(stringResource(R.string.stats_reset_title)) },
+            text = { Text(stringResource(R.string.stats_reset_message)) },
             confirmButton = {
                 TextButton(
                     onClick = {
@@ -102,12 +102,12 @@ fun StatsScreen(
                         showResetDialog = false
                     }
                 ) {
-                    Text("Reset")
+                    Text(stringResource(R.string.stats_reset_confirm))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showResetDialog = false }) {
-                    Text("Cancel")
+                    Text(stringResource(R.string.stats_reset_cancel))
                 }
             }
         )
@@ -126,12 +126,12 @@ fun StatsScreen(
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             StatCard(
-                title = "Wins",
+                title = stringResource(R.string.stats_wins),
                 value = "$winCount",
                 modifier = Modifier.weight(1f)
             )
             StatCard(
-                title = "Losses",
+                title = stringResource(R.string.stats_losses),
                 value = "$lossCount",
                 modifier = Modifier.weight(1f)
             )
@@ -145,12 +145,12 @@ fun StatsScreen(
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             StatCard(
-                title = "Total Hits",
+                title = stringResource(R.string.stats_total_hits),
                 value = "$totalHits",
                 modifier = Modifier.weight(1f)
             )
             StatCard(
-                title = "Longest Rally",
+                title = stringResource(R.string.stats_longest_rally),
                 value = "$longestRally",
                 modifier = Modifier.weight(1f)
             )
@@ -160,7 +160,7 @@ fun StatsScreen(
 
         // Heatmap Section
         Text(
-            text = "Shot Distribution",
+            text = stringResource(R.string.stats_shot_distribution),
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold
         )
@@ -171,17 +171,17 @@ fun StatsScreen(
             FilterChip(
                 selected = filter == StatsFilter.ALL,
                 onClick = { filter = StatsFilter.ALL },
-                label = { Text("All") }
+                label = { Text(stringResource(R.string.stats_filter_all)) }
             )
             FilterChip(
                 selected = filter == StatsFilter.WON,
                 onClick = { filter = StatsFilter.WON },
-                label = { Text("winning shots") }
+                label = { Text(stringResource(R.string.stats_filter_won)) }
             )
             FilterChip(
                 selected = filter == StatsFilter.LOST,
                 onClick = { filter = StatsFilter.LOST },
-                label = { Text("losing shots") }
+                label = { Text(stringResource(R.string.stats_filter_lost)) }
             )
         }
         
@@ -194,15 +194,15 @@ fun StatsScreen(
             // Header Row
             Row(modifier = Modifier.fillMaxWidth()) {
                 Spacer(modifier = Modifier.weight(0.8f)) // Corner (smaller weight to give more space to cols)
-                Text("SOFT", modifier = Modifier.weight(1f), fontWeight = FontWeight.Bold, fontSize = 12.sp, textAlign = androidx.compose.ui.text.style.TextAlign.Center)
-                Text("MED", modifier = Modifier.weight(1f), fontWeight = FontWeight.Bold, fontSize = 12.sp, textAlign = androidx.compose.ui.text.style.TextAlign.Center)
-                Text("HARD", modifier = Modifier.weight(1f), fontWeight = FontWeight.Bold, fontSize = 12.sp, textAlign = androidx.compose.ui.text.style.TextAlign.Center)
+                Text(stringResource(R.string.heatmap_soft), modifier = Modifier.weight(1f), fontWeight = FontWeight.Bold, fontSize = 12.sp, textAlign = androidx.compose.ui.text.style.TextAlign.Center)
+                Text(stringResource(R.string.heatmap_med), modifier = Modifier.weight(1f), fontWeight = FontWeight.Bold, fontSize = 12.sp, textAlign = androidx.compose.ui.text.style.TextAlign.Center)
+                Text(stringResource(R.string.heatmap_hard), modifier = Modifier.weight(1f), fontWeight = FontWeight.Bold, fontSize = 12.sp, textAlign = androidx.compose.ui.text.style.TextAlign.Center)
             }
             
             // Rows
-            HeatmapRow("LOB", listOf(SwingType.SOFT_LOB, SwingType.MEDIUM_LOB, SwingType.HARD_LOB), heatmap, maxCount)
-            HeatmapRow("FLAT", listOf(SwingType.SOFT_FLAT, SwingType.MEDIUM_FLAT, SwingType.HARD_FLAT), heatmap, maxCount)
-            HeatmapRow("SMASH", listOf(SwingType.SOFT_SMASH, SwingType.MEDIUM_SMASH, SwingType.HARD_SMASH), heatmap, maxCount)
+            HeatmapRow(stringResource(R.string.heatmap_lob), listOf(SwingType.SOFT_LOB, SwingType.MEDIUM_LOB, SwingType.HARD_LOB), heatmap, maxCount)
+            HeatmapRow(stringResource(R.string.heatmap_flat), listOf(SwingType.SOFT_FLAT, SwingType.MEDIUM_FLAT, SwingType.HARD_FLAT), heatmap, maxCount)
+            HeatmapRow(stringResource(R.string.heatmap_smash), listOf(SwingType.SOFT_SMASH, SwingType.MEDIUM_SMASH, SwingType.HARD_SMASH), heatmap, maxCount)
         }
         
         Spacer(modifier = Modifier.height(32.dp))
@@ -213,7 +213,7 @@ fun StatsScreen(
             colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error),
             modifier = Modifier.align(Alignment.Start)
         ) {
-            Text("Reset")
+            Text(stringResource(R.string.stats_reset_confirm))
         }
     }
 }

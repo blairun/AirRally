@@ -172,11 +172,41 @@
     <string name="swing_soft_lob">GLOBO SUAVE</string>
     <string name="swing_medium_lob">GLOBO MEDIO</string>
     <string name="swing_hard_lob">GLOBO FUERTE</string>
-    <string name="swing_soft_spike">REMATE SUAVE</string>
-    <string name="swing_medium_spike">REMATE MEDIO</string>
-    <string name="swing_hard_spike">REMATE FUERTE</string>
+    <string name="swing_soft_smash">REMATE SUAVE</string>
+    <string name="swing_medium_smash">REMATE MEDIO</string>
+    <string name="swing_hard_smash">REMATE FUERTE</string>
     <string name="swing_sensitivity_label">Sensibilidad del Swing: %1$.1f</string>
     <string name="info_sensitivity_title">Sensibilidad del Swing</string>
     <string name="info_sensitivity_text">Ajusta la fuerza mínima requerida para registrar un swing.\n\nMenor = Más sensible (Más fácil de activar)\nMayor = Menos sensible (Más difícil de activar)\n\n(Solo local)</string>
     <string name="debug_settings">Ajustes de Depuración</string>
+
+    <!-- Debug Controls -->
+    <string name="debug_controls_title">CONTROLES DE DEPURACIÓN</string>
+    <string name="debug_simulate_my_hit">Simular\nMi Golpe</string>
+    <string name="debug_auto_play">Auto-Juego</string>
+    <string name="debug_simulate_opp_hit">Simular\nGolpe Oponente</string>
+    <string name="debug_return">Volver</string>
+
+    <!-- Stats Screen -->
+    <string name="stats_title">Estadísticas del Juego</string>
+    <string name="stats_wins">Victorias</string>
+    <string name="stats_losses">Derrotas</string>
+    <string name="stats_total_hits">Golpes Totales</string>
+    <string name="stats_longest_rally">Peloteo Más Largo</string>
+    <string name="stats_shot_distribution">Distribución de Golpes</string>
+    <string name="stats_filter_all">Todos</string>
+    <string name="stats_filter_won">Golpes ganadores</string>
+    <string name="stats_filter_lost">Golpes perdedores</string>
+    <string name="stats_reset_title">Restablecer Estadísticas</string>
+    <string name="stats_reset_message">¿Estás seguro de que quieres restablecer todas las estadísticas del juego? Esto no se puede deshacer.</string>
+    <string name="stats_reset_confirm">Restablecer</string>
+    <string name="stats_reset_cancel">Cancelar</string>
+
+    <!-- Heatmap Labels -->
+    <string name="heatmap_soft">SUAVE</string>
+    <string name="heatmap_med">MEDIO</string>
+    <string name="heatmap_hard">FUERTE</string>
+    <string name="heatmap_lob">GLOBO</string>
+    <string name="heatmap_flat">PLANO</string>
+    <string name="heatmap_smash">REMATE</string>
 </resources>

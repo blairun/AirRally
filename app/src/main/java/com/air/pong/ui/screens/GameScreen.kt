@@ -334,7 +334,7 @@ fun DebugGameControls(
             modifier = Modifier.padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text("DEBUG CONTROLS", color = Color.White, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
+            Text(stringResource(R.string.debug_controls_title), color = Color.White, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
             Spacer(modifier = Modifier.height(16.dp))
             
             Row(
@@ -348,12 +348,12 @@ fun DebugGameControls(
                     modifier = Modifier.height(48.dp).width(100.dp),
                     contentPadding = PaddingValues(horizontal = 4.dp)
                 ) {
-                    Text("Simulate\nMy Hit", fontSize = 12.sp, textAlign = TextAlign.Center, lineHeight = 14.sp)
+                    Text(stringResource(R.string.debug_simulate_my_hit), fontSize = 12.sp, textAlign = TextAlign.Center, lineHeight = 14.sp)
                 }
 
                 // Auto-Play (Center)
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text("Auto-Play", color = Color.White, style = MaterialTheme.typography.labelSmall)
+                    Text(stringResource(R.string.debug_auto_play), color = Color.White, style = MaterialTheme.typography.labelSmall)
                     Switch(
                         checked = isAutoPlay,
                         onCheckedChange = { viewModel.setAutoPlay(it) },
@@ -367,7 +367,7 @@ fun DebugGameControls(
                     modifier = Modifier.height(48.dp).width(100.dp),
                     contentPadding = PaddingValues(horizontal = 4.dp)
                 ) {
-                    Text("Simulate\nOpp Hit", fontSize = 12.sp, textAlign = TextAlign.Center, lineHeight = 14.sp)
+                    Text(stringResource(R.string.debug_simulate_opp_hit), fontSize = 12.sp, textAlign = TextAlign.Center, lineHeight = 14.sp)
                 }
             }
             
@@ -382,7 +382,7 @@ fun DebugGameControls(
                 colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.White),
                 border = BorderStroke(1.dp, Color.White)
             ) {
-                Text("Return")
+                Text(stringResource(R.string.debug_return))
             }
         }
     }

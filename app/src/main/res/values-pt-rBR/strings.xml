@@ -67,10 +67,10 @@
     <string name="shot_lob">• Tela Para Cima = LOB</string>
     <string name="shot_lob_desc">  Arco alto e lento.</string>
     <string name="shot_lob_safe">  Seguro, te dá tempo para recuperar.</string>
-    <string name="shot_spike">• Tela Para Baixo = CORTADA</string>
-    <string name="shot_spike_desc">  Rápido e Agressivo!</string>
-    <string name="shot_spike_risk">  Diminui a janela de acerto do oponente, mas</string>
-    <string name="shot_spike_net">  Maior chance de acertar a rede ou fora.</string>
+    <string name="shot_smash">• Tela Para Baixo = CORTADA</string>
+    <string name="shot_smash_desc">  Rápido e Agressivo!</string>
+    <string name="shot_smash_risk">  Diminui a janela de acerto do oponente, mas</string>
+    <string name="shot_smash_net">  Maior chance de acertar a rede ou fora.</string>
     <string name="use_debug_tones">Usar Tons de Debug</string>
     <string name="info_debug_tones_title">Tons de Debug</string>
     <string name="info_debug_tones_text">Se ativado, toca tons simples de bip em vez dos efeitos sonoros do jogo.</string>
@@ -172,11 +172,41 @@
     <string name="swing_soft_lob">LOB SUAVE</string>
     <string name="swing_medium_lob">LOB MÉDIO</string>
     <string name="swing_hard_lob">LOB FORTE</string>
-    <string name="swing_soft_spike">CORTADA SUAVE</string>
-    <string name="swing_medium_spike">CORTADA MÉDIA</string>
-    <string name="swing_hard_spike">CORTADA FORTE</string>
+    <string name="swing_soft_smash">CORTADA SUAVE</string>
+    <string name="swing_medium_smash">CORTADA MÉDIA</string>
+    <string name="swing_hard_smash">CORTADA FORTE</string>
     <string name="swing_sensitivity_label">Sensibilidade do Swing: %1$.1f</string>
     <string name="info_sensitivity_title">Sensibilidade do Swing</string>
     <string name="info_sensitivity_text">Ajusta a força mínima necessária para registrar um swing.\n\nMenor = Mais sensível (Mais fácil de acionar)\nMaior = Menos sensível (Mais difícil de acionar)\n\n(Apenas local)</string>
     <string name="debug_settings">Configurações de Depuração</string>
+
+    <!-- Debug Controls -->
+    <string name="debug_controls_title">CONTROLES DE DEBUG</string>
+    <string name="debug_simulate_my_hit">Simular\nMeu Golpe</string>
+    <string name="debug_auto_play">Jogo Automático</string>
+    <string name="debug_simulate_opp_hit">Simular\nGolpe Oponente</string>
+    <string name="debug_return">Voltar</string>
+
+    <!-- Stats Screen -->
+    <string name="stats_title">Estatísticas do Jogo</string>
+    <string name="stats_wins">Vitórias</string>
+    <string name="stats_losses">Derrotas</string>
+    <string name="stats_total_hits">Total de Golpes</string>
+    <string name="stats_longest_rally">Rally Mais Longo</string>
+    <string name="stats_shot_distribution">Distribuição de Golpes</string>
+    <string name="stats_filter_all">Todos</string>
+    <string name="stats_filter_won">Golpes vencedores</string>
+    <string name="stats_filter_lost">Golpes perdedores</string>
+    <string name="stats_reset_title">Redefinir Estatísticas</string>
+    <string name="stats_reset_message">Tem certeza de que deseja redefinir todas as estatísticas do jogo? Isso não pode ser desfeito.</string>
+    <string name="stats_reset_confirm">Redefinir</string>
+    <string name="stats_reset_cancel">Cancelar</string>
+
+    <!-- Heatmap Labels -->
+    <string name="heatmap_soft">SUAVE</string>
+    <string name="heatmap_med">MÉDIO</string>
+    <string name="heatmap_hard">FORTE</string>
+    <string name="heatmap_lob">LOB</string>
+    <string name="heatmap_flat">PLANO</string>
+    <string name="heatmap_smash">CORTADA</string>
 </resources>

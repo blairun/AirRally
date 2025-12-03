@@ -67,10 +67,10 @@
     <string name="shot_lob">• 屏幕朝上 = 高吊球</string>
     <string name="shot_lob_desc">  慢速，高弧线。</string>
     <string name="shot_lob_safe">  安全，给你时间恢复。</string>
-    <string name="shot_spike">• 屏幕朝下 = 扣杀</string>
-    <string name="shot_spike_desc">  快速且具有攻击性！</string>
-    <string name="shot_spike_risk">  缩短对手的击球窗口，但是</string>
-    <string name="shot_spike_net">  更容易触网或出界。</string>
+    <string name="shot_smash">• 屏幕朝下 = 扣杀</string>
+    <string name="shot_smash_desc">  快速且具有攻击性！</string>
+    <string name="shot_smash_risk">  缩短对手的击球窗口，但是</string>
+    <string name="shot_smash_net">  更容易触网或出界。</string>
     <string name="use_debug_tones">使用调试音效</string>
     <string name="info_debug_tones_title">调试音效</string>
     <string name="info_debug_tones_text">如果启用，将播放简单的哔哔声代替游戏音效。</string>
@@ -172,11 +172,41 @@
     <string name="swing_soft_lob">轻高吊</string>
     <string name="swing_medium_lob">中高吊</string>
     <string name="swing_hard_lob">重高吊</string>
-    <string name="swing_soft_spike">轻扣杀</string>
-    <string name="swing_medium_spike">中扣杀</string>
-    <string name="swing_hard_spike">重扣杀</string>
+    <string name="swing_soft_smash">轻扣杀</string>
+    <string name="swing_medium_smash">中扣杀</string>
+    <string name="swing_hard_smash">重扣杀</string>
     <string name="swing_sensitivity_label">挥杆灵敏度: %1$.1f</string>
     <string name="info_sensitivity_title">挥杆灵敏度</string>
     <string name="info_sensitivity_text">调整注册挥杆所需的最小力度。\n\n较低 = 更灵敏（更容易触发）\n较高 = 不太灵敏（较难触发）\n\n（仅限本地）</string>
     <string name="debug_settings">调试设置</string>
+
+    <!-- Debug Controls -->
+    <string name="debug_controls_title">调试控制</string>
+    <string name="debug_simulate_my_hit">模拟\n我的击球</string>
+    <string name="debug_auto_play">自动播放</string>
+    <string name="debug_simulate_opp_hit">模拟\n对手击球</string>
+    <string name="debug_return">返回</string>
+
+    <!-- Stats Screen -->
+    <string name="stats_title">游戏统计</string>
+    <string name="stats_wins">胜利</string>
+    <string name="stats_losses">失败</string>
+    <string name="stats_total_hits">总击球数</string>
+    <string name="stats_longest_rally">最长回合</string>
+    <string name="stats_shot_distribution">击球分布</string>
+    <string name="stats_filter_all">全部</string>
+    <string name="stats_filter_won">制胜球</string>
+    <string name="stats_filter_lost">失误球</string>
+    <string name="stats_reset_title">重置统计</string>
+    <string name="stats_reset_message">您确定要重置所有游戏统计数据吗？此操作无法撤销。</string>
+    <string name="stats_reset_confirm">重置</string>
+    <string name="stats_reset_cancel">取消</string>
+
+    <!-- Heatmap Labels -->
+    <string name="heatmap_soft">轻</string>
+    <string name="heatmap_med">中</string>
+    <string name="heatmap_hard">重</string>
+    <string name="heatmap_lob">高吊</string>
+    <string name="heatmap_flat">平击</string>
+    <string name="heatmap_smash">扣杀</string>
 </resources>

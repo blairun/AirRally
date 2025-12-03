@@ -67,10 +67,10 @@
     <string name="shot_lob">• Écran vers le haut = LOB</string>
     <string name="shot_lob_desc">  Arc lent et haut.</string>
     <string name="shot_lob_safe">  Sûr, vous donne le temps de récupérer.</string>
-    <string name="shot_spike">• Écran vers le bas = SMASH</string>
-    <string name="shot_spike_desc">  Rapide et agressif !</string>
-    <string name="shot_spike_risk">  Rend la fenêtre de frappe de l\'adversaire plus courte, mais</string>
-    <string name="shot_spike_net">  Plus grand risque de toucher le filet ou de sortir.</string>
+    <string name="shot_smash">• Écran vers le bas = SMASH</string>
+    <string name="shot_smash_desc">  Rapide et agressif !</string>
+    <string name="shot_smash_risk">  Rend la fenêtre de frappe de l\'adversaire plus courte, mais</string>
+    <string name="shot_smash_net">  Plus grand risque de toucher le filet ou de sortir.</string>
     <string name="use_debug_tones">Utiliser les tons de débogage</string>
     <string name="info_debug_tones_title">Tons de débogage</string>
     <string name="info_debug_tones_text">Si activé, joue des bips simples au lieu des effets sonores du jeu.</string>
@@ -172,11 +172,41 @@
     <string name="swing_soft_lob">LOB DOUX</string>
     <string name="swing_medium_lob">LOB MOYEN</string>
     <string name="swing_hard_lob">LOB FORT</string>
-    <string name="swing_soft_spike">SMASH DOUX</string>
-    <string name="swing_medium_spike">SMASH MOYEN</string>
-    <string name="swing_hard_spike">SMASH FORT</string>
+    <string name="swing_soft_smash">SMASH DOUX</string>
+    <string name="swing_medium_smash">SMASH MOYEN</string>
+    <string name="swing_hard_smash">SMASH FORT</string>
     <string name="swing_sensitivity_label">Sensibilité du Swing : %1$.1f</string>
     <string name="info_sensitivity_title">Sensibilité du Swing</string>
     <string name="info_sensitivity_text">Ajuste la force minimale requise pour enregistrer un swing.\n\nPlus bas = Plus sensible (Plus facile à déclencher)\nPlus haut = Moins sensible (Plus difficile à déclencher)\n\n(Local uniquement)</string>
     <string name="debug_settings">Paramètres de Débogage</string>
+
+    <!-- Debug Controls -->
+    <string name="debug_controls_title">CONTRÔLES DE DÉBOGAGE</string>
+    <string name="debug_simulate_my_hit">Simuler\nMon Coup</string>
+    <string name="debug_auto_play">Jeu Auto</string>
+    <string name="debug_simulate_opp_hit">Simuler\nCoup Adv.</string>
+    <string name="debug_return">Retour</string>
+
+    <!-- Stats Screen -->
+    <string name="stats_title">Statistiques du Jeu</string>
+    <string name="stats_wins">Victoires</string>
+    <string name="stats_losses">Défaites</string>
+    <string name="stats_total_hits">Total Coups</string>
+    <string name="stats_longest_rally">Échange le plus long</string>
+    <string name="stats_shot_distribution">Distribution des Coups</string>
+    <string name="stats_filter_all">Tous</string>
+    <string name="stats_filter_won">Coups gagnants</string>
+    <string name="stats_filter_lost">Coups perdants</string>
+    <string name="stats_reset_title">Réinitialiser Stats</string>
+    <string name="stats_reset_message">Êtes-vous sûr de vouloir réinitialiser toutes les statistiques du jeu ? Cette action est irréversible.</string>
+    <string name="stats_reset_confirm">Réinitialiser</string>
+    <string name="stats_reset_cancel">Annuler</string>
+
+    <!-- Heatmap Labels -->
+    <string name="heatmap_soft">DOUX</string>
+    <string name="heatmap_med">MOYEN</string>
+    <string name="heatmap_hard">FORT</string>
+    <string name="heatmap_lob">LOB</string>
+    <string name="heatmap_flat">PLAT</string>
+    <string name="heatmap_smash">SMASH</string>
 </resources>

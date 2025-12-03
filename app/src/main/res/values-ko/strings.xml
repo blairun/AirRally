@@ -67,10 +67,10 @@
     <string name="shot_lob">• 화면 위쪽 = 로브</string>
     <string name="shot_lob_desc">  느리고 높은 아치.</string>
     <string name="shot_lob_safe">  안전하며, 회복할 시간을 줍니다.</string>
-    <string name="shot_spike">• 화면 아래쪽 = 스파이크</string>
-    <string name="shot_spike_desc">  빠르고 공격적!</string>
-    <string name="shot_spike_risk">  상대방의 타격 판정을 줄이지만,</string>
-    <string name="shot_spike_net">  네트에 걸리거나 아웃될 확률이 높습니다.</string>
+    <string name="shot_smash">• 화면 아래쪽 = 스파이크</string>
+    <string name="shot_smash_desc">  빠르고 공격적!</string>
+    <string name="shot_smash_risk">  상대방의 타격 판정을 줄이지만,</string>
+    <string name="shot_smash_net">  네트에 걸리거나 아웃될 확률이 높습니다.</string>
     <string name="use_debug_tones">디버그 톤 사용</string>
     <string name="info_debug_tones_title">디버그 톤</string>
     <string name="info_debug_tones_text">활성화하면 게임 효과음 대신 간단한 비프음이 재생됩니다.</string>
@@ -172,11 +172,41 @@
     <string name="swing_soft_lob">소프트 로브</string>
     <string name="swing_medium_lob">미디엄 로브</string>
     <string name="swing_hard_lob">하드 로브</string>
-    <string name="swing_soft_spike">소프트 스파이크</string>
-    <string name="swing_medium_spike">미디엄 스파이크</string>
-    <string name="swing_hard_spike">하드 스파이크</string>
+    <string name="swing_soft_smash">소프트 스파이크</string>
+    <string name="swing_medium_smash">미디엄 스파이크</string>
+    <string name="swing_hard_smash">하드 스파이크</string>
     <string name="swing_sensitivity_label">스윙 감도: %1$.1f</string>
     <string name="info_sensitivity_title">스윙 감도</string>
     <string name="info_sensitivity_text">스윙을 감지하는 데 필요한 최소 힘을 조정합니다.\n\n낮음 = 더 민감함 (트리거하기 쉬움)\n높음 = 덜 민감함 (트리거하기 어려움)\n\n(로컬 전용)</string>
     <string name="debug_settings">디버그 설정</string>
+
+    <!-- Debug Controls -->
+    <string name="debug_controls_title">디버그 제어</string>
+    <string name="debug_simulate_my_hit">내 타격\n시뮬레이션</string>
+    <string name="debug_auto_play">자동 플레이</string>
+    <string name="debug_simulate_opp_hit">상대 타격\n시뮬레이션</string>
+    <string name="debug_return">돌아가기</string>
+
+    <!-- Stats Screen -->
+    <string name="stats_title">게임 통계</string>
+    <string name="stats_wins">승리</string>
+    <string name="stats_losses">패배</string>
+    <string name="stats_total_hits">총 타격 수</string>
+    <string name="stats_longest_rally">최장 랠리</string>
+    <string name="stats_shot_distribution">샷 분포</string>
+    <string name="stats_filter_all">전체</string>
+    <string name="stats_filter_won">승리 샷</string>
+    <string name="stats_filter_lost">패배 샷</string>
+    <string name="stats_reset_title">통계 초기화</string>
+    <string name="stats_reset_message">모든 게임 통계를 초기화하시겠습니까? 이 작업은 취소할 수 없습니다.</string>
+    <string name="stats_reset_confirm">초기화</string>
+    <string name="stats_reset_cancel">취소</string>
+
+    <!-- Heatmap Labels -->
+    <string name="heatmap_soft">소프트</string>
+    <string name="heatmap_med">미디엄</string>
+    <string name="heatmap_hard">하드</string>
+    <string name="heatmap_lob">로브</string>
+    <string name="heatmap_flat">플랫</string>
+    <string name="heatmap_smash">스파이크</string>
 </resources>

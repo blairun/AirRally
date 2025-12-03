@@ -67,10 +67,10 @@
     <string name="shot_lob">• Schermo Su = PALLONETTO</string>
     <string name="shot_lob_desc">  Arco lento e alto.</string>
     <string name="shot_lob_safe">  Sicuro, ti dà tempo per recuperare.</string>
-    <string name="shot_spike">• Schermo Giù = SCHIACCIATA</string>
-    <string name="shot_spike_desc">  Veloce e aggressivo!</string>
-    <string name="shot_spike_risk">  Rende la finestra di colpo dell\'avversario più breve, ma</string>
-    <string name="shot_spike_net">  Maggiore possibilità di colpire la rete o andare fuori.</string>
+    <string name="shot_smash">• Schermo Giù = SCHIACCIATA</string>
+    <string name="shot_smash_desc">  Veloce e aggressivo!</string>
+    <string name="shot_smash_risk">  Rende la finestra di colpo dell\'avversario più breve, ma</string>
+    <string name="shot_smash_net">  Maggiore possibilità di colpire la rete o andare fuori.</string>
     <string name="use_debug_tones">Usa toni di debug</string>
     <string name="info_debug_tones_title">Toni di debug</string>
     <string name="info_debug_tones_text">Se abilitato, riproduce semplici segnali acustici invece degli effetti sonori del gioco.</string>
@@ -172,11 +172,41 @@
     <string name="swing_soft_lob">PALLONETTO LEGGERO</string>
     <string name="swing_medium_lob">PALLONETTO MEDIO</string>
     <string name="swing_hard_lob">PALLONETTO FORTE</string>
-    <string name="swing_soft_spike">SCHIACCIATA LEGGERA</string>
-    <string name="swing_medium_spike">SCHIACCIATA MEDIA</string>
-    <string name="swing_hard_spike">SCHIACCIATA FORTE</string>
+    <string name="swing_soft_smash">SCHIACCIATA LEGGERA</string>
+    <string name="swing_medium_smash">SCHIACCIATA MEDIA</string>
+    <string name="swing_hard_smash">SCHIACCIATA FORTE</string>
     <string name="swing_sensitivity_label">Sensibilità Swing: %1$.1f</string>
     <string name="info_sensitivity_title">Sensibilità Swing</string>
     <string name="info_sensitivity_text">Regola la forza minima richiesta per registrare uno swing.\n\nMinore = Più sensibile (Più facile da attivare)\nMaggiore = Meno sensibile (Più difficile da attivare)\n\n(Solo locale)</string>
     <string name="debug_settings">Impostazioni Debug</string>
+
+    <!-- Debug Controls -->
+    <string name="debug_controls_title">CONTROLLI DEBUG</string>
+    <string name="debug_simulate_my_hit">Simula\nMio Colpo</string>
+    <string name="debug_auto_play">Auto-Play</string>
+    <string name="debug_simulate_opp_hit">Simula\nColpo Avv.</string>
+    <string name="debug_return">Ritorna</string>
+
+    <!-- Stats Screen -->
+    <string name="stats_title">Statistiche Gioco</string>
+    <string name="stats_wins">Vittorie</string>
+    <string name="stats_losses">Sconfitte</string>
+    <string name="stats_total_hits">Colpi Totali</string>
+    <string name="stats_longest_rally">Scambio Più Lungo</string>
+    <string name="stats_shot_distribution">Distribuzione Colpi</string>
+    <string name="stats_filter_all">Tutti</string>
+    <string name="stats_filter_won">Colpi vincenti</string>
+    <string name="stats_filter_lost">Colpi perdenti</string>
+    <string name="stats_reset_title">Resetta Statistiche</string>
+    <string name="stats_reset_message">Sei sicuro di voler resettare tutte le statistiche di gioco? Questa azione non può essere annullata.</string>
+    <string name="stats_reset_confirm">Resetta</string>
+    <string name="stats_reset_cancel">Annulla</string>
+
+    <!-- Heatmap Labels -->
+    <string name="heatmap_soft">MORBIDO</string>
+    <string name="heatmap_med">MEDIO</string>
+    <string name="heatmap_hard">FORTE</string>
+    <string name="heatmap_lob">PALLONETTO</string>
+    <string name="heatmap_flat">PIATTO</string>
+    <string name="heatmap_smash">SCHIACCIATA</string>
 </resources>

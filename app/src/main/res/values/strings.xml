@@ -180,4 +180,33 @@
     <string name="swing_soft_smash">SOFT SMASH</string>
     <string name="swing_medium_smash">MEDIUM SMASH</string>
     <string name="swing_hard_smash">HARD SMASH</string>
+    <!-- Debug Controls -->
+    <string name="debug_controls_title">DEBUG CONTROLS</string>
+    <string name="debug_simulate_my_hit">Simulate\nMy Hit</string>
+    <string name="debug_auto_play">Auto-Play</string>
+    <string name="debug_simulate_opp_hit">Simulate\nOpp Hit</string>
+    <string name="debug_return">Return</string>
+
+    <!-- Stats Screen -->
+    <string name="stats_title">Game Stats</string>
+    <string name="stats_wins">Wins</string>
+    <string name="stats_losses">Losses</string>
+    <string name="stats_total_hits">Total Hits</string>
+    <string name="stats_longest_rally">Longest Rally</string>
+    <string name="stats_shot_distribution">Shot Distribution</string>
+    <string name="stats_filter_all">All</string>
+    <string name="stats_filter_won">winning shots</string>
+    <string name="stats_filter_lost">losing shots</string>
+    <string name="stats_reset_title">Reset Stats</string>
+    <string name="stats_reset_message">Are you sure you want to reset all game statistics? This cannot be undone.</string>
+    <string name="stats_reset_confirm">Reset</string>
+    <string name="stats_reset_cancel">Cancel</string>
+
+    <!-- Heatmap Labels -->
+    <string name="heatmap_soft">SOFT</string>
+    <string name="heatmap_med">MED</string>
+    <string name="heatmap_hard">HARD</string>
+    <string name="heatmap_lob">LOB</string>
+    <string name="heatmap_flat">FLAT</string>
+    <string name="heatmap_smash">SMASH</string>
 </resources>

@@ -67,10 +67,10 @@
     <string name="shot_lob">• Экран Вверх = СВЕЧА</string>
     <string name="shot_lob_desc">  Медленная, высокая дуга.</string>
     <string name="shot_lob_safe">  Безопасно, дает время восстановиться.</string>
-    <string name="shot_spike">• Экран Вниз = ГАШЕНИЕ</string>
-    <string name="shot_spike_desc">  Быстро и Агрессивно!</string>
-    <string name="shot_spike_risk">  Уменьшает окно удара противника, но</string>
-    <string name="shot_spike_net">  Выше шанс попасть в сетку или в аут.</string>
+    <string name="shot_smash">• Экран Вниз = ГАШЕНИЕ</string>
+    <string name="shot_smash_desc">  Быстро и Агрессивно!</string>
+    <string name="shot_smash_risk">  Уменьшает окно удара противника, но</string>
+    <string name="shot_smash_net">  Выше шанс попасть в сетку или в аут.</string>
     <string name="use_debug_tones">Использовать тоны отладки</string>
     <string name="info_debug_tones_title">Тоны отладки</string>
     <string name="info_debug_tones_text">Если включено, воспроизводит простые звуковые сигналы вместо звуковых эффектов игры.</string>
@@ -172,11 +172,41 @@
     <string name="swing_soft_lob">МЯГКАЯ СВЕЧА</string>
     <string name="swing_medium_lob">СРЕДНЯЯ СВЕЧА</string>
     <string name="swing_hard_lob">СИЛЬНАЯ СВЕЧА</string>
-    <string name="swing_soft_spike">МЯГКОЕ ГАШЕНИЕ</string>
-    <string name="swing_medium_spike">СРЕДНЕЕ ГАШЕНИЕ</string>
-    <string name="swing_hard_spike">СИЛЬНОЕ ГАШЕНИЕ</string>
+    <string name="swing_soft_smash">МЯГКОЕ ГАШЕНИЕ</string>
+    <string name="swing_medium_smash">СРЕДНЕЕ ГАШЕНИЕ</string>
+    <string name="swing_hard_smash">СИЛЬНОЕ ГАШЕНИЕ</string>
     <string name="swing_sensitivity_label">Чувствительность взмаха: %1$.1f</string>
     <string name="info_sensitivity_title">Чувствительность взмаха</string>
     <string name="info_sensitivity_text">Регулирует минимальную силу, необходимую для регистрации взмаха.\n\nНиже = Более чувствительно (Легче активировать)\nВыше = Менее чувствительно (Сложнее активировать)\n\n(Только локально)</string>
     <string name="debug_settings">Настройки отладки</string>
+
+    <!-- Debug Controls -->
+    <string name="debug_controls_title">УПРАВЛЕНИЕ ОТЛАДКОЙ</string>
+    <string name="debug_simulate_my_hit">Симуляция\nМоего Удара</string>
+    <string name="debug_auto_play">Авто-Игра</string>
+    <string name="debug_simulate_opp_hit">Симуляция\nУдара Противника</string>
+    <string name="debug_return">Назад</string>
+
+    <!-- Stats Screen -->
+    <string name="stats_title">Статистика Игры</string>
+    <string name="stats_wins">Победы</string>
+    <string name="stats_losses">Поражения</string>
+    <string name="stats_total_hits">Всего Ударов</string>
+    <string name="stats_longest_rally">Самый Длинный Розыгрыш</string>
+    <string name="stats_shot_distribution">Распределение Ударов</string>
+    <string name="stats_filter_all">Все</string>
+    <string name="stats_filter_won">Выигрышные удары</string>
+    <string name="stats_filter_lost">Проигрышные удары</string>
+    <string name="stats_reset_title">Сброс Статистики</string>
+    <string name="stats_reset_message">Вы уверены, что хотите сбросить всю статистику игры? Это действие нельзя отменить.</string>
+    <string name="stats_reset_confirm">Сбросить</string>
+    <string name="stats_reset_cancel">Отмена</string>
+
+    <!-- Heatmap Labels -->
+    <string name="heatmap_soft">МЯГКО</string>
+    <string name="heatmap_med">СРЕДНЕ</string>
+    <string name="heatmap_hard">СИЛЬНО</string>
+    <string name="heatmap_lob">СВЕЧА</string>
+    <string name="heatmap_flat">ПЛОСКО</string>
+    <string name="heatmap_smash">ГАШЕНИЕ</string>
 </resources>
