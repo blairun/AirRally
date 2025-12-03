@@ -1,13 +1,13 @@
 ![AirRally Feature Graphic](docs/images/feature_graphic.png)
 
 
-AirRally is a motion-controlled table tennis game that turns your Android phone into a paddle. Connect with nearby friends over Bluetooth and swing your devices to rally an invisible ball back and forth with each other.
+AirRally is a motion-controlled table tennis game that turns your Android phone into a paddle. Connect with nearby friends over Bluetooth and swing your devices to rally an invisible ball back and forth.
 
 ## Features
 
 *   **Local Multiplayer:** Connect with a friend over Bluetooth to play a 1v1 Ping Pong match.
 *   **Motion Controls:** Use your phone as a paddle. Hit the ball with varied force and direction.
-*   **Sound Effects:** Audio feedback for hits, misses, and wins.
+*   **Effects:** Visual and audio feedback for hits, misses, and wins.
 
 ## Getting Started
 
