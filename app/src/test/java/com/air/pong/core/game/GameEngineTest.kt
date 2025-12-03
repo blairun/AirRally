@@ -182,7 +182,7 @@ class GameEngineTest {
         // Else -> SOFT
         
         // GravZ > 3.0 -> LOB
-        // GravZ < -3.0 -> SPIKE
+        // GravZ < -3.0 -> SMASH
         // Else -> FLAT
         
         // 1. SOFT FLAT (Force=10, GravZ=0)
@@ -197,13 +197,13 @@ class GameEngineTest {
         gameEngine.processSwing(3000L, 45f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f)
         assertEquals(SwingType.HARD_FLAT, gameEngine.gameState.value.lastSwingType)
         
-        // 4. SOFT LOB (Force=10, GravZ=4.0)
-        gameEngine.processSwing(4000L, 10f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 4.0f)
+        // 4. SOFT LOB (Force=10, GravZ=6.0)
+        gameEngine.processSwing(4000L, 10f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 6.0f)
         assertEquals(SwingType.SOFT_LOB, gameEngine.gameState.value.lastSwingType)
         
-        // 5. HARD SPIKE (Force=45, GravZ=-4.0)
-        gameEngine.processSwing(5000L, 45f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, -4.0f)
-        assertEquals(SwingType.HARD_SPIKE, gameEngine.gameState.value.lastSwingType)
+        // 5. HARD SMASH (Force=45, GravZ=-6.0)
+        gameEngine.processSwing(5000L, 45f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, -6.0f)
+        assertEquals(SwingType.HARD_SMASH, gameEngine.gameState.value.lastSwingType)
     }
 
     @Test
@@ -220,8 +220,8 @@ class GameEngineTest {
         gameEngine.onOpponentHit(0L, SwingType.SOFT_LOB.ordinal)
         assertEquals((baseFlightTime * 1.5f).toLong(), gameEngine.gameState.value.ballArrivalTimestamp)
         
-        // 3. HARD_SPIKE (0.4x) -> 400ms
-        gameEngine.onOpponentHit(0L, SwingType.HARD_SPIKE.ordinal)
+        // 3. HARD_SMASH (0.4x) -> 400ms
+        gameEngine.onOpponentHit(0L, SwingType.HARD_SMASH.ordinal)
         assertEquals((baseFlightTime * 0.4f).toLong(), gameEngine.gameState.value.ballArrivalTimestamp)
     }
 
@@ -240,12 +240,12 @@ class GameEngineTest {
         gameEngine.onOpponentHit(0L, SwingType.MEDIUM_FLAT.ordinal)
         assertEquals((baseWindow * 0.8f).toLong(), gameEngine.getHitWindow())
         
-        // 3. Incoming HARD_SPIKE (60% shrink) -> 200ms
-        gameEngine.onOpponentHit(0L, SwingType.HARD_SPIKE.ordinal)
+        // 3. Incoming HARD_SMASH (60% shrink) -> 200ms
+        gameEngine.onOpponentHit(0L, SwingType.HARD_SMASH.ordinal)
         assertEquals((baseWindow * 0.4f).toLong(), gameEngine.getHitWindow())
 
-        // 4. Incoming SOFT_SPIKE (20% shrink) -> 400ms
-        gameEngine.onOpponentHit(0L, SwingType.SOFT_SPIKE.ordinal)
+        // 4. Incoming SOFT_SMASH (20% shrink) -> 400ms
+        gameEngine.onOpponentHit(0L, SwingType.SOFT_SMASH.ordinal)
         assertEquals((baseWindow * 0.8f).toLong(), gameEngine.getHitWindow())
     }
 
@@ -266,8 +266,8 @@ class GameEngineTest {
             assertEquals(HitResult.HIT, result)
         }
         
-        // 2. Risky Shot (HARD_SPIKE) - Should EVENTUALLY fail
-        // HARD_SPIKE: Force=25, GravZ=-4.0
+        // 2. Risky Shot (HARD_SMASH) - Should EVENTUALLY fail
+        // HARD_SMASH: Force=25, GravZ=-4.0
         // Risk: 30% Net, 10% Out -> 40% Fail Rate
         
         var failures = 0
@@ -278,7 +278,7 @@ class GameEngineTest {
             engine.startGame()
             
             // Use a valid timestamp > 500ms
-            val result = engine.processSwing(1000L, 45f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, -4.0f)
+            val result = engine.processSwing(1000L, 45f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, -6.0f)
             
             assertNotNull("Swing was ignored (returned null)", result)
             
@@ -345,48 +345,48 @@ class GameEngineTest {
         // Expected Out ~1000 (10%). Allow 850-1150
         assertTrue("HARD_FLAT Out Rate should be ~10% (actual: $hardFlatOut)", hardFlatOut in 850..1150)
 
-        // 3. SOFT_SPIKE: 10% Net, 0% Out
-        var softSpikeNet = 0
-        var softSpikeOut = 0
+        // 3. SOFT_SMASH: 10% Net, 0% Out
+        var softSmashNet = 0
+        var softSmashOut = 0
         
         repeat(iterations) {
             val engine = GameEngine()
             engine.setLocalPlayer(true)
             engine.startGame()
-            // Force=10 (Soft), GravZ=-4.0 (Spike)
-            var result = engine.processSwing(1000L, 10f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, -4.0f)
+            // Force=10 (Soft), GravZ=-6.0 (Smash)
+            var result = engine.processSwing(1000L, 10f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, -6.0f)
             if (result == HitResult.PENDING) {
                 result = engine.resolvePendingMiss()
             }
-            if (result == HitResult.MISS_NET) softSpikeNet++
-            if (result == HitResult.MISS_OUT) softSpikeOut++
+            if (result == HitResult.MISS_NET) softSmashNet++
+            if (result == HitResult.MISS_OUT) softSmashOut++
         }
         
         // Expected Net ~1000 (10%). Allow 850-1150
-        assertTrue("SOFT_SPIKE Net Rate should be ~10% (actual: $softSpikeNet)", softSpikeNet in 850..1150)
-        assertEquals("SOFT_SPIKE should never hit out", 0, softSpikeOut)
+        assertTrue("SOFT_SMASH Net Rate should be ~10% (actual: $softSmashNet)", softSmashNet in 850..1150)
+        assertEquals("SOFT_SMASH should never hit out", 0, softSmashOut)
 
-        // 4. HARD_SPIKE: 20% Net, 10% Out
-        var hardSpikeNet = 0
-        var hardSpikeOut = 0
+        // 4. HARD_SMASH: 20% Net, 10% Out
+        var hardSmashNet = 0
+        var hardSmashOut = 0
         
         repeat(iterations) {
             val engine = GameEngine()
             engine.setLocalPlayer(true)
             engine.startGame()
-            // Force=45 (Hard), GravZ=-4.0 (Spike)
-            var result = engine.processSwing(1000L, 45f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, -4.0f)
+            // Force=45 (Hard), GravZ=-6.0 (Smash)
+            var result = engine.processSwing(1000L, 45f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, -6.0f)
             if (result == HitResult.PENDING) {
                 result = engine.resolvePendingMiss()
             }
-            if (result == HitResult.MISS_NET) hardSpikeNet++
-            if (result == HitResult.MISS_OUT) hardSpikeOut++
+            if (result == HitResult.MISS_NET) hardSmashNet++
+            if (result == HitResult.MISS_OUT) hardSmashOut++
         }
         
         // Expected Net ~2000 (20%). Allow 1800-2200
-        assertTrue("HARD_SPIKE Net Rate should be ~20% (actual: $hardSpikeNet)", hardSpikeNet in 1800..2200)
+        assertTrue("HARD_SMASH Net Rate should be ~20% (actual: $hardSmashNet)", hardSmashNet in 1800..2200)
         // Expected Out ~1000 (10%). Allow 850-1150
-        assertTrue("HARD_SPIKE Out Rate should be ~10% (actual: $hardSpikeOut)", hardSpikeOut in 850..1150)
+        assertTrue("HARD_SMASH Out Rate should be ~10% (actual: $hardSmashOut)", hardSmashOut in 850..1150)
     }
     @Test
     fun `test dynamic swing threshold`() {

@@ -77,7 +77,13 @@ class AccelerometerSensorProvider(context: Context) : SensorProvider {
                                 // If the force is already "Hard" (> 44.0), we don't need to wait for the window to finish.
                                 // We can emit immediately to reduce audio latency.
                                 if (peakMagnitude > 44.0f) {
-                                    _swingEvents.tryEmit(pendingPeakEvent!!)
+                                    // Use CURRENT gravity values to capture the wrist snap
+                                    val eventToEmit = pendingPeakEvent!!.copy(
+                                        gravX = lastGravX, 
+                                        gravY = lastGravY, 
+                                        gravZ = lastGravZ
+                                    )
+                                    _swingEvents.tryEmit(eventToEmit)
                                     isCollectingPeak = false
                                     lastSwingTime = now
                                     pendingPeakEvent = null
@@ -86,7 +92,13 @@ class AccelerometerSensorProvider(context: Context) : SensorProvider {
                         } else {
                             // Window expired, emit the peak we found
                             pendingPeakEvent?.let { peakEvent ->
-                                _swingEvents.tryEmit(peakEvent)
+                                // Use CURRENT gravity values to capture the wrist snap
+                                val eventToEmit = peakEvent.copy(
+                                    gravX = lastGravX, 
+                                    gravY = lastGravY, 
+                                    gravZ = lastGravZ
+                                )
+                                _swingEvents.tryEmit(eventToEmit)
                             }
                             
                             // Reset state and start debounce
@@ -105,7 +117,7 @@ class AccelerometerSensorProvider(context: Context) : SensorProvider {
                                 isCollectingPeak = true
                                 peakStartTime = now
                                 peakMagnitude = magnitude
-                                // Use peakStartTime here as well
+                                // Use peakStartTime here as well. Gravity will be updated on emit.
                                 pendingPeakEvent = SwingEvent(peakStartTime, magnitude, x, y, z, lastGyroX, lastGyroY, lastGyroZ, lastGravX, lastGravY, lastGravZ)
                             }
                         }

@@ -105,7 +105,7 @@ class SimulatedGameEngine(
             val roll = Random.nextFloat()
             val swingType = when {
                 roll < 0.60f -> SwingType.MEDIUM_FLAT
-                roll < 0.80f -> SwingType.HARD_SPIKE
+                roll < 0.80f -> SwingType.HARD_SMASH
                 else -> SwingType.SOFT_LOB // Or some other lob type
             }
 
@@ -170,7 +170,7 @@ class SimulatedGameEngine(
             val (targetForce, targetGravZ) = when (swingTypeRoll) {
                 0 -> 18.0f to 0.0f // Flat (Medium)
                 1 -> 15.0f to 7.0f // Lob (Soft/Medium)
-                else -> 25.0f to -7.0f // Spike (Hard)
+                else -> 25.0f to -7.0f // Smash (Hard)
             }
             
             // Add some noise

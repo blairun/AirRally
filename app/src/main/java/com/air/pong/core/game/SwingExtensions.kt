@@ -12,9 +12,9 @@ fun SwingType.getWindowShrinkPercentage(): Float {
         SwingType.SOFT_LOB -> 0.0f
         SwingType.MEDIUM_LOB -> 0.0f
         SwingType.HARD_LOB -> 0.0f
-        SwingType.SOFT_SPIKE -> 0.20f
-        SwingType.MEDIUM_SPIKE -> 0.40f
-        SwingType.HARD_SPIKE -> 0.60f
+        SwingType.SOFT_SMASH -> 0.20f
+        SwingType.MEDIUM_SMASH -> 0.40f
+        SwingType.HARD_SMASH -> 0.60f
     }
 }
 
@@ -30,9 +30,9 @@ fun SwingType.getRiskPercentages(): Pair<Int, Int> {
         SwingType.SOFT_LOB -> 0 to 0
         SwingType.MEDIUM_LOB -> 0 to 5
         SwingType.HARD_LOB -> 0 to 15
-        SwingType.SOFT_SPIKE -> 10 to 0
-        SwingType.MEDIUM_SPIKE -> 15 to 5
-        SwingType.HARD_SPIKE -> 20 to 10
+        SwingType.SOFT_SMASH -> 10 to 0
+        SwingType.MEDIUM_SMASH -> 15 to 5
+        SwingType.HARD_SMASH -> 20 to 10
     }
 }
 
@@ -41,13 +41,13 @@ fun SwingType.getRiskPercentages(): Pair<Int, Int> {
  */
 fun classifySwing(force: Float, gravZ: Float, minThreshold: Float): SwingType {
     // Classification based on Gravity Z (Tilt)
-    // Gravity Z > 3.0 -> Screen Tilted Up -> LOB
-    // Gravity Z < -3.0 -> Screen Tilted Down -> SPIKE
+    // Gravity Z > 5.0 -> Screen Tilted Up -> LOB
+    // Gravity Z < -5.0 -> Screen Tilted Down -> SMASH
     // Else -> Screen Vertical -> FLAT
     
     val type = when {
-        gravZ > 3.0f -> "LOB"
-        gravZ < -3.0f -> "SPIKE"
+        gravZ > 5.0f -> "LOB"
+        gravZ < -5.0f -> "SMASH"
         else -> "FLAT"
     }
     
@@ -75,8 +75,8 @@ fun SwingType.getFlightTimeModifier(): Float {
         SwingType.SOFT_LOB -> 1.5f
         SwingType.MEDIUM_LOB -> 1.5f
         SwingType.HARD_LOB -> 1.6f
-        SwingType.SOFT_SPIKE -> 0.8f
-        SwingType.MEDIUM_SPIKE -> 0.6f
-        SwingType.HARD_SPIKE -> 0.4f
+        SwingType.SOFT_SMASH -> 0.8f
+        SwingType.MEDIUM_SMASH -> 0.6f
+        SwingType.HARD_SMASH -> 0.4f
     }
 }
