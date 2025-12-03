@@ -26,7 +26,7 @@ This plan addresses the gaps identified in the current implementation and provid
 - **Safety Dialog**: Warning on launch. [done]
 - **Gameplay Expansion**:
     - Granular State Machine (`BallState`, `SwingType`). [done]
-    - Swing Classification (Flat, Lob, Spike) based on accelerometer. [done]
+    - Swing Classification (Flat, Lob, Smash) based on accelerometer. [done]
     - Event Log & Hit Feedback UI. [done]
     - Hit Testing & Timing Window Settings. [done]
 - **Testing**: Comprehensive unit and integration tests.
@@ -405,10 +405,10 @@ Show on first app launch:
 **Goal**: Enhance depth with granular states and swing types.
 
 **Features**:
-- **Swing Classification**: Detect Flat, Lob, Spike based on X/Y/Z acceleration.
+- **Swing Classification**: Detect Flat, Lob, Smash based on X/Y/Z acceleration.
 - **Ball State**: Track if ball is In Air, Bounced on My Side, or Bounced on Opponent Side.
-- **Variable Flight Time**: Lobs are slower (1.5x), Spikes are faster (0.5x).
-- **Event Log**: Real-time readout of game events (e.g., "Opponent Hit: HARD SPIKE").
+- **Variable Flight Time**: Lobs are slower (1.5x), Smashs are faster (0.5x).
+- **Event Log**: Real-time readout of game events (e.g., "Opponent Hit: HARD SMASH").
 - **Hit Testing**: Settings panel to visualize sensor data and swing type.
 
 ### Component 7.5: Swing Types & Risk
@@ -423,9 +423,9 @@ Show on first app launch:
 | **SOFT_LOB** | Low lob. | 1.4x (Slow) | 0% | 0% | 0% |
 | **MEDIUM_LOB** | Standard lob. | 1.5x (Slower) | 0% | 5% | 0% |
 | **HARD_LOB** | High lob. | 1.6x (Slowest) | 0% | 15% | 0% |
-| **SOFT_SPIKE** | Weak spike. | 0.8x (Fast) | 10% | 0% | 20% |
-| **MEDIUM_SPIKE** | Controlled smash. | 0.6x (Faster) | 15% | 5% | 40% |
-| **HARD_SPIKE** | Full power smash. | 0.4x (Fastest) | 20% | 10% | 60% |
+| **SOFT_SMASH** | Weak smash. | 0.8x (Fast) | 10% | 0% | 20% |
+| **MEDIUM_SMASH** | Controlled smash. | 0.6x (Faster) | 15% | 5% | 40% |
+| **HARD_SMASH** | Full power smash. | 0.4x (Fastest) | 20% | 10% | 60% |
 
 ### Risk & Difficulty Logic
 
@@ -440,7 +440,7 @@ If the shot is valid, the **Receiver's Hit Window** is tightened based on the in
 -   *Formula*: `EffectiveWindow = BaseWindow * (100% - WindowShrink)`
 -   *Example*: If Base Window is ±200ms (Total 400ms):
     -   Incoming `MEDIUM_FLAT` (10% shrink) → Window becomes ±180ms.
-    -   Incoming `HARD_SPIKE` (50% shrink) → Window becomes ±100ms.
+    -   Incoming `HARD_SMASH` (50% shrink) → Window becomes ±100ms.
 This makes aggressive shots significantly harder to return, rewarding the risk taken by the hitter.
 
 ### Component 7.6: Game Flow

@@ -47,7 +47,7 @@ To avoid complexity, we use a deterministic "Time-of-Flight" model.
     -   Monitor Linear Accelerometer.
     -   Trigger: Magnitude > `THRESHOLD_SWING_FORCE` (e.g., 2.0g).
     -   **Classification**:
-        -   **Type**: `FLAT` (Push), `LOB` (Pull/Up), `SPIKE` (Down) based on Z-axis.
+        -   **Type**: `FLAT` (Push), `LOB` (Pull/Up), `SMASH` (Down) based on Z-axis.
         -   **Force**: `SOFT`, `MEDIUM`, `HARD` based on Magnitude.
     -   Debounce: Ignore subsequent swings for 500ms.
 
@@ -57,7 +57,7 @@ To avoid complexity, we use a deterministic "Time-of-Flight" model.
         -   `SOFT`: 1.2x FlightTime
         -   `HARD`: 0.8x FlightTime
         -   `LOB`: 1.5x FlightTime
-        -   `SPIKE`: 0.5x FlightTime (High Risk)
+        -   `SMASH`: 0.5x FlightTime (High Risk)
     -   When Player A hits at `T_hit`:
         -   Player B expects arrival at `T_arrival = T_hit + (BaseFlightTime * Modifier)`.
     -   **Hit Window**: Player B must swing between `T_arrival - Window` and `T_arrival + Window`.

@@ -18,7 +18,7 @@ The `GameEngineTest` class covers the core game logic, including:
 - **Game State**: Initial state, scoring, win conditions.
 - **Serve Rotation**: Standard rotation and deuce logic.
 - **Timing Windows**: Hit/Miss detection based on arrival time.
-- **Swing Classification**: Logic to categorize swings as FLAT, LOB, or SPIKE based on sensor data.
+- **Swing Classification**: Logic to categorize swings as FLAT, LOB, or SMASH based on sensor data.
 - **Flight Time Modifiers**: Adjustments to ball speed based on swing type.
 - **Window Shrink**: Difficulty adjustments based on incoming shot aggression.
 - **Risk Logic**: Probabilistic fault detection (Net/Out) for risky shots.
@@ -39,7 +39,7 @@ Certain features rely on hardware sensors and Bluetooth hardware, making them im
 - **Swing Detection**: Verify that real physical swings trigger the accelerometer threshold.
 - **Classification**:
     - **LOB**: Tilt screen UP and swing -> Should detect LOB.
-    - **SPIKE**: Tilt screen DOWN and swing -> Should detect SPIKE.
+    - **SMASH**: Tilt screen DOWN and swing -> Should detect SMASH.
     - **FLAT**: Hold screen VERTICAL and swing -> Should detect FLAT.
 - **False Positives**: Verify that walking or shaking the phone gently does *not* trigger a swing.
 
@@ -59,7 +59,7 @@ Certain features rely on hardware sensors and Bluetooth hardware, making them im
 | **Gameplay** | Host serves | Client hears "Bounce" sound approx 1s later |
 | **Gameplay** | Client returns serve | Host hears "Bounce" sound |
 | **Gameplay** | Rally for 10+ hits | No sync errors or "ghost" misses |
-| **Sensors** | Player performs "Spike" motion | Game logs "SPIKE" swing type |
+| **Sensors** | Player performs "Smash" motion | Game logs "SMASH" swing type |
 | **Sensors** | Player performs "Lob" motion | Game logs "LOB" swing type |
 | **Lifecycle** | Press Home button during game | Game pauses, opponent notified |
 | **Lifecycle** | Resume app | Game resumes or offers rematch |
