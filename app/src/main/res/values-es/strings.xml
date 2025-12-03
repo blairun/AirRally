@@ -67,10 +67,10 @@
     <string name="shot_lob">• Pantalla Arriba = GLOBO</string>
     <string name="shot_lob_desc">  Arco lento y alto.</string>
     <string name="shot_lob_safe">  Seguro, te da tiempo para recuperarte.</string>
-    <string name="shot_spike">• Pantalla Abajo = REMATE</string>
-    <string name="shot_spike_desc">  ¡Rápido y agresivo!</string>
-    <string name="shot_spike_risk">  Hace que la ventana de golpe del oponente sea más corta, pero</string>
-    <string name="shot_spike_net">  Mayor probabilidad de golpear la red o salir fuera.</string>
+    <string name="shot_smash">• Pantalla Abajo = REMATE</string>
+    <string name="shot_smash_desc">  ¡Rápido y agresivo!</string>
+    <string name="shot_smash_risk">  Hace que la ventana de golpe del oponente sea más corta, pero</string>
+    <string name="shot_smash_net">  Mayor probabilidad de golpear la red o salir fuera.</string>
     <string name="use_debug_tones">Usar tonos de depuración</string>
     <string name="info_debug_tones_title">Tonos de depuración</string>
     <string name="info_debug_tones_text">Si está habilitado, reproduce tonos simples en lugar de los efectos de sonido del juego.</string>

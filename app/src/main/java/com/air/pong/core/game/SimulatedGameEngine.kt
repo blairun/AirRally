@@ -101,7 +101,7 @@ class SimulatedGameEngine(
             val now = System.currentTimeMillis()
 
             // Strategic Shot Selection
-            // 60% Safe (Medium Flat), 20% Aggressive (Hard Spike), 20% Defensive (Lob)
+            // 60% Safe (Medium Flat), 20% Aggressive (Hard Smash), 20% Defensive (Lob)
             val roll = Random.nextFloat()
             val swingType = when {
                 roll < 0.60f -> SwingType.MEDIUM_FLAT
