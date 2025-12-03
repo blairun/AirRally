@@ -13,7 +13,7 @@ enum class SwingType {
     MEDIUM_LOB,
     HARD_LOB,
     
-    SOFT_SPIKE,
-    MEDIUM_SPIKE,
-    HARD_SPIKE
+    SOFT_SMASH,
+    MEDIUM_SMASH,
+    HARD_SMASH
 }

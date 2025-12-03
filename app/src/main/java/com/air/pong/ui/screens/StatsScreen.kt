@@ -202,7 +202,7 @@ fun StatsScreen(
             // Rows
             HeatmapRow("LOB", listOf(SwingType.SOFT_LOB, SwingType.MEDIUM_LOB, SwingType.HARD_LOB), heatmap, maxCount)
             HeatmapRow("FLAT", listOf(SwingType.SOFT_FLAT, SwingType.MEDIUM_FLAT, SwingType.HARD_FLAT), heatmap, maxCount)
-            HeatmapRow("SPIKE", listOf(SwingType.SOFT_SPIKE, SwingType.MEDIUM_SPIKE, SwingType.HARD_SPIKE), heatmap, maxCount)
+            HeatmapRow("SMASH", listOf(SwingType.SOFT_SMASH, SwingType.MEDIUM_SMASH, SwingType.HARD_SMASH), heatmap, maxCount)
         }
         
         Spacer(modifier = Modifier.height(32.dp))

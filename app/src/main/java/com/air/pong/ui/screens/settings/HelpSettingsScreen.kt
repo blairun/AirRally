@@ -52,9 +52,9 @@ fun HelpSettingsScreen() {
         Text(stringResource(R.string.shot_lob_safe), style = MaterialTheme.typography.bodyMedium)
         
         Spacer(modifier = Modifier.height(4.dp))
-        Text(stringResource(R.string.shot_spike), style = MaterialTheme.typography.bodyMedium)
-        Text(stringResource(R.string.shot_spike_desc), style = MaterialTheme.typography.bodyMedium)
-        Text(stringResource(R.string.shot_spike_risk), style = MaterialTheme.typography.bodyMedium)
-        Text(stringResource(R.string.shot_spike_net), style = MaterialTheme.typography.bodyMedium)
+        Text(stringResource(R.string.shot_smash), style = MaterialTheme.typography.bodyMedium)
+        Text(stringResource(R.string.shot_smash_desc), style = MaterialTheme.typography.bodyMedium)
+        Text(stringResource(R.string.shot_smash_risk), style = MaterialTheme.typography.bodyMedium)
+        Text(stringResource(R.string.shot_smash_net), style = MaterialTheme.typography.bodyMedium)
     }
 }

@@ -70,10 +70,10 @@
     <string name="shot_lob">• Screen Up = LOB</string>
     <string name="shot_lob_desc">  Slow, high arc.</string>
     <string name="shot_lob_safe">  Safe, gives you time to recover.</string>
-    <string name="shot_spike">• Screen Down = SPIKE</string>
-    <string name="shot_spike_desc">  Fast &amp; Aggressive!</string>
-    <string name="shot_spike_risk">  Makes opponent\'s hit window shorter, but</string>
-    <string name="shot_spike_net">  Higher chance to hit net or off table.</string>
+    <string name="shot_smash">• Screen Down = SMASH</string>
+    <string name="shot_smash_desc">  Fast &amp; Aggressive!</string>
+    <string name="shot_smash_risk">  Makes opponent\'s hit window shorter, but</string>
+    <string name="shot_smash_net">  Higher chance to hit net or off table.</string>
     <string name="use_debug_tones">Use Debug Tones</string>
     <string name="info_debug_tones_title">Debug Tones</string>
     <string name="info_debug_tones_text">If enabled, plays simple beep tones instead of the game sound effects.</string>
@@ -94,7 +94,7 @@
     <string name="created_by_ai">AI</string>
     <string name="created_by_r">r</string>
     <string name="license">License</string>
-    <string name="mit_license">MIT License</string>
+    <string name="license_name">CC BY-NC 4.0</string>
     <string name="source_code">Source Code</string>
     <string name="view_github_repo">View GitHub Repo</string>
     <string name="problems">Problems?</string>
@@ -177,7 +177,7 @@
     <string name="swing_soft_lob">SOFT LOB</string>
     <string name="swing_medium_lob">MEDIUM LOB</string>
     <string name="swing_hard_lob">HARD LOB</string>
-    <string name="swing_soft_spike">SOFT SPIKE</string>
-    <string name="swing_medium_spike">MEDIUM SPIKE</string>
-    <string name="swing_hard_spike">HARD SPIKE</string>
+    <string name="swing_soft_smash">SOFT SMASH</string>
+    <string name="swing_medium_smash">MEDIUM SMASH</string>
+    <string name="swing_hard_smash">HARD SMASH</string>
 </resources>

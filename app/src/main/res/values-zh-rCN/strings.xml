@@ -90,7 +90,7 @@
     <string name="created_by_ai">AI</string>
     <string name="created_by_r">r</string>
     <string name="license">许可证</string>
-    <string name="mit_license">MIT 许可证</string>
+    <string name="license_name">CC BY-NC 4.0</string>
     <string name="source_code">源代码</string>
     <string name="view_github_repo">查看 GitHub 仓库</string>
     <string name="problems">遇到问题？</string>

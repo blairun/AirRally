@@ -580,9 +580,9 @@ fun getSwingTypeStringId(swingType: SwingType): Int {
         SwingType.SOFT_LOB -> R.string.swing_soft_lob
         SwingType.MEDIUM_LOB -> R.string.swing_medium_lob
         SwingType.HARD_LOB -> R.string.swing_hard_lob
-        SwingType.SOFT_SPIKE -> R.string.swing_soft_spike
-        SwingType.MEDIUM_SPIKE -> R.string.swing_medium_spike
-        SwingType.HARD_SPIKE -> R.string.swing_hard_spike
+        SwingType.SOFT_SMASH -> R.string.swing_soft_smash
+        SwingType.MEDIUM_SMASH -> R.string.swing_medium_smash
+        SwingType.HARD_SMASH -> R.string.swing_hard_smash
     }
 }
 

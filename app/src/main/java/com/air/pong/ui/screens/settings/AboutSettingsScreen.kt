@@ -84,7 +84,7 @@ fun AboutSettingsScreen() {
         ) {
             Text(stringResource(R.string.license), style = MaterialTheme.typography.bodyMedium)
             Text(
-                stringResource(R.string.mit_license), 
+                stringResource(R.string.license_name), 
                 style = MaterialTheme.typography.bodyMedium, 
                 fontWeight = FontWeight.Bold,
                 color = linkColor,

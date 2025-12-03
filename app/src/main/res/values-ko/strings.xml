@@ -90,7 +90,7 @@
     <string name="created_by_ai">AI</string>
     <string name="created_by_r">r</string>
     <string name="license">라이선스</string>
-    <string name="mit_license">MIT 라이선스</string>
+    <string name="license_name">CC BY-NC 4.0</string>
     <string name="source_code">소스 코드</string>
     <string name="view_github_repo">GitHub 리포지토리 보기</string>
     <string name="problems">문제가 있나요?</string>

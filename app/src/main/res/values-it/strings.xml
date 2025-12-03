@@ -90,7 +90,7 @@
     <string name="created_by_ai">AI</string>
     <string name="created_by_r">r</string>
     <string name="license">Licenza</string>
-    <string name="mit_license">Licenza MIT</string>
+    <string name="license_name">CC BY-NC 4.0</string>
     <string name="source_code">Codice sorgente</string>
     <string name="view_github_repo">Vedi repository GitHub</string>
     <string name="problems">Problemi?</string>
