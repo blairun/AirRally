@@ -81,15 +81,33 @@ class GameEngine {
         }
     }
 
+    private fun getCurrentFlightTime(): Long {
+        val base = _gameState.value.flightTime
+        val type = _gameState.value.lastSwingType ?: return base
+        return (base * type.getFlightTimeModifier()).toLong()
+    }
+
     /**
      * Returns the start and end offsets (in ms) relative to ballArrivalTimestamp for the valid hit window.
      */
     private fun getHitWindowBounds(): Pair<Long, Long> {
         val halfWindow = getHitWindow()
-        // Shift the window so it starts at the bounce (BOUNCE_OFFSET_MS before arrival)
-        val startWindow = -BOUNCE_OFFSET_MS
-        val endWindow = startWindow + (2 * halfWindow)
-        return startWindow to endWindow
+        val totalWindow = halfWindow * 2
+        
+        // Ideal window starts at BOUNCE_OFFSET_MS before arrival
+        val idealStartWindow = -BOUNCE_OFFSET_MS
+        
+        // Safety Check: Cannot hit in first 200ms of flight
+        // Earliest valid hit time relative to arrival = (Arrival - FlightTime + 200) - Arrival
+        // = 200 - FlightTime
+        val flightTime = getCurrentFlightTime()
+        val earliestValidStart = 200 - flightTime
+        
+        // Actual start is the later of the two
+        val actualStartWindow = kotlin.math.max(idealStartWindow, earliestValidStart)
+        val actualEndWindow = actualStartWindow + totalWindow
+        
+        return actualStartWindow to actualEndWindow
     }
 
     /**
@@ -106,7 +124,7 @@ class GameEngine {
             delta < startWindow -> HitResult.MISS_EARLY
             delta <= endWindow -> {
                  // Check for "Too Early" relative to launch (prevent hitting instantly after opponent)
-                 val flightTime = _gameState.value.flightTime
+                 val flightTime = getCurrentFlightTime()
                  val timeSinceLaunch = flightTime + delta 
                  if (timeSinceLaunch < 200) { // First 200ms are unhittable
                      HitResult.MISS_EARLY

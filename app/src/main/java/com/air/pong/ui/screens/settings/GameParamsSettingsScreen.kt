@@ -1,18 +1,145 @@
 package com.air.pong.ui.screens.settings
 
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.air.pong.R
+import com.air.pong.core.game.getWindowShrinkPercentage
+import com.air.pong.core.game.getFlightTimeModifier
+
+
+
+
+@Composable
+fun FlightTimeVisualization(baseFlightTime: Float, refreshTrigger: Int) {
+    // Explicitly remember the calculation based on the trigger to ensure it re-runs
+    val calculationResult = remember(baseFlightTime, refreshTrigger) {
+        val allTypes = com.air.pong.core.game.SwingType.values()
+        
+        // Find types with min and max flight modifiers
+        // Note: Shortest time = Lowest Modifier
+        //       Longest time = Highest Modifier
+        
+        val minFlightType = allTypes.minByOrNull { it.getFlightTimeModifier() } ?: com.air.pong.core.game.SwingType.HARD_SMASH
+        val maxFlightType = allTypes.maxByOrNull { it.getFlightTimeModifier() } ?: com.air.pong.core.game.SwingType.HARD_LOB
+        
+        val minModifier = minFlightType.getFlightTimeModifier()
+        val maxModifier = maxFlightType.getFlightTimeModifier()
+        
+        val minTime = (baseFlightTime * minModifier).toLong()
+        val maxTime = (baseFlightTime * maxModifier).toLong()
+        
+        // Format names for display
+        val shortestName = minFlightType.name.lowercase().replace("_", " ")
+        val longestName = maxFlightType.name.lowercase().replace("_", " ")
+        
+        Quadruple(shortestName, minTime, longestName, maxTime)
+    }
+
+    val (shortestName, minTime, longestName, maxTime) = calculationResult
+
+    Column(modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)) {
+        Text(
+            text = "🏓...............bounce",
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        // Stacked layout for better localization support
+        Column(modifier = Modifier.fillMaxWidth()) {
+            Text(
+                text = "shortest: $shortestName ${minTime}ms",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.secondary
+            )
+            Text(
+                text = "longest: $longestName ${maxTime}ms",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.secondary
+            )
+        }
+    }
+}
+
+@Composable
+fun HitWindowVisualization(difficultyWindow: Int, refreshTrigger: Int) {
+    // Difficulty is the base window size.
+    // Start of window is always -200ms (BOUNCE_OFFSET_MS)
+    // End of window = Start + (2 * HalfWindow)
+    // HalfWindow = (Difficulty * ShrinkFactor)
+    
+    // We need to read the current SwingSettings to get the shrink factors.
+    // Since SwingSettings is a static object and not a State, we use the refreshTrigger 
+    // passed from the parent to force recomposition when settings change.
+    
+    // Explicitly remember the calculation based on the trigger to ensure it re-runs
+    val calculationResult = remember(difficultyWindow, refreshTrigger) {
+        // Dynamic Logic: Find the SwingType with Max Shrink (Shortest Window) and Min Shrink (Longest Window)
+        val allTypes = com.air.pong.core.game.SwingType.values()
+        
+        val maxShrinkType = allTypes.maxByOrNull { it.getWindowShrinkPercentage() } ?: com.air.pong.core.game.SwingType.HARD_SMASH
+        val minShrinkType = allTypes.minByOrNull { it.getWindowShrinkPercentage() } ?: com.air.pong.core.game.SwingType.SOFT_LOB
+        
+        val maxShrink = maxShrinkType.getWindowShrinkPercentage()
+        val minShrink = minShrinkType.getWindowShrinkPercentage()
+        
+        val startWindow = -200 // Fixed bounce offset
+        
+        // Shortest Window (Max Shrink)
+        val shortestHalf = difficultyWindow * (1.0f - maxShrink)
+        val shortestEnd = startWindow + (2 * shortestHalf).toInt()
+        val shortestTotal = shortestEnd - startWindow
+        
+        // Longest Window (Min Shrink)
+        val longestHalf = difficultyWindow * (1.0f - minShrink)
+        val longestEnd = startWindow + (2 * longestHalf).toInt()
+        val longestTotal = longestEnd - startWindow
+        
+        // Format names for display (e.g. HARD_SMASH -> hard smash)
+        val shortestName = maxShrinkType.name.lowercase().replace("_", " ")
+        val longestName = minShrinkType.name.lowercase().replace("_", " ")
+        
+        Quadruple(shortestName, shortestTotal, longestName, longestTotal)
+    }
+
+    val (shortestName, shortestTotal, longestName, longestTotal) = calculationResult
+
+    Column(modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)) {
+        Text(
+            text = "🏓..............|bounce.......|",
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        // Stacked layout for better localization support
+        Column(modifier = Modifier.fillMaxWidth()) {
+            Text(
+                text = "shortest: $shortestName ${shortestTotal}ms",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.secondary
+            )
+            Text(
+                text = "longest: $longestName ${longestTotal}ms",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.secondary
+            )
+        }
+    }
+}
+
+// Helper data class for the result (since Pair/Triple are limited)
+data class Quadruple<A, B, C, D>(val first: A, val second: B, val third: C, val fourth: D)
 
 @Composable
 fun GameParamsSettingsScreen(
@@ -23,10 +150,15 @@ fun GameParamsSettingsScreen(
     minSwingThreshold: Float,
     onSwingThresholdChange: (Float) -> Unit,
     onSettingsChange: () -> Unit,
-    onResetDefaults: () -> Unit,
+    onResetMainDefaults: () -> Unit,
+    onResetSwingDefaults: () -> Unit,
     onShowInfo: (String, String) -> Unit
 ) {
     val context = LocalContext.current
+    
+    // Shared trigger to refresh visualizations when advanced settings change
+    var advancedSettingsTrigger by remember { mutableIntStateOf(0) }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -35,12 +167,34 @@ fun GameParamsSettingsScreen(
     ) {
         // Defaults Button
         Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
-            TextButton(onClick = onResetDefaults) {
+            TextButton(onClick = onResetMainDefaults) {
                 Text(stringResource(R.string.defaults))
             }
         }
         
         Spacer(modifier = Modifier.height(8.dp))
+
+        // Swing Sensitivity (Local) - Moved to Top
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(stringResource(R.string.swing_sensitivity_label, minSwingThreshold), style = MaterialTheme.typography.bodyLarge)
+            IconButton(onClick = {
+                onShowInfo(context.getString(R.string.info_sensitivity_title), context.getString(R.string.info_sensitivity_text))
+            }) {
+                Icon(Icons.Default.Info, contentDescription = "Info", modifier = Modifier.size(20.dp))
+            }
+        }
+        Slider(
+            value = minSwingThreshold,
+            onValueChange = {
+                // Snap to 1.0
+                onSwingThresholdChange(kotlin.math.round(it))
+            },
+            valueRange = 10.0f..24.0f,
+            steps = 13,
+            onValueChangeFinished = onSettingsChange
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
 
         // Flight Time
         val flightTimeLabel = when {
@@ -68,6 +222,8 @@ fun GameParamsSettingsScreen(
             steps = 6,
             onValueChangeFinished = onSettingsChange
         )
+        
+        FlightTimeVisualization(baseFlightTime = flightTime, refreshTrigger = advancedSettingsTrigger)
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -97,27 +253,380 @@ fun GameParamsSettingsScreen(
             steps = 9,
             onValueChangeFinished = onSettingsChange
         )
-
+        
+        HitWindowVisualization(difficultyWindow = difficulty, refreshTrigger = advancedSettingsTrigger)
+        
+        Spacer(modifier = Modifier.height(24.dp))
+        
+        HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
+        
         Spacer(modifier = Modifier.height(16.dp))
+        
+        SwingParamsGrid(
+            onSettingsChange = {
+                onSettingsChange()
+                advancedSettingsTrigger++ // Force refresh of visualizations
+            }, 
+            onShowInfo = onShowInfo, 
+            onReset = onResetSwingDefaults
+        )
+    }
+}
 
-        // Swing Sensitivity (Local)
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(stringResource(R.string.swing_sensitivity_label, minSwingThreshold), style = MaterialTheme.typography.bodyLarge)
-            IconButton(onClick = {
-                onShowInfo(context.getString(R.string.info_sensitivity_title), context.getString(R.string.info_sensitivity_text))
-            }) {
-                Icon(Icons.Default.Info, contentDescription = "Info", modifier = Modifier.size(20.dp))
+@Composable
+fun SwingParamsGrid(onSettingsChange: () -> Unit, onShowInfo: (String, String) -> Unit, onReset: () -> Unit) {
+    // Force recomposition when values change
+    var refreshTrigger by remember { mutableIntStateOf(0) }
+    // Read the state to subscribe to changes
+    val trigger = refreshTrigger
+    
+    var isExpanded by remember { mutableStateOf(false) }
+
+    Column(modifier = Modifier.fillMaxWidth()) {
+        // Header / Toggle
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { isExpanded = !isExpanded }
+                .padding(vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = "Advanced",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+            )
+            Icon(
+                if (isExpanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                contentDescription = if (isExpanded) "Collapse" else "Expand"
+            )
+        }
+
+        if (isExpanded) {
+            // Title and Reset Row
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = "Swing Parameters",
+                        style = MaterialTheme.typography.titleSmall,
+                        fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+                    )
+                    IconButton(onClick = {
+                        onShowInfo(
+                            "Swing Parameters",
+                            "Fine-tune the risk and reward for each swing type.\n\n" +
+                            "Flight: Flight time multiplier.\n" +
+                            "Net%: Chance of hitting the net (losing point).\n" +
+                            "Out%: Chance of hitting out of bounds (losing point).\n" +
+                            "Shrink%: How much this shot shrinks the opponent's timing window (making it harder for them).\n" +
+                            "Note: Very fast shots (Low Flight Time) may shift the opponent's hit window slightly later to ensure it remains hittable."
+                        )
+                    }) {
+                        Icon(Icons.Default.Info, contentDescription = "Info", modifier = Modifier.size(20.dp))
+                    }
+                }
+                
+                TextButton(onClick = {
+                    onReset()
+                    refreshTrigger++
+                    onSettingsChange()
+                }) {
+                    Text("Default")
+                }
+            }
+
+            // Table Headers
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                Text("Type", modifier = Modifier.weight(1.5f), style = MaterialTheme.typography.labelMedium)
+                Text("Flight", modifier = Modifier.weight(1f), style = MaterialTheme.typography.labelMedium)
+                Text("Net%", modifier = Modifier.weight(1f), style = MaterialTheme.typography.labelMedium)
+                Text("Out%", modifier = Modifier.weight(1f), style = MaterialTheme.typography.labelMedium)
+                Text("Shrink%", modifier = Modifier.weight(1f), style = MaterialTheme.typography.labelMedium)
+            }
+            
+            HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
+            
+            val types = listOf(
+                "Soft Lob" to Quadruple(
+                    { com.air.pong.core.game.SwingSettings.softLobNetRisk },
+                    { com.air.pong.core.game.SwingSettings.softLobOutRisk },
+                    { com.air.pong.core.game.SwingSettings.softLobShrink },
+                    { com.air.pong.core.game.SwingSettings.softLobFlight }
+                ),
+                "Med Lob" to Quadruple(
+                    { com.air.pong.core.game.SwingSettings.mediumLobNetRisk },
+                    { com.air.pong.core.game.SwingSettings.mediumLobOutRisk },
+                    { com.air.pong.core.game.SwingSettings.mediumLobShrink },
+                    { com.air.pong.core.game.SwingSettings.mediumLobFlight }
+                ),
+                "Hard Lob" to Quadruple(
+                    { com.air.pong.core.game.SwingSettings.hardLobNetRisk },
+                    { com.air.pong.core.game.SwingSettings.hardLobOutRisk },
+                    { com.air.pong.core.game.SwingSettings.hardLobShrink },
+                    { com.air.pong.core.game.SwingSettings.hardLobFlight }
+                ),
+                "Soft Flat" to Quadruple(
+                    { com.air.pong.core.game.SwingSettings.softFlatNetRisk },
+                    { com.air.pong.core.game.SwingSettings.softFlatOutRisk },
+                    { com.air.pong.core.game.SwingSettings.softFlatShrink },
+                    { com.air.pong.core.game.SwingSettings.softFlatFlight }
+                ),
+                "Med Flat" to Quadruple(
+                    { com.air.pong.core.game.SwingSettings.mediumFlatNetRisk },
+                    { com.air.pong.core.game.SwingSettings.mediumFlatOutRisk },
+                    { com.air.pong.core.game.SwingSettings.mediumFlatShrink },
+                    { com.air.pong.core.game.SwingSettings.mediumFlatFlight }
+                ),
+                "Hard Flat" to Quadruple(
+                    { com.air.pong.core.game.SwingSettings.hardFlatNetRisk },
+                    { com.air.pong.core.game.SwingSettings.hardFlatOutRisk },
+                    { com.air.pong.core.game.SwingSettings.hardFlatShrink },
+                    { com.air.pong.core.game.SwingSettings.hardFlatFlight }
+                ),
+                "Soft Smash" to Quadruple(
+                    { com.air.pong.core.game.SwingSettings.softSmashNetRisk },
+                    { com.air.pong.core.game.SwingSettings.softSmashOutRisk },
+                    { com.air.pong.core.game.SwingSettings.softSmashShrink },
+                    { com.air.pong.core.game.SwingSettings.softSmashFlight }
+                ),
+                "Med Smash" to Quadruple(
+                    { com.air.pong.core.game.SwingSettings.mediumSmashNetRisk },
+                    { com.air.pong.core.game.SwingSettings.mediumSmashOutRisk },
+                    { com.air.pong.core.game.SwingSettings.mediumSmashShrink },
+                    { com.air.pong.core.game.SwingSettings.mediumSmashFlight }
+                ),
+                "Hard Smash" to Quadruple(
+                    { com.air.pong.core.game.SwingSettings.hardSmashNetRisk },
+                    { com.air.pong.core.game.SwingSettings.hardSmashOutRisk },
+                    { com.air.pong.core.game.SwingSettings.hardSmashShrink },
+                    { com.air.pong.core.game.SwingSettings.hardSmashFlight }
+                )
+            )
+            
+            // Setters (Must match the order above: Lob, Flat, Smash)
+            val setters = listOf(
+                Quadruple(
+                    { v: Int -> com.air.pong.core.game.SwingSettings.softLobNetRisk = v },
+                    { v: Int -> com.air.pong.core.game.SwingSettings.softLobOutRisk = v },
+                    { v: Int -> com.air.pong.core.game.SwingSettings.softLobShrink = v },
+                    { v: Float -> com.air.pong.core.game.SwingSettings.softLobFlight = v }
+                ),
+                Quadruple(
+                    { v: Int -> com.air.pong.core.game.SwingSettings.mediumLobNetRisk = v },
+                    { v: Int -> com.air.pong.core.game.SwingSettings.mediumLobOutRisk = v },
+                    { v: Int -> com.air.pong.core.game.SwingSettings.mediumLobShrink = v },
+                    { v: Float -> com.air.pong.core.game.SwingSettings.mediumLobFlight = v }
+                ),
+                Quadruple(
+                    { v: Int -> com.air.pong.core.game.SwingSettings.hardLobNetRisk = v },
+                    { v: Int -> com.air.pong.core.game.SwingSettings.hardLobOutRisk = v },
+                    { v: Int -> com.air.pong.core.game.SwingSettings.hardLobShrink = v },
+                    { v: Float -> com.air.pong.core.game.SwingSettings.hardLobFlight = v }
+                ),
+                Quadruple(
+                    { v: Int -> com.air.pong.core.game.SwingSettings.softFlatNetRisk = v },
+                    { v: Int -> com.air.pong.core.game.SwingSettings.softFlatOutRisk = v },
+                    { v: Int -> com.air.pong.core.game.SwingSettings.softFlatShrink = v },
+                    { v: Float -> com.air.pong.core.game.SwingSettings.softFlatFlight = v }
+                ),
+                Quadruple(
+                    { v: Int -> com.air.pong.core.game.SwingSettings.mediumFlatNetRisk = v },
+                    { v: Int -> com.air.pong.core.game.SwingSettings.mediumFlatOutRisk = v },
+                    { v: Int -> com.air.pong.core.game.SwingSettings.mediumFlatShrink = v },
+                    { v: Float -> com.air.pong.core.game.SwingSettings.mediumFlatFlight = v }
+                ),
+                Quadruple(
+                    { v: Int -> com.air.pong.core.game.SwingSettings.hardFlatNetRisk = v },
+                    { v: Int -> com.air.pong.core.game.SwingSettings.hardFlatOutRisk = v },
+                    { v: Int -> com.air.pong.core.game.SwingSettings.hardFlatShrink = v },
+                    { v: Float -> com.air.pong.core.game.SwingSettings.hardFlatFlight = v }
+                ),
+                Quadruple(
+                    { v: Int -> com.air.pong.core.game.SwingSettings.softSmashNetRisk = v },
+                    { v: Int -> com.air.pong.core.game.SwingSettings.softSmashOutRisk = v },
+                    { v: Int -> com.air.pong.core.game.SwingSettings.softSmashShrink = v },
+                    { v: Float -> com.air.pong.core.game.SwingSettings.softSmashFlight = v }
+                ),
+                Quadruple(
+                    { v: Int -> com.air.pong.core.game.SwingSettings.mediumSmashNetRisk = v },
+                    { v: Int -> com.air.pong.core.game.SwingSettings.mediumSmashOutRisk = v },
+                    { v: Int -> com.air.pong.core.game.SwingSettings.mediumSmashShrink = v },
+                    { v: Float -> com.air.pong.core.game.SwingSettings.mediumSmashFlight = v }
+                ),
+                Quadruple(
+                    { v: Int -> com.air.pong.core.game.SwingSettings.hardSmashNetRisk = v },
+                    { v: Int -> com.air.pong.core.game.SwingSettings.hardSmashOutRisk = v },
+                    { v: Int -> com.air.pong.core.game.SwingSettings.hardSmashShrink = v },
+                    { v: Float -> com.air.pong.core.game.SwingSettings.hardSmashFlight = v }
+                )
+            )
+
+            types.forEachIndexed { index, (name, getters) ->
+                val (getNet, getOut, getShrink, getFlight) = getters
+                val (setNet, setOut, setShrink, setFlight) = setters[index]
+                
+                SwingParamRow(
+                    name = name,
+                    netVal = getNet(),
+                    outVal = getOut(),
+                    shrinkVal = getShrink(),
+                    flightVal = getFlight(),
+                    onNetChange = { setNet(it); refreshTrigger++; onSettingsChange() },
+                    onOutChange = { setOut(it); refreshTrigger++; onSettingsChange() },
+                    onShrinkChange = { setShrink(it); refreshTrigger++; onSettingsChange() },
+                    onFlightChange = { setFlight(it); refreshTrigger++; onSettingsChange() }
+                )
+                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
             }
         }
-        Slider(
-            value = minSwingThreshold,
-            onValueChange = {
-                // Snap to 1.0
-                onSwingThresholdChange(kotlin.math.round(it))
+    }
+}
+
+@Composable
+fun SwingParamRow(
+    name: String,
+    netVal: Int,
+    outVal: Int,
+    shrinkVal: Int,
+    flightVal: Float,
+    onNetChange: (Int) -> Unit,
+    onOutChange: (Int) -> Unit,
+    onShrinkChange: (Int) -> Unit,
+    onFlightChange: (Float) -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(name, modifier = Modifier.weight(1.5f), style = MaterialTheme.typography.bodySmall)
+        
+        CompactFloatInput(value = flightVal, onValueChange = onFlightChange, modifier = Modifier.weight(1f))
+        CompactNumberInput(value = netVal, onValueChange = onNetChange, modifier = Modifier.weight(1f))
+        CompactNumberInput(value = outVal, onValueChange = onOutChange, modifier = Modifier.weight(1f))
+        CompactNumberInput(value = shrinkVal, onValueChange = onShrinkChange, modifier = Modifier.weight(1f))
+    }
+}
+
+@OptIn(androidx.compose.foundation.ExperimentalFoundationApi::class)
+@Composable
+fun CompactNumberInput(
+    value: Int,
+    onValueChange: (Int) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    var showDialog by remember { mutableStateOf(false) }
+    
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = { showDialog = false },
+            title = { Text("Fine Tune Value") },
+            text = {
+                Column {
+                    Text("Current: $value%", style = MaterialTheme.typography.bodyLarge)
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Slider(
+                        value = value.toFloat(),
+                        onValueChange = { onValueChange(it.toInt()) },
+                        valueRange = 0f..50f,
+                        steps = 49
+                    )
+                }
             },
-            valueRange = 10.0f..24.0f,
-            steps = 13,
-            onValueChangeFinished = onSettingsChange
+            confirmButton = {
+                TextButton(onClick = { showDialog = false }) {
+                    Text("Done")
+                }
+            }
+        )
+    }
+
+    Box(
+        modifier = modifier.combinedClickable(
+            onClick = {
+                // Cycle values: 0, 5, 10... 50, 0
+                val next = if (value >= 50) 0 else value + 5
+                // Snap to nearest 5 if we were off-grid
+                val snapped = ((next + 2) / 5) * 5
+                onValueChange(if (snapped > 50) 0 else snapped)
+            },
+            onLongClick = {
+                showDialog = true
+            }
+        ),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = "$value",
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.primary
+        )
+    }
+}
+
+@OptIn(androidx.compose.foundation.ExperimentalFoundationApi::class)
+@Composable
+fun CompactFloatInput(
+    value: Float,
+    onValueChange: (Float) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    var showDialog by remember { mutableStateOf(false) }
+    
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = { showDialog = false },
+            title = { Text("Flight Time Modifier") },
+            text = {
+                Column {
+                    Text("Current: ${String.format("%.1fx", value)}", style = MaterialTheme.typography.bodyLarge)
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Slider(
+                        value = value,
+                        onValueChange = { 
+                            // Snap to 0.1
+                            val snapped = (it * 10).toInt() / 10f
+                            onValueChange(snapped) 
+                        },
+                        valueRange = 0.2f..1.8f,
+                        steps = 15 // (1.8 - 0.2) / 0.1 - 1 = 16 - 1 = 15 steps
+                    )
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { showDialog = false }) {
+                    Text("Done")
+                }
+            }
+        )
+    }
+
+    Box(
+        modifier = modifier.combinedClickable(
+            onClick = {
+                // Cycle values: 0.2 -> 1.8 -> 0.2
+                val next = if (value >= 1.8f) 0.2f else value + 0.1f
+                // Snap to nearest 0.1
+                val snapped = (next * 10).toInt() / 10f
+                onValueChange(snapped)
+            },
+            onLongClick = {
+                showDialog = true
+            }
+        ),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = String.format("%.1fx", value),
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.primary
         )
     }
 }

@@ -20,7 +20,8 @@ class MessageCodecTest {
 
     @Test
     fun `test Settings encoding and decoding`() {
-        val original = GameMessage.Settings(flightTime = 1500L, difficulty = 2)
+        val swingSettings = List(27) { it } // 0..26
+        val original = GameMessage.Settings(flightTime = 1500L, difficulty = 2, swingSettings = swingSettings)
         val encoded = MessageCodec.encode(original)
         val decoded = MessageCodec.decode(encoded)
         
@@ -28,6 +29,8 @@ class MessageCodecTest {
         val decodedSettings = decoded as GameMessage.Settings
         assertEquals(original.flightTime, decodedSettings.flightTime)
         assertEquals(original.difficulty, decodedSettings.difficulty)
+        assertEquals(original.swingSettings.size, decodedSettings.swingSettings.size)
+        assertEquals(original.swingSettings, decodedSettings.swingSettings)
     }
 
     @Test

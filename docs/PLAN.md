@@ -164,13 +164,16 @@ Concrete implementation of `SensorProvider`:
 1. **Fix isHost tracking**: Call `setLocalPlayer()` from `startGame()`
 2. **Add timing window logic**:
    ```kotlin
-   ```kotlin
    fun checkHitTiming(swingTimestamp: Long): HitResult {
        val arrival = gameState.value.ballArrivalTimestamp
        val delta = swingTimestamp - arrival
+       
        // Window is shifted to start at the bounce (BOUNCE_OFFSET_MS before arrival)
-       // to prevent hitting before the bounce sound.
-       val startWindow = -BOUNCE_OFFSET_MS
+       // OR shifted later if the flight time is very short (to respect 200ms safety check).
+       val idealStart = -BOUNCE_OFFSET_MS
+       val safetyStart = 200 - flightTime // Ensure at least 200ms after launch
+       val startWindow = max(idealStart, safetyStart)
+       
        val endWindow = startWindow + (2 * getHitWindow())
        
        return when {

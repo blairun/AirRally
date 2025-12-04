@@ -6,15 +6,15 @@ package com.air.pong.core.game
  */
 fun SwingType.getWindowShrinkPercentage(): Float {
     return when (this) {
-        SwingType.SOFT_FLAT -> 0.0f
-        SwingType.MEDIUM_FLAT -> 0.20f
-        SwingType.HARD_FLAT -> 0.35f
-        SwingType.SOFT_LOB -> 0.0f
-        SwingType.MEDIUM_LOB -> 0.0f
-        SwingType.HARD_LOB -> 0.0f
-        SwingType.SOFT_SMASH -> 0.20f
-        SwingType.MEDIUM_SMASH -> 0.40f
-        SwingType.HARD_SMASH -> 0.60f
+        SwingType.SOFT_FLAT -> SwingSettings.softFlatShrink / 100f
+        SwingType.MEDIUM_FLAT -> SwingSettings.mediumFlatShrink / 100f
+        SwingType.HARD_FLAT -> SwingSettings.hardFlatShrink / 100f
+        SwingType.SOFT_LOB -> SwingSettings.softLobShrink / 100f
+        SwingType.MEDIUM_LOB -> SwingSettings.mediumLobShrink / 100f
+        SwingType.HARD_LOB -> SwingSettings.hardLobShrink / 100f
+        SwingType.SOFT_SMASH -> SwingSettings.softSmashShrink / 100f
+        SwingType.MEDIUM_SMASH -> SwingSettings.mediumSmashShrink / 100f
+        SwingType.HARD_SMASH -> SwingSettings.hardSmashShrink / 100f
     }
 }
 
@@ -24,15 +24,15 @@ fun SwingType.getWindowShrinkPercentage(): Float {
  */
 fun SwingType.getRiskPercentages(): Pair<Int, Int> {
     return when (this) {
-        SwingType.SOFT_FLAT -> 0 to 0
-        SwingType.MEDIUM_FLAT -> 0 to 2
-        SwingType.HARD_FLAT -> 5 to 10
-        SwingType.SOFT_LOB -> 0 to 0
-        SwingType.MEDIUM_LOB -> 0 to 5
-        SwingType.HARD_LOB -> 0 to 15
-        SwingType.SOFT_SMASH -> 10 to 0
-        SwingType.MEDIUM_SMASH -> 15 to 5
-        SwingType.HARD_SMASH -> 20 to 10
+        SwingType.SOFT_FLAT -> SwingSettings.softFlatNetRisk to SwingSettings.softFlatOutRisk
+        SwingType.MEDIUM_FLAT -> SwingSettings.mediumFlatNetRisk to SwingSettings.mediumFlatOutRisk
+        SwingType.HARD_FLAT -> SwingSettings.hardFlatNetRisk to SwingSettings.hardFlatOutRisk
+        SwingType.SOFT_LOB -> SwingSettings.softLobNetRisk to SwingSettings.softLobOutRisk
+        SwingType.MEDIUM_LOB -> SwingSettings.mediumLobNetRisk to SwingSettings.mediumLobOutRisk
+        SwingType.HARD_LOB -> SwingSettings.hardLobNetRisk to SwingSettings.hardLobOutRisk
+        SwingType.SOFT_SMASH -> SwingSettings.softSmashNetRisk to SwingSettings.softSmashOutRisk
+        SwingType.MEDIUM_SMASH -> SwingSettings.mediumSmashNetRisk to SwingSettings.mediumSmashOutRisk
+        SwingType.HARD_SMASH -> SwingSettings.hardSmashNetRisk to SwingSettings.hardSmashOutRisk
     }
 }
 
@@ -69,14 +69,14 @@ fun classifySwing(force: Float, gravZ: Float, minThreshold: Float): SwingType {
  */
 fun SwingType.getFlightTimeModifier(): Float {
     return when (this) {
-        SwingType.SOFT_FLAT -> 1.3f
-        SwingType.MEDIUM_FLAT -> 1.0f
-        SwingType.HARD_FLAT -> 0.7f
-        SwingType.SOFT_LOB -> 1.5f
-        SwingType.MEDIUM_LOB -> 1.5f
-        SwingType.HARD_LOB -> 1.6f
-        SwingType.SOFT_SMASH -> 0.8f
-        SwingType.MEDIUM_SMASH -> 0.6f
-        SwingType.HARD_SMASH -> 0.4f
+        SwingType.SOFT_FLAT -> SwingSettings.softFlatFlight
+        SwingType.MEDIUM_FLAT -> SwingSettings.mediumFlatFlight
+        SwingType.HARD_FLAT -> SwingSettings.hardFlatFlight
+        SwingType.SOFT_LOB -> SwingSettings.softLobFlight
+        SwingType.MEDIUM_LOB -> SwingSettings.mediumLobFlight
+        SwingType.HARD_LOB -> SwingSettings.hardLobFlight
+        SwingType.SOFT_SMASH -> SwingSettings.softSmashFlight
+        SwingType.MEDIUM_SMASH -> SwingSettings.mediumSmashFlight
+        SwingType.HARD_SMASH -> SwingSettings.hardSmashFlight
     }
 }

@@ -216,13 +216,55 @@ class GameEngineTest {
         gameEngine.onOpponentHit(0L, SwingType.MEDIUM_FLAT.ordinal)
         assertEquals((baseFlightTime * 1.0f).toLong(), gameEngine.gameState.value.ballArrivalTimestamp)
         
-        // 2. SOFT_LOB (1.5x) -> 1500ms
+        // 2. SOFT_LOB (1.4x) -> 1400ms
         gameEngine.onOpponentHit(0L, SwingType.SOFT_LOB.ordinal)
-        assertEquals((baseFlightTime * 1.5f).toLong(), gameEngine.gameState.value.ballArrivalTimestamp)
+        assertEquals((baseFlightTime * 1.4f).toLong(), gameEngine.gameState.value.ballArrivalTimestamp)
         
         // 3. HARD_SMASH (0.4x) -> 400ms
         gameEngine.onOpponentHit(0L, SwingType.HARD_SMASH.ordinal)
         assertEquals((baseFlightTime * 0.4f).toLong(), gameEngine.gameState.value.ballArrivalTimestamp)
+    }
+
+    @Test
+    fun `test fast smash hit window`() {
+        // Setup: Fast Smash that requires window shifting
+        // Base Flight = 600ms
+        // Hard Smash Flight Modifier = 0.4 -> Actual Flight = 240ms
+        // Base Window (Difficulty) = 500ms
+        // Hard Smash Shrink = 50% -> Window Factor = 0.5
+        // Total Window Size = 2 * 500 * 0.5 = 500ms
+        
+        val baseFlightTime = 600L
+        val difficulty = 500
+        gameEngine.updateSettings(baseFlightTime, difficulty, false, false, GameEngine.DEFAULT_SWING_THRESHOLD)
+        
+        // Opponent hits Hard Smash at T=1000
+        val hitTime = 1000L
+        gameEngine.onOpponentHit(hitTime, SwingType.HARD_SMASH.ordinal)
+        
+        val arrivalTime = hitTime + 240 // 1240
+        assertEquals(arrivalTime, gameEngine.gameState.value.ballArrivalTimestamp)
+        
+        // Window Calculation:
+        // Ideal Start = Arrival - 200 = 1040
+        // Safety Start = HitTime + 200 = 1200
+        // Actual Start = max(1040, 1200) = 1200
+        // Actual End = Actual Start + 500 = 1700
+        
+        // 1. Too Early (Safety Check) -> T=1150 (HitTime + 150)
+        assertEquals(HitResult.MISS_EARLY, gameEngine.checkHitTiming(1150))
+        
+        // 2. Valid Hit (Start of Window) -> T=1210 (HitTime + 210)
+        assertEquals(HitResult.HIT, gameEngine.checkHitTiming(1210))
+        
+        // 3. Valid Hit (Middle/Late) -> T=1500
+        assertEquals(HitResult.HIT, gameEngine.checkHitTiming(1500))
+        
+        // 4. Valid Hit (End of Window) -> T=1690
+        assertEquals(HitResult.HIT, gameEngine.checkHitTiming(1690))
+        
+        // 5. Too Late -> T=1710
+        assertEquals(HitResult.MISS_LATE, gameEngine.checkHitTiming(1710))
     }
 
     @Test
@@ -240,9 +282,9 @@ class GameEngineTest {
         gameEngine.onOpponentHit(0L, SwingType.MEDIUM_FLAT.ordinal)
         assertEquals((baseWindow * 0.8f).toLong(), gameEngine.getHitWindow())
         
-        // 3. Incoming HARD_SMASH (60% shrink) -> 200ms
+        // 3. Incoming HARD_SMASH (50% shrink) -> 250ms
         gameEngine.onOpponentHit(0L, SwingType.HARD_SMASH.ordinal)
-        assertEquals((baseWindow * 0.4f).toLong(), gameEngine.getHitWindow())
+        assertEquals((baseWindow * 0.5f).toLong(), gameEngine.getHitWindow())
 
         // 4. Incoming SOFT_SMASH (20% shrink) -> 400ms
         gameEngine.onOpponentHit(0L, SwingType.SOFT_SMASH.ordinal)

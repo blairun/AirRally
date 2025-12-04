@@ -113,6 +113,56 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
         gameEngine.updateSettings(savedFlightTime, savedDifficulty, savedDebugMode, savedDebugTones, savedMinSwingThreshold)
         sensorProvider.setSwingThreshold(savedMinSwingThreshold)
 
+        // Load Swing Settings
+        com.air.pong.core.game.SwingSettings.softFlatNetRisk = sharedPrefs.getInt("softFlatNetRisk", com.air.pong.core.game.SwingSettings.DEFAULT_SOFT_FLAT_NET_RISK)
+        com.air.pong.core.game.SwingSettings.softFlatOutRisk = sharedPrefs.getInt("softFlatOutRisk", com.air.pong.core.game.SwingSettings.DEFAULT_SOFT_FLAT_OUT_RISK)
+        com.air.pong.core.game.SwingSettings.softFlatShrink = sharedPrefs.getInt("softFlatShrink", com.air.pong.core.game.SwingSettings.DEFAULT_SOFT_FLAT_SHRINK)
+
+        com.air.pong.core.game.SwingSettings.mediumFlatNetRisk = sharedPrefs.getInt("mediumFlatNetRisk", com.air.pong.core.game.SwingSettings.DEFAULT_MEDIUM_FLAT_NET_RISK)
+        com.air.pong.core.game.SwingSettings.mediumFlatOutRisk = sharedPrefs.getInt("mediumFlatOutRisk", com.air.pong.core.game.SwingSettings.DEFAULT_MEDIUM_FLAT_OUT_RISK)
+        com.air.pong.core.game.SwingSettings.mediumFlatShrink = sharedPrefs.getInt("mediumFlatShrink", com.air.pong.core.game.SwingSettings.DEFAULT_MEDIUM_FLAT_SHRINK)
+
+        com.air.pong.core.game.SwingSettings.hardFlatNetRisk = sharedPrefs.getInt("hardFlatNetRisk", com.air.pong.core.game.SwingSettings.DEFAULT_HARD_FLAT_NET_RISK)
+        com.air.pong.core.game.SwingSettings.hardFlatOutRisk = sharedPrefs.getInt("hardFlatOutRisk", com.air.pong.core.game.SwingSettings.DEFAULT_HARD_FLAT_OUT_RISK)
+        com.air.pong.core.game.SwingSettings.hardFlatShrink = sharedPrefs.getInt("hardFlatShrink", com.air.pong.core.game.SwingSettings.DEFAULT_HARD_FLAT_SHRINK)
+
+        com.air.pong.core.game.SwingSettings.softLobNetRisk = sharedPrefs.getInt("softLobNetRisk", com.air.pong.core.game.SwingSettings.DEFAULT_SOFT_LOB_NET_RISK)
+        com.air.pong.core.game.SwingSettings.softLobOutRisk = sharedPrefs.getInt("softLobOutRisk", com.air.pong.core.game.SwingSettings.DEFAULT_SOFT_LOB_OUT_RISK)
+        com.air.pong.core.game.SwingSettings.softLobShrink = sharedPrefs.getInt("softLobShrink", com.air.pong.core.game.SwingSettings.DEFAULT_SOFT_LOB_SHRINK)
+
+        com.air.pong.core.game.SwingSettings.mediumLobNetRisk = sharedPrefs.getInt("mediumLobNetRisk", com.air.pong.core.game.SwingSettings.DEFAULT_MEDIUM_LOB_NET_RISK)
+        com.air.pong.core.game.SwingSettings.mediumLobOutRisk = sharedPrefs.getInt("mediumLobOutRisk", com.air.pong.core.game.SwingSettings.DEFAULT_MEDIUM_LOB_OUT_RISK)
+        com.air.pong.core.game.SwingSettings.mediumLobShrink = sharedPrefs.getInt("mediumLobShrink", com.air.pong.core.game.SwingSettings.DEFAULT_MEDIUM_LOB_SHRINK)
+
+        com.air.pong.core.game.SwingSettings.hardLobNetRisk = sharedPrefs.getInt("hardLobNetRisk", com.air.pong.core.game.SwingSettings.DEFAULT_HARD_LOB_NET_RISK)
+        com.air.pong.core.game.SwingSettings.hardLobOutRisk = sharedPrefs.getInt("hardLobOutRisk", com.air.pong.core.game.SwingSettings.DEFAULT_HARD_LOB_OUT_RISK)
+        com.air.pong.core.game.SwingSettings.hardLobShrink = sharedPrefs.getInt("hardLobShrink", com.air.pong.core.game.SwingSettings.DEFAULT_HARD_LOB_SHRINK)
+
+        com.air.pong.core.game.SwingSettings.softSmashNetRisk = sharedPrefs.getInt("softSmashNetRisk", com.air.pong.core.game.SwingSettings.DEFAULT_SOFT_SMASH_NET_RISK)
+        com.air.pong.core.game.SwingSettings.softSmashOutRisk = sharedPrefs.getInt("softSmashOutRisk", com.air.pong.core.game.SwingSettings.DEFAULT_SOFT_SMASH_OUT_RISK)
+        com.air.pong.core.game.SwingSettings.softSmashShrink = sharedPrefs.getInt("softSmashShrink", com.air.pong.core.game.SwingSettings.DEFAULT_SOFT_SMASH_SHRINK)
+
+        com.air.pong.core.game.SwingSettings.mediumSmashNetRisk = sharedPrefs.getInt("mediumSmashNetRisk", com.air.pong.core.game.SwingSettings.DEFAULT_MEDIUM_SMASH_NET_RISK)
+        com.air.pong.core.game.SwingSettings.mediumSmashOutRisk = sharedPrefs.getInt("mediumSmashOutRisk", com.air.pong.core.game.SwingSettings.DEFAULT_MEDIUM_SMASH_OUT_RISK)
+        com.air.pong.core.game.SwingSettings.mediumSmashShrink = sharedPrefs.getInt("mediumSmashShrink", com.air.pong.core.game.SwingSettings.DEFAULT_MEDIUM_SMASH_SHRINK)
+
+        com.air.pong.core.game.SwingSettings.hardSmashNetRisk = sharedPrefs.getInt("hardSmashNetRisk", com.air.pong.core.game.SwingSettings.DEFAULT_HARD_SMASH_NET_RISK)
+        com.air.pong.core.game.SwingSettings.hardSmashOutRisk = sharedPrefs.getInt("hardSmashOutRisk", com.air.pong.core.game.SwingSettings.DEFAULT_HARD_SMASH_OUT_RISK)
+        com.air.pong.core.game.SwingSettings.hardSmashShrink = sharedPrefs.getInt("hardSmashShrink", com.air.pong.core.game.SwingSettings.DEFAULT_HARD_SMASH_SHRINK)
+
+        // Load Flight Settings
+        com.air.pong.core.game.SwingSettings.softFlatFlight = sharedPrefs.getFloat("softFlatFlight", com.air.pong.core.game.SwingSettings.DEFAULT_SOFT_FLAT_FLIGHT)
+        com.air.pong.core.game.SwingSettings.mediumFlatFlight = sharedPrefs.getFloat("mediumFlatFlight", com.air.pong.core.game.SwingSettings.DEFAULT_MEDIUM_FLAT_FLIGHT)
+        com.air.pong.core.game.SwingSettings.hardFlatFlight = sharedPrefs.getFloat("hardFlatFlight", com.air.pong.core.game.SwingSettings.DEFAULT_HARD_FLAT_FLIGHT)
+
+        com.air.pong.core.game.SwingSettings.softLobFlight = sharedPrefs.getFloat("softLobFlight", com.air.pong.core.game.SwingSettings.DEFAULT_SOFT_LOB_FLIGHT)
+        com.air.pong.core.game.SwingSettings.mediumLobFlight = sharedPrefs.getFloat("mediumLobFlight", com.air.pong.core.game.SwingSettings.DEFAULT_MEDIUM_LOB_FLIGHT)
+        com.air.pong.core.game.SwingSettings.hardLobFlight = sharedPrefs.getFloat("hardLobFlight", com.air.pong.core.game.SwingSettings.DEFAULT_HARD_LOB_FLIGHT)
+
+        com.air.pong.core.game.SwingSettings.softSmashFlight = sharedPrefs.getFloat("softSmashFlight", com.air.pong.core.game.SwingSettings.DEFAULT_SOFT_SMASH_FLIGHT)
+        com.air.pong.core.game.SwingSettings.mediumSmashFlight = sharedPrefs.getFloat("mediumSmashFlight", com.air.pong.core.game.SwingSettings.DEFAULT_MEDIUM_SMASH_FLIGHT)
+        com.air.pong.core.game.SwingSettings.hardSmashFlight = sharedPrefs.getFloat("hardSmashFlight", com.air.pong.core.game.SwingSettings.DEFAULT_HARD_SMASH_FLIGHT)
+
         // Observe Network Messages
         viewModelScope.launch {
             messageHandler.observeGameMessages().collect { msg ->
@@ -148,7 +198,7 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
                     if (isHost) {
                         // Sync settings to the newly connected guest
                         val currentState = gameState.value
-                        sendMessage(GameMessage.Settings(currentState.flightTime, currentState.difficulty))
+                        sendMessage(GameMessage.Settings(currentState.flightTime, currentState.difficulty, getFlattenedSwingSettings()))
                     }
                 } else if (state == com.air.pong.core.network.NetworkAdapter.ConnectionState.DISCONNECTED || 
                     state == com.air.pong.core.network.NetworkAdapter.ConnectionState.ERROR) {
@@ -332,6 +382,8 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
             apply()
         }
     }
+
+
     
     fun hostGame() {
         isHost = true
@@ -498,6 +550,15 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
                 val currentUseDebugTones = gameEngine.gameState.value.useDebugTones
                 val currentMinThreshold = gameEngine.gameState.value.minSwingThreshold
                 gameEngine.updateSettings(msg.flightTime, msg.difficulty, currentDebug, currentUseDebugTones, currentMinThreshold)
+                
+                // Update Swing Settings from Host
+                if (msg.swingSettings.size == 36) {
+                    updateSwingSettingsFromList(msg.swingSettings)
+                } else if (msg.swingSettings.size == 27) {
+                    // Legacy support or partial update? For now, just ignore or log warning.
+                    // Ideally we could map the 27 to the first 27 and leave flight defaults.
+                    updateSwingSettingsFromListLegacy(msg.swingSettings)
+                }
             }
             is GameMessage.ActionSwing -> {
                 // Fix for Clock Synchronization:
@@ -745,7 +806,7 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
         sensorProvider.setSwingThreshold(minSwingThreshold)
         
         // Only sync synced settings (Flight Time, Difficulty)
-        sendMessage(GameMessage.Settings(flightTime, difficulty))
+        sendMessage(GameMessage.Settings(flightTime, difficulty, getFlattenedSwingSettings()))
         
         // Save to SharedPreferences
         sharedPrefs.edit().apply {
@@ -754,6 +815,56 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
             putBoolean("debug_mode", isDebugMode)
             putBoolean("debug_tones", useDebugTones)
             putFloat("min_swing_threshold", minSwingThreshold)
+            
+            // Save Swing Settings
+            putInt("softFlatNetRisk", com.air.pong.core.game.SwingSettings.softFlatNetRisk)
+            putInt("softFlatOutRisk", com.air.pong.core.game.SwingSettings.softFlatOutRisk)
+            putInt("softFlatShrink", com.air.pong.core.game.SwingSettings.softFlatShrink)
+            
+            putInt("mediumFlatNetRisk", com.air.pong.core.game.SwingSettings.mediumFlatNetRisk)
+            putInt("mediumFlatOutRisk", com.air.pong.core.game.SwingSettings.mediumFlatOutRisk)
+            putInt("mediumFlatShrink", com.air.pong.core.game.SwingSettings.mediumFlatShrink)
+            
+            putInt("hardFlatNetRisk", com.air.pong.core.game.SwingSettings.hardFlatNetRisk)
+            putInt("hardFlatOutRisk", com.air.pong.core.game.SwingSettings.hardFlatOutRisk)
+            putInt("hardFlatShrink", com.air.pong.core.game.SwingSettings.hardFlatShrink)
+            
+            putInt("softLobNetRisk", com.air.pong.core.game.SwingSettings.softLobNetRisk)
+            putInt("softLobOutRisk", com.air.pong.core.game.SwingSettings.softLobOutRisk)
+            putInt("softLobShrink", com.air.pong.core.game.SwingSettings.softLobShrink)
+            
+            putInt("mediumLobNetRisk", com.air.pong.core.game.SwingSettings.mediumLobNetRisk)
+            putInt("mediumLobOutRisk", com.air.pong.core.game.SwingSettings.mediumLobOutRisk)
+            putInt("mediumLobShrink", com.air.pong.core.game.SwingSettings.mediumLobShrink)
+            
+            putInt("hardLobNetRisk", com.air.pong.core.game.SwingSettings.hardLobNetRisk)
+            putInt("hardLobOutRisk", com.air.pong.core.game.SwingSettings.hardLobOutRisk)
+            putInt("hardLobShrink", com.air.pong.core.game.SwingSettings.hardLobShrink)
+            
+            putInt("softSmashNetRisk", com.air.pong.core.game.SwingSettings.softSmashNetRisk)
+            putInt("softSmashOutRisk", com.air.pong.core.game.SwingSettings.softSmashOutRisk)
+            putInt("softSmashShrink", com.air.pong.core.game.SwingSettings.softSmashShrink)
+            
+            putInt("mediumSmashNetRisk", com.air.pong.core.game.SwingSettings.mediumSmashNetRisk)
+            putInt("mediumSmashOutRisk", com.air.pong.core.game.SwingSettings.mediumSmashOutRisk)
+            putInt("mediumSmashShrink", com.air.pong.core.game.SwingSettings.mediumSmashShrink)
+            
+            putInt("hardSmashNetRisk", com.air.pong.core.game.SwingSettings.hardSmashNetRisk)
+            putInt("hardSmashOutRisk", com.air.pong.core.game.SwingSettings.hardSmashOutRisk)
+            putInt("hardSmashShrink", com.air.pong.core.game.SwingSettings.hardSmashShrink)
+            
+            putFloat("softFlatFlight", com.air.pong.core.game.SwingSettings.softFlatFlight)
+            putFloat("mediumFlatFlight", com.air.pong.core.game.SwingSettings.mediumFlatFlight)
+            putFloat("hardFlatFlight", com.air.pong.core.game.SwingSettings.hardFlatFlight)
+            
+            putFloat("softLobFlight", com.air.pong.core.game.SwingSettings.softLobFlight)
+            putFloat("mediumLobFlight", com.air.pong.core.game.SwingSettings.mediumLobFlight)
+            putFloat("hardLobFlight", com.air.pong.core.game.SwingSettings.hardLobFlight)
+            
+            putFloat("softSmashFlight", com.air.pong.core.game.SwingSettings.softSmashFlight)
+            putFloat("mediumSmashFlight", com.air.pong.core.game.SwingSettings.mediumSmashFlight)
+            putFloat("hardSmashFlight", com.air.pong.core.game.SwingSettings.hardSmashFlight)
+            
             apply()
         }
     }
@@ -781,13 +892,163 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
         // If I am host, sync my settings to the guest
         if (isHost) {
             val state = gameState.value
-            sendMessage(GameMessage.Settings(state.flightTime, state.difficulty))
+            sendMessage(GameMessage.Settings(state.flightTime, state.difficulty, getFlattenedSwingSettings()))
         }
     }
 
     fun notifyBusy() {
         sendMessage(GameMessage.PlayerBusy)
         // We don't change our local state, but we tell the opponent we are busy
+    }
+
+    private fun getFlattenedSwingSettings(): List<Int> {
+        return listOf(
+            com.air.pong.core.game.SwingSettings.softFlatNetRisk, com.air.pong.core.game.SwingSettings.softFlatOutRisk, com.air.pong.core.game.SwingSettings.softFlatShrink, (com.air.pong.core.game.SwingSettings.softFlatFlight * 100).toInt(),
+            com.air.pong.core.game.SwingSettings.mediumFlatNetRisk, com.air.pong.core.game.SwingSettings.mediumFlatOutRisk, com.air.pong.core.game.SwingSettings.mediumFlatShrink, (com.air.pong.core.game.SwingSettings.mediumFlatFlight * 100).toInt(),
+            com.air.pong.core.game.SwingSettings.hardFlatNetRisk, com.air.pong.core.game.SwingSettings.hardFlatOutRisk, com.air.pong.core.game.SwingSettings.hardFlatShrink, (com.air.pong.core.game.SwingSettings.hardFlatFlight * 100).toInt(),
+            
+            com.air.pong.core.game.SwingSettings.softLobNetRisk, com.air.pong.core.game.SwingSettings.softLobOutRisk, com.air.pong.core.game.SwingSettings.softLobShrink, (com.air.pong.core.game.SwingSettings.softLobFlight * 100).toInt(),
+            com.air.pong.core.game.SwingSettings.mediumLobNetRisk, com.air.pong.core.game.SwingSettings.mediumLobOutRisk, com.air.pong.core.game.SwingSettings.mediumLobShrink, (com.air.pong.core.game.SwingSettings.mediumLobFlight * 100).toInt(),
+            com.air.pong.core.game.SwingSettings.hardLobNetRisk, com.air.pong.core.game.SwingSettings.hardLobOutRisk, com.air.pong.core.game.SwingSettings.hardLobShrink, (com.air.pong.core.game.SwingSettings.hardLobFlight * 100).toInt(),
+            
+            com.air.pong.core.game.SwingSettings.softSmashNetRisk, com.air.pong.core.game.SwingSettings.softSmashOutRisk, com.air.pong.core.game.SwingSettings.softSmashShrink, (com.air.pong.core.game.SwingSettings.softSmashFlight * 100).toInt(),
+            com.air.pong.core.game.SwingSettings.mediumSmashNetRisk, com.air.pong.core.game.SwingSettings.mediumSmashOutRisk, com.air.pong.core.game.SwingSettings.mediumSmashShrink, (com.air.pong.core.game.SwingSettings.mediumSmashFlight * 100).toInt(),
+            com.air.pong.core.game.SwingSettings.hardSmashNetRisk, com.air.pong.core.game.SwingSettings.hardSmashOutRisk, com.air.pong.core.game.SwingSettings.hardSmashShrink, (com.air.pong.core.game.SwingSettings.hardSmashFlight * 100).toInt()
+        )
+    }
+
+    private fun updateSwingSettingsFromListLegacy(list: List<Int>) {
+        if (list.size != 27) return
+        
+        var i = 0
+        com.air.pong.core.game.SwingSettings.softFlatNetRisk = list[i++]; com.air.pong.core.game.SwingSettings.softFlatOutRisk = list[i++]; com.air.pong.core.game.SwingSettings.softFlatShrink = list[i++]
+        com.air.pong.core.game.SwingSettings.mediumFlatNetRisk = list[i++]; com.air.pong.core.game.SwingSettings.mediumFlatOutRisk = list[i++]; com.air.pong.core.game.SwingSettings.mediumFlatShrink = list[i++]
+        com.air.pong.core.game.SwingSettings.hardFlatNetRisk = list[i++]; com.air.pong.core.game.SwingSettings.hardFlatOutRisk = list[i++]; com.air.pong.core.game.SwingSettings.hardFlatShrink = list[i++]
+        
+        com.air.pong.core.game.SwingSettings.softLobNetRisk = list[i++]; com.air.pong.core.game.SwingSettings.softLobOutRisk = list[i++]; com.air.pong.core.game.SwingSettings.softLobShrink = list[i++]
+        com.air.pong.core.game.SwingSettings.mediumLobNetRisk = list[i++]; com.air.pong.core.game.SwingSettings.mediumLobOutRisk = list[i++]; com.air.pong.core.game.SwingSettings.mediumLobShrink = list[i++]
+        com.air.pong.core.game.SwingSettings.hardLobNetRisk = list[i++]; com.air.pong.core.game.SwingSettings.hardLobOutRisk = list[i++]; com.air.pong.core.game.SwingSettings.hardLobShrink = list[i++]
+        
+        com.air.pong.core.game.SwingSettings.softSmashNetRisk = list[i++]; com.air.pong.core.game.SwingSettings.softSmashOutRisk = list[i++]; com.air.pong.core.game.SwingSettings.softSmashShrink = list[i++]
+        com.air.pong.core.game.SwingSettings.mediumSmashNetRisk = list[i++]; com.air.pong.core.game.SwingSettings.mediumSmashOutRisk = list[i++]; com.air.pong.core.game.SwingSettings.mediumSmashShrink = list[i++]
+        com.air.pong.core.game.SwingSettings.hardSmashNetRisk = list[i++]; com.air.pong.core.game.SwingSettings.hardSmashOutRisk = list[i++]; com.air.pong.core.game.SwingSettings.hardSmashShrink = list[i++]
+    }
+
+    private fun updateSwingSettingsFromList(list: List<Int>) {
+        if (list.size != 36) return
+        
+        var i = 0
+        com.air.pong.core.game.SwingSettings.softFlatNetRisk = list[i++]; com.air.pong.core.game.SwingSettings.softFlatOutRisk = list[i++]; com.air.pong.core.game.SwingSettings.softFlatShrink = list[i++]; com.air.pong.core.game.SwingSettings.softFlatFlight = list[i++] / 100f
+        com.air.pong.core.game.SwingSettings.mediumFlatNetRisk = list[i++]; com.air.pong.core.game.SwingSettings.mediumFlatOutRisk = list[i++]; com.air.pong.core.game.SwingSettings.mediumFlatShrink = list[i++]; com.air.pong.core.game.SwingSettings.mediumFlatFlight = list[i++] / 100f
+        com.air.pong.core.game.SwingSettings.hardFlatNetRisk = list[i++]; com.air.pong.core.game.SwingSettings.hardFlatOutRisk = list[i++]; com.air.pong.core.game.SwingSettings.hardFlatShrink = list[i++]; com.air.pong.core.game.SwingSettings.hardFlatFlight = list[i++] / 100f
+        
+        com.air.pong.core.game.SwingSettings.softLobNetRisk = list[i++]; com.air.pong.core.game.SwingSettings.softLobOutRisk = list[i++]; com.air.pong.core.game.SwingSettings.softLobShrink = list[i++]; com.air.pong.core.game.SwingSettings.softLobFlight = list[i++] / 100f
+        com.air.pong.core.game.SwingSettings.mediumLobNetRisk = list[i++]; com.air.pong.core.game.SwingSettings.mediumLobOutRisk = list[i++]; com.air.pong.core.game.SwingSettings.mediumLobShrink = list[i++]; com.air.pong.core.game.SwingSettings.mediumLobFlight = list[i++] / 100f
+        com.air.pong.core.game.SwingSettings.hardLobNetRisk = list[i++]; com.air.pong.core.game.SwingSettings.hardLobOutRisk = list[i++]; com.air.pong.core.game.SwingSettings.hardLobShrink = list[i++]; com.air.pong.core.game.SwingSettings.hardLobFlight = list[i++] / 100f
+        
+        com.air.pong.core.game.SwingSettings.softSmashNetRisk = list[i++]; com.air.pong.core.game.SwingSettings.softSmashOutRisk = list[i++]; com.air.pong.core.game.SwingSettings.softSmashShrink = list[i++]; com.air.pong.core.game.SwingSettings.softSmashFlight = list[i++] / 100f
+        com.air.pong.core.game.SwingSettings.mediumSmashNetRisk = list[i++]; com.air.pong.core.game.SwingSettings.mediumSmashOutRisk = list[i++]; com.air.pong.core.game.SwingSettings.mediumSmashShrink = list[i++]; com.air.pong.core.game.SwingSettings.mediumSmashFlight = list[i++] / 100f
+        com.air.pong.core.game.SwingSettings.hardSmashNetRisk = list[i++]; com.air.pong.core.game.SwingSettings.hardSmashOutRisk = list[i++]; com.air.pong.core.game.SwingSettings.hardSmashShrink = list[i++]; com.air.pong.core.game.SwingSettings.hardSmashFlight = list[i++] / 100f
+    }
+    
+    fun updateSwingSettings() {
+        // Save to SharedPreferences
+        with(sharedPrefs.edit()) {
+            putInt("softFlatNetRisk", com.air.pong.core.game.SwingSettings.softFlatNetRisk)
+            putInt("softFlatOutRisk", com.air.pong.core.game.SwingSettings.softFlatOutRisk)
+            putInt("softFlatShrink", com.air.pong.core.game.SwingSettings.softFlatShrink)
+            
+            putInt("mediumFlatNetRisk", com.air.pong.core.game.SwingSettings.mediumFlatNetRisk)
+            putInt("mediumFlatOutRisk", com.air.pong.core.game.SwingSettings.mediumFlatOutRisk)
+            putInt("mediumFlatShrink", com.air.pong.core.game.SwingSettings.mediumFlatShrink)
+            
+            putInt("hardFlatNetRisk", com.air.pong.core.game.SwingSettings.hardFlatNetRisk)
+            putInt("hardFlatOutRisk", com.air.pong.core.game.SwingSettings.hardFlatOutRisk)
+            putInt("hardFlatShrink", com.air.pong.core.game.SwingSettings.hardFlatShrink)
+            
+            putInt("softLobNetRisk", com.air.pong.core.game.SwingSettings.softLobNetRisk)
+            putInt("softLobOutRisk", com.air.pong.core.game.SwingSettings.softLobOutRisk)
+            putInt("softLobShrink", com.air.pong.core.game.SwingSettings.softLobShrink)
+            
+            putInt("mediumLobNetRisk", com.air.pong.core.game.SwingSettings.mediumLobNetRisk)
+            putInt("mediumLobOutRisk", com.air.pong.core.game.SwingSettings.mediumLobOutRisk)
+            putInt("mediumLobShrink", com.air.pong.core.game.SwingSettings.mediumLobShrink)
+            
+            putInt("hardLobNetRisk", com.air.pong.core.game.SwingSettings.hardLobNetRisk)
+            putInt("hardLobOutRisk", com.air.pong.core.game.SwingSettings.hardLobOutRisk)
+            putInt("hardLobShrink", com.air.pong.core.game.SwingSettings.hardLobShrink)
+            
+            putInt("softSmashNetRisk", com.air.pong.core.game.SwingSettings.softSmashNetRisk)
+            putInt("softSmashOutRisk", com.air.pong.core.game.SwingSettings.softSmashOutRisk)
+            putInt("softSmashShrink", com.air.pong.core.game.SwingSettings.softSmashShrink)
+            
+            putInt("mediumSmashNetRisk", com.air.pong.core.game.SwingSettings.mediumSmashNetRisk)
+            putInt("mediumSmashOutRisk", com.air.pong.core.game.SwingSettings.mediumSmashOutRisk)
+            putInt("mediumSmashShrink", com.air.pong.core.game.SwingSettings.mediumSmashShrink)
+            
+            putInt("hardSmashNetRisk", com.air.pong.core.game.SwingSettings.hardSmashNetRisk)
+            putInt("hardSmashOutRisk", com.air.pong.core.game.SwingSettings.hardSmashOutRisk)
+            putInt("hardSmashShrink", com.air.pong.core.game.SwingSettings.hardSmashShrink)
+            
+            apply()
+        }
+        
+        // Sync if connected
+        val state = gameState.value
+        sendMessage(GameMessage.Settings(state.flightTime, state.difficulty, getFlattenedSwingSettings()))
+    }
+    
+    fun resetSwingSettings() {
+        // Reset to defaults
+        com.air.pong.core.game.SwingSettings.softFlatNetRisk = 0
+        com.air.pong.core.game.SwingSettings.softFlatOutRisk = 0
+        com.air.pong.core.game.SwingSettings.softFlatShrink = 0
+
+        com.air.pong.core.game.SwingSettings.mediumFlatNetRisk = 0
+        com.air.pong.core.game.SwingSettings.mediumFlatOutRisk = 2
+        com.air.pong.core.game.SwingSettings.mediumFlatShrink = 20
+
+        com.air.pong.core.game.SwingSettings.hardFlatNetRisk = 5
+        com.air.pong.core.game.SwingSettings.hardFlatOutRisk = 10
+        com.air.pong.core.game.SwingSettings.hardFlatShrink = 35
+
+        com.air.pong.core.game.SwingSettings.softLobNetRisk = 0
+        com.air.pong.core.game.SwingSettings.softLobOutRisk = 0
+        com.air.pong.core.game.SwingSettings.softLobShrink = 0
+
+        com.air.pong.core.game.SwingSettings.mediumLobNetRisk = 0
+        com.air.pong.core.game.SwingSettings.mediumLobOutRisk = 5
+        com.air.pong.core.game.SwingSettings.mediumLobShrink = 0
+
+        com.air.pong.core.game.SwingSettings.hardLobNetRisk = 0
+        com.air.pong.core.game.SwingSettings.hardLobOutRisk = 15
+        com.air.pong.core.game.SwingSettings.hardLobShrink = 0
+
+        com.air.pong.core.game.SwingSettings.softSmashNetRisk = 10
+        com.air.pong.core.game.SwingSettings.softSmashOutRisk = 0
+        com.air.pong.core.game.SwingSettings.softSmashShrink = 20
+
+        com.air.pong.core.game.SwingSettings.mediumSmashNetRisk = 15
+        com.air.pong.core.game.SwingSettings.mediumSmashOutRisk = 5
+        com.air.pong.core.game.SwingSettings.mediumSmashShrink = 40
+
+        com.air.pong.core.game.SwingSettings.hardSmashNetRisk = 20
+        com.air.pong.core.game.SwingSettings.hardSmashOutRisk = 10
+        com.air.pong.core.game.SwingSettings.hardSmashShrink = 60
+        com.air.pong.core.game.SwingSettings.hardSmashFlight = 0.4f
+
+        com.air.pong.core.game.SwingSettings.softFlatFlight = 1.3f
+        com.air.pong.core.game.SwingSettings.mediumFlatFlight = 1.0f
+        com.air.pong.core.game.SwingSettings.hardFlatFlight = 0.7f
+
+        com.air.pong.core.game.SwingSettings.softLobFlight = 1.5f
+        com.air.pong.core.game.SwingSettings.mediumLobFlight = 1.5f
+        com.air.pong.core.game.SwingSettings.hardLobFlight = 1.6f
+
+        com.air.pong.core.game.SwingSettings.softSmashFlight = 0.8f
+        com.air.pong.core.game.SwingSettings.mediumSmashFlight = 0.6f
+        
+        updateSwingSettings()
     }
 
 

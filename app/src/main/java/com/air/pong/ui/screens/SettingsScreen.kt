@@ -185,7 +185,8 @@ fun SettingsScreen(
                         onSettingsChange = {
                             viewModel.updateSettings(flightTime.toLong(), difficulty, isDebugMode, gameState.useDebugTones, minSwingThreshold)
                         },
-                        onResetDefaults = { viewModel.resetGameSettings() },
+                        onResetMainDefaults = viewModel::resetGameSettings,
+                        onResetSwingDefaults = viewModel::resetSwingSettings,
                         onShowInfo = { title, text ->
                             infoTitle = title
                             infoText = text

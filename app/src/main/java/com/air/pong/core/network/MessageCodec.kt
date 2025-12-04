@@ -81,11 +81,14 @@ object MessageCodec {
     }
     
     private fun encodeSettings(msg: GameMessage.Settings): ByteArray {
-        // [Type: 1][FlightTime: 8][Difficulty: 4]
-        val buffer = ByteBuffer.allocate(13).order(ByteOrder.BIG_ENDIAN)
+        // [Type: 1][FlightTime: 8][Difficulty: 4][ListSize: 4][Values: N*4]
+        val listSize = msg.swingSettings.size
+        val buffer = ByteBuffer.allocate(13 + 4 + (listSize * 4)).order(ByteOrder.BIG_ENDIAN)
         buffer.put(MessageType.SETTINGS)
         buffer.putLong(msg.flightTime)
         buffer.putInt(msg.difficulty)
+        buffer.putInt(listSize)
+        msg.swingSettings.forEach { buffer.putInt(it) }
         return buffer.array()
     }
     
@@ -142,7 +145,16 @@ object MessageCodec {
         val buffer = ByteBuffer.wrap(payload).order(ByteOrder.BIG_ENDIAN)
         val flightTime = buffer.long
         val difficulty = buffer.int
-        return GameMessage.Settings(flightTime, difficulty)
+        
+        val listSize = if (buffer.remaining() >= 4) buffer.int else 0
+        val swingSettings = mutableListOf<Int>()
+        for (i in 0 until listSize) {
+            if (buffer.remaining() >= 4) {
+                swingSettings.add(buffer.int)
+            }
+        }
+        
+        return GameMessage.Settings(flightTime, difficulty, swingSettings)
     }
     
     private fun decodeActionSwing(payload: ByteArray): GameMessage.ActionSwing {

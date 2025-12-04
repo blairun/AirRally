@@ -21,7 +21,8 @@ sealed class GameMessage {
      */
     data class Settings(
         val flightTime: Long,
-        val difficulty: Int
+        val difficulty: Int,
+        val swingSettings: List<Int> // Flattened list of 27 integers
     ) : GameMessage()
     
     /**
