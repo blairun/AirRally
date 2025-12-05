@@ -194,6 +194,7 @@ fun SettingsScreen(
                         },
                         lastSwingType = gameState.lastSwingType,
                         lastSwingData = gameState.lastSwingData,
+                        swingSettingsVersion = viewModel.swingSettingsVersion.collectAsState().value,
                         onPlayTestSound = { viewModel.playTestSound(it) },
                         onClearDebugData = { viewModel.clearDebugData() }
                     )

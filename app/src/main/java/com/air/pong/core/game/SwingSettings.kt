@@ -8,40 +8,40 @@ object SwingSettings {
     // Defaults based on original hardcoded values in SwingExtensions.kt
     
     // Constants for Defaults
-    const val DEFAULT_SOFT_FLAT_NET_RISK = 0
-    const val DEFAULT_SOFT_FLAT_OUT_RISK = 0
+    const val DEFAULT_SOFT_FLAT_NET_RISK = 2
+    const val DEFAULT_SOFT_FLAT_OUT_RISK = 1
     const val DEFAULT_SOFT_FLAT_SHRINK = 0
 
-    const val DEFAULT_MEDIUM_FLAT_NET_RISK = 0
-    const val DEFAULT_MEDIUM_FLAT_OUT_RISK = 2
+    const val DEFAULT_MEDIUM_FLAT_NET_RISK = 1
+    const val DEFAULT_MEDIUM_FLAT_OUT_RISK = 3
     const val DEFAULT_MEDIUM_FLAT_SHRINK = 20
 
-    const val DEFAULT_HARD_FLAT_NET_RISK = 5
-    const val DEFAULT_HARD_FLAT_OUT_RISK = 10
-    const val DEFAULT_HARD_FLAT_SHRINK = 35
+    const val DEFAULT_HARD_FLAT_NET_RISK = 3
+    const val DEFAULT_HARD_FLAT_OUT_RISK = 5
+    const val DEFAULT_HARD_FLAT_SHRINK = 40
 
     const val DEFAULT_SOFT_LOB_NET_RISK = 0
-    const val DEFAULT_SOFT_LOB_OUT_RISK = 0
-    const val DEFAULT_SOFT_LOB_SHRINK = 0
+    const val DEFAULT_SOFT_LOB_OUT_RISK = 3
+    const val DEFAULT_SOFT_LOB_SHRINK = 10
 
     const val DEFAULT_MEDIUM_LOB_NET_RISK = 0
     const val DEFAULT_MEDIUM_LOB_OUT_RISK = 5
-    const val DEFAULT_MEDIUM_LOB_SHRINK = 0
+    const val DEFAULT_MEDIUM_LOB_SHRINK = 5
 
     const val DEFAULT_HARD_LOB_NET_RISK = 0
-    const val DEFAULT_HARD_LOB_OUT_RISK = 15
+    const val DEFAULT_HARD_LOB_OUT_RISK = 9
     const val DEFAULT_HARD_LOB_SHRINK = 0
 
-    const val DEFAULT_SOFT_SMASH_NET_RISK = 10
-    const val DEFAULT_SOFT_SMASH_OUT_RISK = 0
+    const val DEFAULT_SOFT_SMASH_NET_RISK = 3
+    const val DEFAULT_SOFT_SMASH_OUT_RISK = 1
     const val DEFAULT_SOFT_SMASH_SHRINK = 20
 
-    const val DEFAULT_MEDIUM_SMASH_NET_RISK = 15
-    const val DEFAULT_MEDIUM_SMASH_OUT_RISK = 5
+    const val DEFAULT_MEDIUM_SMASH_NET_RISK = 6
+    const val DEFAULT_MEDIUM_SMASH_OUT_RISK = 6
     const val DEFAULT_MEDIUM_SMASH_SHRINK = 40
 
-    const val DEFAULT_HARD_SMASH_NET_RISK = 20
-    const val DEFAULT_HARD_SMASH_OUT_RISK = 10
+    const val DEFAULT_HARD_SMASH_NET_RISK = 9
+    const val DEFAULT_HARD_SMASH_OUT_RISK = 9
     const val DEFAULT_HARD_SMASH_SHRINK = 50
 
     // Flight Time Modifiers (x100 for integer storage if needed, but we store as Float here for runtime)
@@ -50,13 +50,13 @@ object SwingSettings {
     const val DEFAULT_MEDIUM_FLAT_FLIGHT = 1.0f
     const val DEFAULT_HARD_FLAT_FLIGHT = 0.7f
 
-    const val DEFAULT_SOFT_LOB_FLIGHT = 1.4f
-    const val DEFAULT_MEDIUM_LOB_FLIGHT = 1.5f
-    const val DEFAULT_HARD_LOB_FLIGHT = 1.6f
+    const val DEFAULT_SOFT_LOB_FLIGHT = 1.5f
+    const val DEFAULT_MEDIUM_LOB_FLIGHT = 1.7f
+    const val DEFAULT_HARD_LOB_FLIGHT = 1.9f
 
     const val DEFAULT_SOFT_SMASH_FLIGHT = 0.8f
-    const val DEFAULT_MEDIUM_SMASH_FLIGHT = 0.6f
-    const val DEFAULT_HARD_SMASH_FLIGHT = 0.4f
+    const val DEFAULT_MEDIUM_SMASH_FLIGHT = 0.5f
+    const val DEFAULT_HARD_SMASH_FLIGHT = 0.3f
 
     // SOFT_FLAT
     var softFlatNetRisk: Int = DEFAULT_SOFT_FLAT_NET_RISK

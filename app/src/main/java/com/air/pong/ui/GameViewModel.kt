@@ -51,6 +51,9 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
     
     private val _opponentAvatarIndex = kotlinx.coroutines.flow.MutableStateFlow(0)
     val opponentAvatarIndex = _opponentAvatarIndex.asStateFlow()
+
+    private val _swingSettingsVersion = kotlinx.coroutines.flow.MutableStateFlow(0)
+    val swingSettingsVersion = _swingSettingsVersion.asStateFlow()
     
     var isHost = false
         private set
@@ -554,10 +557,12 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
                 // Update Swing Settings from Host
                 if (msg.swingSettings.size == 36) {
                     updateSwingSettingsFromList(msg.swingSettings)
+                    _swingSettingsVersion.value++
                 } else if (msg.swingSettings.size == 27) {
                     // Legacy support or partial update? For now, just ignore or log warning.
                     // Ideally we could map the 27 to the first 27 and leave flight defaults.
                     updateSwingSettingsFromListLegacy(msg.swingSettings)
+                    _swingSettingsVersion.value++
                 }
             }
             is GameMessage.ActionSwing -> {

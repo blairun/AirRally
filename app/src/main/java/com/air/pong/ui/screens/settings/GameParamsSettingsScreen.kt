@@ -181,13 +181,23 @@ fun GameParamsSettingsScreen(
     // New parameters for swing testing
     lastSwingType: com.air.pong.core.game.SwingType?,
     lastSwingData: com.air.pong.core.game.SwingData?,
+    swingSettingsVersion: Int,
     onPlayTestSound: (com.air.pong.audio.AudioManager.SoundEvent) -> Unit,
     onClearDebugData: () -> Unit
 ) {
     val context = LocalContext.current
     
-    // Shared trigger to refresh visualizations when advanced settings change
+    // Pass scroll state down
+    val scrollState = rememberScrollState()
+
+    // Shared trigger to refresh visualizations when advanced settings change.
+    // Also refreshed when swingSettingsVersion changes (from network).
     var advancedSettingsTrigger by remember { mutableIntStateOf(0) }
+    
+    // Watch for external updates
+    LaunchedEffect(swingSettingsVersion) {
+        advancedSettingsTrigger = swingSettingsVersion
+    }
 
     // Cleanup on enter/exit
     DisposableEffect(Unit) {
@@ -201,7 +211,7 @@ fun GameParamsSettingsScreen(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
-            .verticalScroll(rememberScrollState())
+            .verticalScroll(scrollState)
     ) {
         // Defaults Button
         Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
@@ -237,7 +247,7 @@ fun GameParamsSettingsScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 8.dp),
-            contentAlignment = Alignment.Center
+            contentAlignment = Alignment.CenterStart
         ) {
             if (lastSwingType != null) {
                 Text(
@@ -336,6 +346,8 @@ fun GameParamsSettingsScreen(
         Spacer(modifier = Modifier.height(16.dp))
         
         SwingParamsGrid(
+            scrollState = scrollState,
+            settingsVersion = swingSettingsVersion,
             onSettingsChange = {
                 onSettingsChange()
                 advancedSettingsTrigger++ // Force refresh of visualizations
@@ -347,13 +359,34 @@ fun GameParamsSettingsScreen(
 }
 
 @Composable
-fun SwingParamsGrid(onSettingsChange: () -> Unit, onShowInfo: (String, String) -> Unit, onReset: () -> Unit) {
-    // Force recomposition when values change
+fun SwingParamsGrid(
+    scrollState: androidx.compose.foundation.ScrollState,
+    settingsVersion: Int,
+    onSettingsChange: () -> Unit, 
+    onShowInfo: (String, String) -> Unit, 
+    onReset: () -> Unit
+) {
+    // Force recomposition when values change (local or remote)
     var refreshTrigger by remember { mutableIntStateOf(0) }
+
+    // Watch for external updates from network
+    LaunchedEffect(settingsVersion) {
+        refreshTrigger = settingsVersion
+    }
+
     // Read the state to subscribe to changes
     val trigger = refreshTrigger
     
     var isExpanded by remember { mutableStateOf(false) }
+
+    // Auto-Scroll when expanded
+    LaunchedEffect(isExpanded) {
+        if (isExpanded) {
+            // Wait a frame for layout to update
+            kotlinx.coroutines.delay(100)
+            scrollState.animateScrollTo(scrollState.maxValue)
+        }
+    }
 
     Column(modifier = Modifier.fillMaxWidth()) {
         // Header / Toggle
@@ -607,9 +640,9 @@ fun CompactNumberInput(
                     Spacer(modifier = Modifier.height(16.dp))
                     Slider(
                         value = value.toFloat(),
-                        onValueChange = { onValueChange(it.toInt()) },
-                        valueRange = 0f..50f,
-                        steps = 49
+                        onValueChange = { onValueChange(kotlin.math.round(it).toInt()) },
+                        valueRange = 0f..100f
+                        // steps removed to avoid visual dots
                     )
                 }
             },
@@ -624,11 +657,11 @@ fun CompactNumberInput(
     Box(
         modifier = modifier.combinedClickable(
             onClick = {
-                // Cycle values: 0, 5, 10... 50, 0
-                val next = if (value >= 50) 0 else value + 5
+                // Cycle values: 0, 5, 10... 100, 0
+                val next = if (value >= 100) 0 else value + 5
                 // Snap to nearest 5 if we were off-grid
                 val snapped = ((next + 2) / 5) * 5
-                onValueChange(if (snapped > 50) 0 else snapped)
+                onValueChange(if (snapped > 100) 0 else snapped)
             },
             onLongClick = {
                 showDialog = true
@@ -668,8 +701,8 @@ fun CompactFloatInput(
                             val snapped = (it * 10).toInt() / 10f
                             onValueChange(snapped) 
                         },
-                        valueRange = 0.2f..1.8f,
-                        steps = 15 // (1.8 - 0.2) / 0.1 - 1 = 16 - 1 = 15 steps
+                        valueRange = 0.2f..2.0f,
+                        steps = 17 // (2.0 - 0.2) / 0.1 - 1 = 18 - 1 = 17 steps
                     )
                 }
             },
@@ -684,8 +717,8 @@ fun CompactFloatInput(
     Box(
         modifier = modifier.combinedClickable(
             onClick = {
-                // Cycle values: 0.2 -> 1.8 -> 0.2
-                val next = if (value >= 1.8f) 0.2f else value + 0.1f
+                // Cycle values: 0.2 -> 2.0 -> 0.2
+                val next = if (value >= 2.0f) 0.2f else value + 0.1f
                 // Snap to nearest 0.1
                 val snapped = (next * 10).toInt() / 10f
                 onValueChange(snapped)
