@@ -526,6 +526,31 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
                 }
                 hapticManager.playHit()
                 
+                // 1.5. If Serving (even if Pending Miss), play the Bounce sound
+                // This makes faulty serves (Net/Out) still sound like they bounced on my side first.
+                if (wasServing) {
+                    // Calculate Dynamic Bounce Time for Serve
+                    val swingType = gameEngine.gameState.value.lastSwingType ?: com.air.pong.core.game.SwingType.MEDIUM_FLAT
+                    val baseFlight = gameEngine.gameState.value.flightTime
+                    
+                    // Use Serve-Specific Flight Time
+                    val actualFlightTime = (baseFlight * swingType.getServeFlightTimeModifier()).toLong()
+                    
+                    val bounceRatio = when {
+                        swingType.isSmash() -> 0.25f
+                        swingType.isLob() -> 0.30f
+                        else -> 0.30f 
+                    }
+                    
+                    val bounceDelay = (actualFlightTime * bounceRatio).toLong().coerceAtLeast(100L)
+
+                    viewModelScope.launch {
+                        kotlinx.coroutines.delay(bounceDelay)
+                        audioManager.play(com.air.pong.audio.AudioManager.SoundEvent.BOUNCE, gameEngine.gameState.value.useDebugTones)
+                        gameEngine.onBounce()
+                    }
+                }
+                
                 // 2. Schedule the resolution (Net/Out)
                 val pendingMiss = gameEngine.gameState.value.pendingMiss
                 val delay = pendingMiss?.delayMs ?: 500L
