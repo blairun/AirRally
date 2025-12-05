@@ -102,6 +102,7 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
         val savedDebugTones = sharedPrefs.getBoolean("debug_tones", false)
         val savedPlayerName = sharedPrefs.getString("player_name", null) ?: fetchDeviceName()
         val savedMinSwingThreshold = sharedPrefs.getFloat("min_swing_threshold", GameEngine.DEFAULT_SWING_THRESHOLD)
+        val savedRallyShrink = sharedPrefs.getBoolean("rally_shrink", true)
         
         // Avatar Logic
         val savedAvatarIndex = sharedPrefs.getInt("avatar_index", -1)
@@ -117,7 +118,7 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
 
         _playerName.value = savedPlayerName
 
-        gameEngine.updateSettings(savedFlightTime, savedDifficulty, savedDebugMode, savedDebugTones, savedMinSwingThreshold)
+        gameEngine.updateSettings(savedFlightTime, savedDifficulty, savedDebugMode, savedDebugTones, savedMinSwingThreshold, savedRallyShrink)
         sensorProvider.setSwingThreshold(savedMinSwingThreshold)
 
         // Load Swing Settings
@@ -205,7 +206,7 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
                     if (isHost) {
                         // Sync settings to the newly connected guest
                         val currentState = gameState.value
-                        sendMessage(GameMessage.Settings(currentState.flightTime, currentState.difficulty, getFlattenedSwingSettings()))
+                        sendMessage(GameMessage.Settings(currentState.flightTime, currentState.difficulty, getFlattenedSwingSettings(), currentState.isRallyShrinkEnabled))
                     }
                 } else if (state == com.air.pong.core.network.NetworkAdapter.ConnectionState.DISCONNECTED || 
                     state == com.air.pong.core.network.NetworkAdapter.ConnectionState.ERROR) {
@@ -377,7 +378,7 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun resetGameSettings() {
-        gameEngine.updateSettings(700L, 400, false, false, GameEngine.DEFAULT_SWING_THRESHOLD)
+        gameEngine.updateSettings(700L, 400, false, false, GameEngine.DEFAULT_SWING_THRESHOLD, true)
         sensorProvider.setSwingThreshold(GameEngine.DEFAULT_SWING_THRESHOLD)
         // Also update shared prefs so it persists
         with(sharedPrefs.edit()) {
@@ -386,11 +387,23 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
             putBoolean("debug_mode", false)
             putBoolean("debug_tones", false)
             putFloat("min_swing_threshold", GameEngine.DEFAULT_SWING_THRESHOLD)
+            putBoolean("rally_shrink", true)
             apply()
         }
     }
 
 
+    
+    fun updateRallyShrink(isEnabled: Boolean) {
+        val currentState = gameEngine.gameState.value
+        gameEngine.updateSettings(currentState.flightTime, currentState.difficulty, currentState.isDebugMode, currentState.useDebugTones, currentState.minSwingThreshold, isEnabled)
+        sharedPrefs.edit().putBoolean("rally_shrink", isEnabled).apply()
+        
+        // Sync if host
+        if (isHost && connectionState.value == com.air.pong.core.network.NetworkAdapter.ConnectionState.CONNECTED) {
+            sendMessage(GameMessage.Settings(currentState.flightTime, currentState.difficulty, getFlattenedSwingSettings(), isEnabled))
+        }
+    }
     
     fun hostGame() {
         isHost = true
@@ -575,7 +588,7 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
                 val currentDebug = gameEngine.gameState.value.isDebugMode
                 val currentUseDebugTones = gameEngine.gameState.value.useDebugTones
                 val currentMinThreshold = gameEngine.gameState.value.minSwingThreshold
-                gameEngine.updateSettings(msg.flightTime, msg.difficulty, currentDebug, currentUseDebugTones, currentMinThreshold)
+                gameEngine.updateSettings(msg.flightTime, msg.difficulty, currentDebug, currentUseDebugTones, currentMinThreshold, msg.isRallyShrinkEnabled)
                 
                 // Update Swing Settings from Host
                 if (msg.swingSettings.size == 36) {
@@ -829,12 +842,12 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
     
-    fun updateSettings(flightTime: Long, difficulty: Int, isDebugMode: Boolean, useDebugTones: Boolean, minSwingThreshold: Float) {
-        gameEngine.updateSettings(flightTime, difficulty, isDebugMode, useDebugTones, minSwingThreshold)
+    fun updateSettings(flightTime: Long, difficulty: Int, isDebugMode: Boolean, useDebugTones: Boolean, minSwingThreshold: Float, isRallyShrinkEnabled: Boolean = true) {
+        gameEngine.updateSettings(flightTime, difficulty, isDebugMode, useDebugTones, minSwingThreshold, isRallyShrinkEnabled)
         sensorProvider.setSwingThreshold(minSwingThreshold)
         
         // Only sync synced settings (Flight Time, Difficulty)
-        sendMessage(GameMessage.Settings(flightTime, difficulty, getFlattenedSwingSettings()))
+        sendMessage(GameMessage.Settings(flightTime, difficulty, getFlattenedSwingSettings(), isRallyShrinkEnabled))
         
         // Save to SharedPreferences
         sharedPrefs.edit().apply {

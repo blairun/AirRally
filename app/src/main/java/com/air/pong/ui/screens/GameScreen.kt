@@ -262,42 +262,7 @@ fun GameScreen(
                     }
                 }
                 
-                // --- Debug Overlay (Optional) ---
-                if (gameState.isDebugMode) {
-                    Card(
-                        colors = CardDefaults.cardColors(
-                            containerColor = Color.Black.copy(alpha = 0.5f)
-                        ),
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Column(
-                            modifier = Modifier.padding(8.dp)
-                        ) {
-                            Text(
-                                stringResource(R.string.debug_info), 
-                                style = MaterialTheme.typography.labelSmall, 
-                                color = Color.Green,
-                                fontWeight = FontWeight.Bold
-                            )
-                            Text(stringResource(R.string.phase_fmt, gameState.gamePhase), color = Color.White, style = MaterialTheme.typography.bodySmall)
-                            Text(stringResource(R.string.arrival_fmt, gameState.ballArrivalTimestamp), color = Color.White, style = MaterialTheme.typography.bodySmall)
-                            Text(stringResource(R.string.now_fmt, System.currentTimeMillis()), color = Color.White, style = MaterialTheme.typography.bodySmall)
-                            Text(stringResource(R.string.delta_fmt, gameState.ballArrivalTimestamp - System.currentTimeMillis()), color = Color.White, style = MaterialTheme.typography.bodySmall)
-                            Text(stringResource(R.string.difficulty_fmt, gameState.difficulty), color = Color.White, style = MaterialTheme.typography.bodySmall)
-                            Text(stringResource(R.string.flight_time_fmt, gameState.flightTime), color = Color.White, style = MaterialTheme.typography.bodySmall)
-                            
-                            Spacer(modifier = Modifier.height(8.dp))
-                            Text(stringResource(R.string.last_swing), color = Color.Yellow, style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold)
-                            gameState.lastSwingType?.let {
-                                    Text(stringResource(R.string.type_fmt, it), color = Color.White, style = MaterialTheme.typography.bodySmall)
-                            }
-                            gameState.lastSwingData?.let {
-                                    Text(stringResource(R.string.force_fmt, it.force), color = Color.White, style = MaterialTheme.typography.bodySmall)
-                                    Text(stringResource(R.string.grav_z_fmt, "%.2f".format(it.gravZ)), color = Color.White, style = MaterialTheme.typography.bodySmall)
-                            }
-                        }
-                    }
-                }
+
         
         
         // Debug Game Controls
@@ -309,11 +274,67 @@ fun GameScreen(
             )
         }
         
-        // Action Feed Panel (Bottom Sheet)
-        ActionFeedPanel(
-            events = gameState.eventLog,
-            modifier = Modifier.align(Alignment.BottomCenter)
-        )
+        // Debug Overlay + Action Feed Panel (Bottom Sheet)
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.BottomCenter),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            // --- Debug Overlay (Moved Here) ---
+            if (gameState.isDebugMode) {
+                Card(
+                    colors = CardDefaults.cardColors(
+                        containerColor = Color.Black.copy(alpha = 0.5f)
+                    ),
+                    modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
+                ) {
+                    Column(
+                        modifier = Modifier.padding(8.dp)
+                    ) {
+                        Text(
+                            stringResource(R.string.debug_info), 
+                            style = MaterialTheme.typography.labelSmall, 
+                            color = Color.Green,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Row(modifier = Modifier.fillMaxWidth()) {
+                            // Column 1: Game State
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(stringResource(R.string.phase_fmt, gameState.gamePhase), color = Color.White, style = MaterialTheme.typography.bodySmall)
+                                Text(stringResource(R.string.difficulty_fmt, gameState.difficulty), color = Color.White, style = MaterialTheme.typography.bodySmall)
+                                Text(stringResource(R.string.flight_time_fmt, gameState.flightTime), color = Color.White, style = MaterialTheme.typography.bodySmall)
+                                Text(stringResource(R.string.hit_window_fmt, gameState.currentHitWindow), color = Color.White, style = MaterialTheme.typography.bodySmall)
+                            }
+                            Spacer(modifier = Modifier.width(8.dp))
+                            // Column 2: Timing
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(stringResource(R.string.arrival_fmt, gameState.ballArrivalTimestamp), color = Color.White, style = MaterialTheme.typography.bodySmall)
+                                Text(stringResource(R.string.now_fmt, System.currentTimeMillis()), color = Color.White, style = MaterialTheme.typography.bodySmall)
+                                Text(stringResource(R.string.delta_fmt, gameState.ballArrivalTimestamp - System.currentTimeMillis()), color = Color.White, style = MaterialTheme.typography.bodySmall)
+                            }
+                        }
+                        
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(stringResource(R.string.last_swing), color = Color.Yellow, style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold)
+                        Row(modifier = Modifier.fillMaxWidth()) {
+                            gameState.lastSwingType?.let {
+                                Text(stringResource(R.string.type_fmt, it), color = Color.White, style = MaterialTheme.typography.bodySmall, modifier = Modifier.padding(end = 8.dp))
+                            }
+                            gameState.lastSwingData?.let {
+                                Text(stringResource(R.string.force_fmt, it.force), color = Color.White, style = MaterialTheme.typography.bodySmall, modifier = Modifier.padding(end = 8.dp))
+                                Text(stringResource(R.string.grav_z_fmt, "%.2f".format(it.gravZ)), color = Color.White, style = MaterialTheme.typography.bodySmall)
+                            }
+                        }
+                    }
+                }
+            }
+            
+            ActionFeedPanel(
+                events = gameState.eventLog,
+                // modifier = Modifier.align(Alignment.BottomCenter) // Removed align, parent column handles it
+            )
+        }
         }
     }
 }

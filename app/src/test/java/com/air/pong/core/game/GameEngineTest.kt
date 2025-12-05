@@ -64,6 +64,29 @@ class GameEngineTest {
         SwingSettings.hardSmashFlight = SwingSettings.DEFAULT_HARD_SMASH_FLIGHT
     }
 
+    private fun disableRisk() {
+        SwingSettings.softFlatNetRisk = 0
+        SwingSettings.softFlatOutRisk = 0
+        SwingSettings.mediumFlatNetRisk = 0
+        SwingSettings.mediumFlatOutRisk = 0
+        SwingSettings.hardFlatNetRisk = 0
+        SwingSettings.hardFlatOutRisk = 0
+        
+        SwingSettings.softLobNetRisk = 0
+        SwingSettings.softLobOutRisk = 0
+        SwingSettings.mediumLobNetRisk = 0
+        SwingSettings.mediumLobOutRisk = 0
+        SwingSettings.hardLobNetRisk = 0
+        SwingSettings.hardLobOutRisk = 0
+        
+        SwingSettings.softSmashNetRisk = 0
+        SwingSettings.softSmashOutRisk = 0
+        SwingSettings.mediumSmashNetRisk = 0
+        SwingSettings.mediumSmashOutRisk = 0
+        SwingSettings.hardSmashNetRisk = 0
+        SwingSettings.hardSmashOutRisk = 0
+    }
+
     @Test
     fun `test initial state`() {
         val state = gameEngine.gameState.value
@@ -188,9 +211,10 @@ class GameEngineTest {
 
     @Test
     fun `test timing window`() {
+        disableRisk()
         // Explicitly set flight time to avoid relying on default
         val testFlightTime = 1000L
-        gameEngine.updateSettings(testFlightTime, 500, isDebugMode = false, useDebugTones = false, minSwingThreshold = GameEngine.DEFAULT_SWING_THRESHOLD) // Difficulty 500ms (Medium)
+        gameEngine.updateSettings(testFlightTime, 500, isDebugMode = false, useDebugTones = false, minSwingThreshold = GameEngine.DEFAULT_SWING_THRESHOLD, isRallyShrinkEnabled = true) // Difficulty 500ms (Medium)
 
         // P1 serves at T=1000. Arrival = 1000 + 1000 = 2000.
         // Note: Must start > 500ms to avoid cooldown check against initial 0
@@ -227,6 +251,7 @@ class GameEngineTest {
 
     @Test
     fun `test swing classification`() {
+        disableRisk()
         // Force > 20 -> HARD
         // Force > 17 -> MEDIUM
         // Else -> SOFT
@@ -260,7 +285,7 @@ class GameEngineTest {
     fun `test flight time modifiers`() {
         // Set base flight time to 1000ms explicitly (default is 700ms)
         val baseFlightTime = 1000L
-        gameEngine.updateSettings(baseFlightTime, 500, isDebugMode = false, useDebugTones = false, minSwingThreshold = GameEngine.DEFAULT_SWING_THRESHOLD)
+        gameEngine.updateSettings(baseFlightTime, 500, isDebugMode = false, useDebugTones = false, minSwingThreshold = GameEngine.DEFAULT_SWING_THRESHOLD, isRallyShrinkEnabled = true)
         
         // 1. MEDIUM_FLAT (Default: 1.0x)
         gameEngine.onOpponentHit(0L, SwingType.MEDIUM_FLAT.ordinal)
@@ -277,9 +302,10 @@ class GameEngineTest {
 
     @Test
     fun `test smash serve flight time exception`() {
+        disableRisk()
         // Smash Serve should use LOB flight times (Slow) due to bounce physics
         val baseFlightTime = 1000L
-        gameEngine.updateSettings(baseFlightTime, 500, false, false, GameEngine.DEFAULT_SWING_THRESHOLD)
+        gameEngine.updateSettings(baseFlightTime, 500, false, false, GameEngine.DEFAULT_SWING_THRESHOLD, true)
         
         gameEngine.startGame() // Reset to serve phase
         
@@ -303,9 +329,10 @@ class GameEngineTest {
     
     @Test
     fun `test no window shrink on serve return`() {
+        disableRisk()
         // Setup: Serve phase, Hard Smash Serve
         val baseWindow = 500L
-        gameEngine.updateSettings(1000L, baseWindow.toInt(), false, false, GameEngine.DEFAULT_SWING_THRESHOLD)
+        gameEngine.updateSettings(1000L, baseWindow.toInt(), false, false, GameEngine.DEFAULT_SWING_THRESHOLD, true)
         gameEngine.startGame()
         
         // Serve HARD_SMASH (Shrink is normally high, e.g. 50%)
@@ -325,9 +352,13 @@ class GameEngineTest {
         // Now it IS my turn. Incoming shot is HARD_SMASH.
         // Should have shrinkage.
         val shrinkPercent = SwingType.HARD_SMASH.getWindowShrinkPercentage()
-        val shrunkWindow = (baseWindow * (1.0f - shrinkPercent)).toLong()
         
-        println("DEBUG: WindowShrink - Base: $baseWindow, Shrink%: $shrinkPercent, ExpectedShrunk: $shrunkWindow, Actual: ${gameEngine.getHitWindow()}")
+        // Rally Length = 2. Rally Shrink = 20.
+        val rallyShrink = 20L
+        val adjustedBase = baseWindow - rallyShrink
+        val shrunkWindow = (adjustedBase * (1.0f - shrinkPercent)).toLong()
+        
+        println("DEBUG: WindowShrink - Base: $baseWindow, RallyShrink: $rallyShrink, Shrink%: $shrinkPercent, ExpectedShrunk: $shrunkWindow, Actual: ${gameEngine.getHitWindow()}")
         
         assertTrue("Shrunk window $shrunkWindow should be < base window $baseWindow", shrunkWindow < baseWindow)
         
@@ -336,29 +367,35 @@ class GameEngineTest {
 
     @Test
     fun `test fast smash hit window`() {
+        disableRisk()
         // Setup: Fast Smash that requires window shifting
         val baseFlightTime = 600L
         val difficulty = 500
-        gameEngine.updateSettings(baseFlightTime, difficulty, false, false, GameEngine.DEFAULT_SWING_THRESHOLD)
+        gameEngine.updateSettings(baseFlightTime, difficulty, false, false, GameEngine.DEFAULT_SWING_THRESHOLD, true)
         
         // Use current settings
         val flightModifier = SwingSettings.hardSmashFlight
         val shrinkPercent = SwingSettings.hardSmashShrink / 100f
         
         val flightDuration = (baseFlightTime * flightModifier).toLong() 
-        val halfWindow = (difficulty * (1.0f - shrinkPercent)).toLong()
-        val totalWindow = halfWindow * 2
         
         // Pre-condition: We need to be in a rally (length > 1) for shrinking to apply
         gameEngine.startGame()
-        // 1. I Serve
-        gameEngine.processSwing(100L, 10f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f)
+        // 1. I Serve (Rally=1) - Must be > 500ms to avoid cooldown
+        gameEngine.processSwing(1000L, 10f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f)
         // 2. Opponent Returns (Rally=2)
-        gameEngine.onOpponentHit(500L, SwingType.MEDIUM_FLAT.ordinal)
+        gameEngine.onOpponentHit(2000L, SwingType.MEDIUM_FLAT.ordinal)
 
-        // Opponent hits Hard Smash at T=1000
-        val hitTime = 1000L
+        // Opponent hits Hard Smash at T=3000 (Rally=3)
+        val hitTime = 3000L
         gameEngine.onOpponentHit(hitTime, SwingType.HARD_SMASH.ordinal)
+        
+        // Calculate expected window with Rally Shrink
+        // Rally Length = 3. Shrink = 30ms.
+        val rallyShrink = 30L
+        val adjustedBaseWindow = (difficulty - rallyShrink).coerceAtLeast(200L)
+        val halfWindow = (adjustedBaseWindow * (1.0f - shrinkPercent)).toLong()
+        val totalWindow = halfWindow * 2
         
         val arrivalTime = hitTime + flightDuration
         assertEquals(arrivalTime, gameEngine.gameState.value.ballArrivalTimestamp)
@@ -368,56 +405,58 @@ class GameEngineTest {
         val actualStart = maxOf(safetyStart, standardStart)
         val actualEnd = actualStart + totalWindow
         
-        val checkTime = actualEnd + 10
+        val checkTime = actualEnd // Check exactly at the end
         val result = gameEngine.checkHitTiming(checkTime)
         
         println("DEBUG: FastSmash - Hit: $hitTime, Arrival: $arrivalTime, SafetyStart: $safetyStart, StdStart: $standardStart, ActualStart: $actualStart, End: $actualEnd")
         println("DEBUG: FastSmash - Checking at $checkTime. Result: $result")
         
-        // Window Calculation:
-        // Ideal Start = Arrival - 200 = 1040
-        // Safety Start = HitTime + 200 = 1200
-        // Actual Start = max(1040, 1200) = 1200
-        // Actual End = Actual Start + 500 = 1700
+        // 1. Too Early (Safety Check) -> T=3150 (HitTime + 150)
+        assertEquals("Too Early (Safety Check)", HitResult.MISS_EARLY, gameEngine.checkHitTiming(hitTime + 150))
         
-        // 1. Too Early (Safety Check) -> T=1150 (HitTime + 150)
-        assertEquals("Too Early (Safety Check)", HitResult.MISS_EARLY, gameEngine.checkHitTiming(1150))
+        // 2. Valid Hit (Start of Window) -> T=3210 (HitTime + 210)
+        assertEquals("Valid Hit (Start of Window)", HitResult.HIT, gameEngine.checkHitTiming(hitTime + 210))
         
-        // 2. Valid Hit (Start of Window) -> T=1210 (HitTime + 210)
-        assertEquals("Valid Hit (Start of Window)", HitResult.HIT, gameEngine.checkHitTiming(1210))
+        // 3. Valid Hit (Middle/Late) -> T=3500
+        assertEquals("Valid Hit (Middle/Late)", HitResult.HIT, gameEngine.checkHitTiming(hitTime + 500))
         
-        // 3. Valid Hit (Middle/Late) -> T=1500
-        assertEquals("Valid Hit (Middle/Late)", HitResult.HIT, gameEngine.checkHitTiming(1500))
+        // 4. Valid Hit (End of Window)
+        assertEquals("Valid Hit (End of Window)", HitResult.HIT, gameEngine.checkHitTiming(actualEnd))
         
-        // 4. Valid Hit (End of Window) -> T=1690
-        assertEquals("Valid Hit (End of Window)", HitResult.HIT, gameEngine.checkHitTiming(1690))
-        
-        // 5. Too Late -> T=1710
-        assertEquals("Should be MISS_LATE when hitting after window", HitResult.MISS_LATE, gameEngine.checkHitTiming(1710))
+        // 5. Too Late -> T=ActualEnd + 1
+        assertEquals("Should be MISS_LATE when hitting after window", HitResult.MISS_LATE, gameEngine.checkHitTiming(actualEnd + 1))
     }
 
     @Test
     fun `test window shrink`() {
+        disableRisk()
         // Base Window (Medium Difficulty)
         val testFlightTime = 1000L
-        gameEngine.updateSettings(testFlightTime, 500, isDebugMode = false, useDebugTones = false, minSwingThreshold = GameEngine.DEFAULT_SWING_THRESHOLD) // Difficulty 500ms
+        gameEngine.updateSettings(testFlightTime, 500, isDebugMode = false, useDebugTones = false, minSwingThreshold = GameEngine.DEFAULT_SWING_THRESHOLD, isRallyShrinkEnabled = true) // Difficulty 500ms
         val baseWindow = 500L
         
         // 1. Incoming SOFT_FLAT (Default 0% shrink)
+        // Rally = 1 (Return of Serve). No Rally Shrink.
         gameEngine.onOpponentHit(0L, SwingType.SOFT_FLAT.ordinal)
         assertEquals((baseWindow * (1f - SwingSettings.softFlatShrink/100f)).toLong(), gameEngine.getHitWindow())
         
         // 2. Incoming MEDIUM_FLAT (Default 20% shrink)
+        // Rally = 2. Rally Shrink = 20.
         gameEngine.onOpponentHit(0L, SwingType.MEDIUM_FLAT.ordinal)
-        assertEquals((baseWindow * (1f - SwingSettings.mediumFlatShrink/100f)).toLong(), gameEngine.getHitWindow())
+        val base2 = baseWindow - 20
+        assertEquals((base2 * (1f - SwingSettings.mediumFlatShrink/100f)).toLong(), gameEngine.getHitWindow())
         
         // 3. Incoming HARD_SMASH (Default 50% shrink)
+        // Rally = 3. Rally Shrink = 30.
         gameEngine.onOpponentHit(0L, SwingType.HARD_SMASH.ordinal)
-        assertEquals((baseWindow * (1f - SwingSettings.hardSmashShrink/100f)).toLong(), gameEngine.getHitWindow())
+        val base3 = baseWindow - 30
+        assertEquals((base3 * (1f - SwingSettings.hardSmashShrink/100f)).toLong(), gameEngine.getHitWindow())
 
         // 4. Incoming SOFT_SMASH (Default 20% shrink)
+        // Rally = 4. Rally Shrink = 40.
         gameEngine.onOpponentHit(0L, SwingType.SOFT_SMASH.ordinal)
-        assertEquals((baseWindow * (1f - SwingSettings.softSmashShrink/100f)).toLong(), gameEngine.getHitWindow())
+        val base4 = baseWindow - 40
+        assertEquals((base4 * (1f - SwingSettings.softSmashShrink/100f)).toLong(), gameEngine.getHitWindow())
     }
 
     @Test
@@ -600,8 +639,9 @@ class GameEngineTest {
     }
     @Test
     fun `test dynamic swing threshold`() {
+        disableRisk()
         // Set low threshold (10.0f) - New Min
-        gameEngine.updateSettings(1000L, 500, false, false, 10.0f)
+        gameEngine.updateSettings(1000L, 500, false, false, 10.0f, true)
         
         // 1. SOFT (Force=11.0) -> Should be valid SOFT (since > 10.0)
         // Note: We need to ensure we are in a valid state to swing (e.g. Waiting for Serve)
@@ -618,7 +658,7 @@ class GameEngineTest {
         assertEquals(SwingType.HARD_FLAT, gameEngine.gameState.value.lastSwingType)
         
         // Set default threshold (14.0f)
-        gameEngine.updateSettings(1000L, 500, false, false, GameEngine.DEFAULT_SWING_THRESHOLD)
+        gameEngine.updateSettings(1000L, 500, false, false, GameEngine.DEFAULT_SWING_THRESHOLD, true)
 
         // 4. SOFT (Force=20.0) -> > 14.0 (but < 23.0)
         gameEngine.processSwing(4000L, 20.0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f)
@@ -633,10 +673,74 @@ class GameEngineTest {
         assertEquals(SwingType.HARD_FLAT, gameEngine.gameState.value.lastSwingType)
 
         // Set high threshold (24.0f) - New Max
-        gameEngine.updateSettings(1000L, 500, false, false, 24.0f)
+        gameEngine.updateSettings(1000L, 500, false, false, 24.0f, true)
         
         // 7. SOFT (Force=25.0) -> > 24.0 (but < 33.0)
         gameEngine.processSwing(7000L, 25.0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f)
         assertEquals(SwingType.SOFT_FLAT, gameEngine.gameState.value.lastSwingType)
+    }
+    @Test
+    fun `test rally shrink logic`() {
+        disableRisk()
+        // Setup: Base Window = 500ms
+        val baseWindow = 500L
+        gameEngine.updateSettings(1000L, baseWindow.toInt(), false, false, GameEngine.DEFAULT_SWING_THRESHOLD, true)
+        
+        // 1. Serve (Rally=0 -> 1)
+        // No shrink on serve
+        gameEngine.startGame()
+        gameEngine.processSwing(1000L, 10f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f)
+        
+        // 2. Opponent Return (P2)
+        // P2 hits. P1 receives it.
+        gameEngine.onOpponentHit(2000L, SwingType.SOFT_FLAT.ordinal)
+        assertEquals(2, gameEngine.gameState.value.currentRallyLength)
+        
+        // Now P1 needs to hit. Window should be shrunk.
+        // Base = 500. Shrink = 2 * 10 = 20. Result = 480.
+        // Note: SwingType shrink also applies. SOFT_FLAT has 0% shrink.
+        assertEquals(480L, gameEngine.getHitWindow())
+        
+        // 3. P1 Hits (Rally=3)
+        // Note: SOFT_FLAT has 1.3x flight time. 1000 * 1.3 = 1300.
+        // Arrival = 2000 + 1300 = 3300.
+        // Window starts at -200 (3100).
+        // We must hit AFTER 3100. Let's hit at 3200.
+        gameEngine.processSwing(3200L, 10f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f)
+        assertEquals(3, gameEngine.gameState.value.currentRallyLength)
+        
+        // 4. Opponent Return (P2)
+        gameEngine.onOpponentHit(4000L, SwingType.SOFT_FLAT.ordinal)
+        assertEquals(4, gameEngine.gameState.value.currentRallyLength)
+        
+        // Now P1 needs to hit. Window should be shrunk more.
+        // Base = 500. Rally=4. Shrink = 4 * 10 = 40. Result = 460.
+        assertEquals(460L, gameEngine.getHitWindow())
+        
+        // 5. Disable Rally Shrink
+        gameEngine.updateSettings(1000L, baseWindow.toInt(), false, false, GameEngine.DEFAULT_SWING_THRESHOLD, false)
+        
+        // Should return to Base Window (500)
+        assertEquals(500L, gameEngine.getHitWindow())
+        
+        // 6. Re-enable and test Min Window Floor
+        gameEngine.updateSettings(1000L, baseWindow.toInt(), false, false, GameEngine.DEFAULT_SWING_THRESHOLD, true)
+        
+        // Simulate long rally (Rally=40) -> Shrink = 400. 500 - 400 = 100.
+        // Floor is 200. Should return 200.
+        // We need to hack the state to set rally length, or play 40 shots.
+        // Let's play 40 shots.
+        repeat(36) { // We are at 4. Need 36 more to get to 40.
+             // I hit
+             gameEngine.processSwing(5000L + it*1000, 10f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f)
+             // Opponent hits
+             gameEngine.onOpponentHit(5500L + it*1000, SwingType.SOFT_FLAT.ordinal)
+        }
+        
+        // Check Rally Length (should be large)
+        assertTrue(gameEngine.gameState.value.currentRallyLength >= 40)
+        
+        // Check Window (Should be floored at 200)
+        assertEquals(200L, gameEngine.getHitWindow())
     }
 }

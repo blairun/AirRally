@@ -57,25 +57,11 @@ class GameEngine {
     }
 
     /**
-     * Returns the hit window in milliseconds based on difficulty (which is now the window size in ms) AND incoming swing type.
+     * Returns the hit window in milliseconds.
+     * Delegates to the pre-calculated value in GameState.
      */
     fun getHitWindow(): Long {
-        // Difficulty is now the base window size in ms (200-700)
-        val baseWindow = _gameState.value.difficulty.toLong()
-        
-        // Window Shrink Logic:
-        // Disabled for Return of Serve (Rally Length <= 1).
-        // Only applies during rallied shots (Rally Length > 1).
-        if (_gameState.value.currentRallyLength <= 1) {
-            return baseWindow
-        }
-
-        // Apply Window Shrink based on the LAST swing type (the incoming shot)
-        // If lastSwingType is null (e.g. first serve), no shrink.
-        val shrinkPercentage = _gameState.value.lastSwingType?.getWindowShrinkPercentage() ?: 0f
-        val shrinkFactor = 1.0f - shrinkPercentage
-        
-        return (baseWindow * shrinkFactor).roundToLong()
+        return _gameState.value.currentHitWindow
     }
 
     private fun checkRisk(swingType: SwingType): HitResult {
@@ -126,7 +112,21 @@ class GameEngine {
         val arrival = _gameState.value.ballArrivalTimestamp
         val delta = swingTimestamp - arrival
         
-        val (startWindow, endWindow) = getHitWindowBounds()
+        // Use the CURRENT hit window (which represents the window for the incoming shot)
+        // Note: In processSwing, we must ensure we use this BEFORE overwriting lastSwingType
+        val halfWindow = getHitWindow()
+        val totalWindow = halfWindow * 2
+        
+        // Ideal window starts at BOUNCE_OFFSET_MS before arrival
+        val idealStartWindow = -BOUNCE_OFFSET_MS
+        
+        // Safety Check: Cannot hit in first 200ms of flight
+        val flightTime = getCurrentFlightTime()
+        val earliestValidStart = MIN_REACTION_TIME_MS - flightTime
+        
+        // Actual start is the later of the two
+        val startWindow = kotlin.math.max(idealStartWindow, earliestValidStart)
+        val endWindow = startWindow + totalWindow
         
         return when {
             delta < startWindow -> HitResult.MISS_EARLY
@@ -165,10 +165,12 @@ class GameEngine {
         
         // Store raw values for debug
         _gameState.update {
-            it.copy(
+            val newState = it.copy(
                 lastSwingType = swingType,
                 lastSwingData = SwingData(force, x, y, z, gx, gy, gz, gravX, gravY, gravZ)
             )
+            // Update hit window for the NEXT person (which is based on MY swing now)
+            newState.copy(currentHitWindow = newState.calculateHitWindow())
         }
         
         val currentState = _gameState.value
@@ -222,7 +224,7 @@ class GameEngine {
 
              val nextArrival = timestamp + serveFlightTime
              _gameState.update {
-                 it.copy(
+                 val newState = it.copy(
                      ballArrivalTimestamp = nextArrival,
                      ballState = BallState.IN_AIR,
                      gamePhase = GamePhase.RALLY,
@@ -232,6 +234,7 @@ class GameEngine {
                      currentPointShots = it.currentPointShots + swingType,
                      currentRallyLength = 1
                  )
+                 newState.copy(currentHitWindow = newState.calculateHitWindow())
              }
              return HitResult.HIT
         }
@@ -247,12 +250,11 @@ class GameEngine {
                 // Success!
                 val nextArrival = timestamp + currentState.flightTime 
                 _gameState.update {
-                    // Concurrency Guard: Ensure game is still in progress
                     if (it.gamePhase != GamePhase.RALLY && it.gamePhase != GamePhase.WAITING_FOR_SERVE) {
                         return@update it
                     }
                     
-                    it.copy(
+                    val newState = it.copy(
                         gamePhase = GamePhase.RALLY,
                         isMyTurn = false,
                         ballArrivalTimestamp = nextArrival,
@@ -262,6 +264,8 @@ class GameEngine {
                         currentRallyLength = it.currentRallyLength + 1,
                         ballState = BallState.IN_AIR
                     )
+                    // Recalculate window for opponent based on new rally length
+                    newState.copy(currentHitWindow = newState.calculateHitWindow())
                 }
                 return HitResult.HIT
             } else {
@@ -331,7 +335,7 @@ class GameEngine {
          val nextArrival = timestamp + actualFlightTime
          
          _gameState.update {
-             it.copy(
+             val newState = it.copy(
                  gamePhase = GamePhase.RALLY,
                  isMyTurn = true, // Now it's my turn to hit
                  ballArrivalTimestamp = nextArrival,
@@ -341,6 +345,7 @@ class GameEngine {
                  lastSwingType = swingType, // Store this so we can calculate window shrink later
                  currentRallyLength = it.currentRallyLength + 1
              )
+             newState.copy(currentHitWindow = newState.calculateHitWindow())
          }
     }
 
@@ -407,6 +412,8 @@ class GameEngine {
         return false
     }
 
+
+
     fun handleMiss(whoMissed: Player) {
         lastPointEndedTimestamp = System.currentTimeMillis()
         // Update Score
@@ -463,7 +470,12 @@ class GameEngine {
                     lastEvent = "Your Serve", // Or "Opponent Serving" - UI handles this text usually but good to reset
                     currentPointShots = emptyList(),
                     currentRallyLength = 0
-                )
+                ).apply { 
+                    // Refresh hit window (reset to base)
+                    // Note: copy() isn't mutable, so we need to use the result of calculateHitWindow
+                }.let { 
+                    it.copy(currentHitWindow = it.calculateHitWindow())
+                }
             } else {
                 state
             }
@@ -502,15 +514,18 @@ class GameEngine {
         }
     }
 
-    fun updateSettings(flightTime: Long, difficulty: Int, isDebugMode: Boolean, useDebugTones: Boolean, minSwingThreshold: Float) {
+    fun updateSettings(flightTime: Long, difficulty: Int, isDebugMode: Boolean, useDebugTones: Boolean, minSwingThreshold: Float, isRallyShrinkEnabled: Boolean) {
         _gameState.update {
-            it.copy(
+            val newState = it.copy(
                 flightTime = flightTime,
                 difficulty = difficulty,
                 isDebugMode = isDebugMode,
                 useDebugTones = useDebugTones,
-                minSwingThreshold = minSwingThreshold
+                minSwingThreshold = minSwingThreshold,
+                isRallyShrinkEnabled = isRallyShrinkEnabled
             )
+            // Recalculate because difficulty or enabled flag changed
+            newState.copy(currentHitWindow = newState.calculateHitWindow())
         }
     }
 
@@ -534,7 +549,7 @@ class GameEngine {
                 }
             }
             
-            state.copy(
+            val newState = state.copy(
                 gamePhase = GamePhase.WAITING_FOR_SERVE,
                 player1Score = 0,
                 player2Score = 0,
@@ -548,6 +563,8 @@ class GameEngine {
                 currentRallyLength = 0,
                 longestRally = 0
             )
+            // Reset hit window
+            newState.copy(currentHitWindow = newState.calculateHitWindow())
         }
     }
 
@@ -582,7 +599,7 @@ class GameEngine {
 
     fun resetGame() {
         _gameState.update {
-            it.copy(
+            val newState = it.copy(
                 gamePhase = GamePhase.IDLE,
                 player1Score = 0,
                 player2Score = 0,
@@ -594,6 +611,7 @@ class GameEngine {
                 currentRallyLength = 0,
                 longestRally = 0
             )
+            newState.copy(currentHitWindow = newState.calculateHitWindow())
         }
     }
 

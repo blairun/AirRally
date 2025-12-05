@@ -128,6 +128,7 @@
     <string name="delta_fmt">Delta: %1$dms</string>
     <string name="difficulty_fmt">Difficulty: %1$d</string>
     <string name="flight_time_fmt">FlightTime: %1$d</string>
+    <string name="hit_window_fmt">HitWindow: %1$d</string>
     <string name="last_swing">LAST SWING:</string>
     <string name="type_fmt">Type: %1$s</string>
     <string name="grav_z_fmt">GravZ: %1$s</string>

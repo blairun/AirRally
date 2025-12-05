@@ -81,14 +81,15 @@ object MessageCodec {
     }
     
     private fun encodeSettings(msg: GameMessage.Settings): ByteArray {
-        // [Type: 1][FlightTime: 8][Difficulty: 4][ListSize: 4][Values: N*4]
+        // [Type: 1][FlightTime: 8][Difficulty: 4][ListSize: 4][Values: N*4][RallyShrink: 1]
         val listSize = msg.swingSettings.size
-        val buffer = ByteBuffer.allocate(13 + 4 + (listSize * 4)).order(ByteOrder.BIG_ENDIAN)
+        val buffer = ByteBuffer.allocate(13 + 4 + (listSize * 4) + 1).order(ByteOrder.BIG_ENDIAN)
         buffer.put(MessageType.SETTINGS)
         buffer.putLong(msg.flightTime)
         buffer.putInt(msg.difficulty)
         buffer.putInt(listSize)
         msg.swingSettings.forEach { buffer.putInt(it) }
+        buffer.put(if (msg.isRallyShrinkEnabled) 1.toByte() else 0.toByte())
         return buffer.array()
     }
     
@@ -154,7 +155,14 @@ object MessageCodec {
             }
         }
         
-        return GameMessage.Settings(flightTime, difficulty, swingSettings)
+        // Backward compatibility: If no more bytes, default to true
+        val isRallyShrinkEnabled = if (buffer.remaining() >= 1) {
+            buffer.get() == 1.toByte()
+        } else {
+            true 
+        }
+        
+        return GameMessage.Settings(flightTime, difficulty, swingSettings, isRallyShrinkEnabled)
     }
     
     private fun decodeActionSwing(payload: ByteArray): GameMessage.ActionSwing {

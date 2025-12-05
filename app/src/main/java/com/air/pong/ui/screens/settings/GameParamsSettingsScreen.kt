@@ -183,7 +183,9 @@ fun GameParamsSettingsScreen(
     lastSwingData: com.air.pong.core.game.SwingData?,
     swingSettingsVersion: Int,
     onPlayTestSound: (com.air.pong.audio.AudioManager.SoundEvent) -> Unit,
-    onClearDebugData: () -> Unit
+    onClearDebugData: () -> Unit,
+    isRallyShrinkEnabled: Boolean,
+    onRallyShrinkChange: (Boolean) -> Unit
 ) {
     val context = LocalContext.current
     
@@ -338,6 +340,35 @@ fun GameParamsSettingsScreen(
         )
         
         HitWindowVisualization(difficultyWindow = difficulty, refreshTrigger = advancedSettingsTrigger)
+        
+
+        
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Rally Shrink Toggle
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text("Shrinking Hit Window", style = MaterialTheme.typography.bodyLarge)
+                IconButton(onClick = {
+                    onShowInfo(
+                        "Shrinking Hit Window",
+                        "When enabled, the hit window shrinks by 10ms for every shot in a rally (down to 200ms). This makes long rallies progressively harder."
+                    )
+                }) {
+                    Icon(Icons.Default.Info, contentDescription = "Info", modifier = Modifier.size(20.dp))
+                }
+            }
+            Switch(
+                checked = isRallyShrinkEnabled,
+                onCheckedChange = {
+                    onRallyShrinkChange(it)
+                }
+            )
+        }
         
         Spacer(modifier = Modifier.height(24.dp))
         

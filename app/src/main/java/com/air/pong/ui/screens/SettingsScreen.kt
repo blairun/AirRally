@@ -183,7 +183,7 @@ fun SettingsScreen(
                         minSwingThreshold = minSwingThreshold,
                         onSwingThresholdChange = { minSwingThreshold = it },
                         onSettingsChange = {
-                            viewModel.updateSettings(flightTime.toLong(), difficulty, isDebugMode, gameState.useDebugTones, minSwingThreshold)
+                            viewModel.updateSettings(flightTime.toLong(), difficulty, isDebugMode, gameState.useDebugTones, minSwingThreshold, gameState.isRallyShrinkEnabled)
                         },
                         onResetMainDefaults = viewModel::resetGameSettings,
                         onResetSwingDefaults = viewModel::resetSwingSettings,
@@ -196,7 +196,9 @@ fun SettingsScreen(
                         lastSwingData = gameState.lastSwingData,
                         swingSettingsVersion = viewModel.swingSettingsVersion.collectAsState().value,
                         onPlayTestSound = { viewModel.playTestSound(it) },
-                        onClearDebugData = { viewModel.clearDebugData() }
+                        onClearDebugData = { viewModel.clearDebugData() },
+                        isRallyShrinkEnabled = gameState.isRallyShrinkEnabled,
+                        onRallyShrinkChange = { viewModel.updateRallyShrink(it) }
                     )
                     SettingsScreenType.Stats -> StatsScreen(
                         viewModel = viewModel
@@ -206,11 +208,11 @@ fun SettingsScreen(
                         isDebugMode = isDebugMode,
                         onDebugModeChange = {
                             isDebugMode = it
-                            viewModel.updateSettings(flightTime.toLong(), difficulty, isDebugMode, gameState.useDebugTones, minSwingThreshold)
+                            viewModel.updateSettings(flightTime.toLong(), difficulty, isDebugMode, gameState.useDebugTones, minSwingThreshold, gameState.isRallyShrinkEnabled)
                         },
                         useDebugTones = gameState.useDebugTones,
                         onUseDebugTonesChange = {
-                            viewModel.updateSettings(flightTime.toLong(), difficulty, isDebugMode, it, minSwingThreshold)
+                            viewModel.updateSettings(flightTime.toLong(), difficulty, isDebugMode, it, minSwingThreshold, gameState.isRallyShrinkEnabled)
                         },
                         minSwingThreshold = minSwingThreshold,
                         lastSwingType = gameState.lastSwingType,

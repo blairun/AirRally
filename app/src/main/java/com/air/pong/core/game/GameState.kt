@@ -1,5 +1,7 @@
 package com.air.pong.core.game
 
+import kotlin.math.roundToLong
+
 /**
  * Represents the current state of the game.
  * This is the Source of Truth for the UI.
@@ -19,6 +21,7 @@ data class GameState(
     val difficulty: Int = 1, // 0: Easy, 1: Medium, 2: Hard
     val isDebugMode: Boolean = false,
     val useDebugTones: Boolean = false,
+    val isRallyShrinkEnabled: Boolean = true,
     
     val ballState: BallState = BallState.IDLE,
     val eventLog: List<GameEvent> = emptyList(),
@@ -30,8 +33,40 @@ data class GameState(
     // Stats Tracking for current point
     val currentPointShots: List<SwingType> = emptyList(),
     val currentRallyLength: Int = 0,
-    val longestRally: Int = 0
+    val longestRally: Int = 0,
+    
+    // Dynamic State
+    val currentHitWindow: Long = 400L // Calculated hit window for the NEXT shot
 )
+
+/**
+ * Calculates what the hit window SHOULD be based on the current state.
+ * This logic was moved from GameEngine to be accessible for UI/Debug.
+ */
+fun GameState.calculateHitWindow(): Long {
+    // Difficulty is the base window size in ms (200-700)
+    val baseWindow = difficulty.toLong()
+    
+    // Window Shrink Logic:
+    // Disabled for Return of Serve (Rally Length <= 1).
+    // Only applies during rallied shots (Rally Length > 1).
+    if (currentRallyLength <= 1) {
+        return baseWindow
+    }
+
+    // 1. Rally Shrink
+    var currentWindow = baseWindow
+    if (isRallyShrinkEnabled) {
+        val rallyShrink = (currentRallyLength * 10L)
+        currentWindow = (currentWindow - rallyShrink).coerceAtLeast(200L)
+    }
+
+    // 2. Swing Type Shrink
+    val shrinkPercentage = lastSwingType?.getWindowShrinkPercentage() ?: 0f
+    val shrinkFactor = 1.0f - shrinkPercentage
+    
+    return (currentWindow * shrinkFactor).roundToLong()
+}
 
 data class PendingMiss(
     val type: HitResult,
