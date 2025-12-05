@@ -6,6 +6,10 @@ import androidx.lifecycle.viewModelScope
 import com.air.pong.core.game.GameEngine
 import com.air.pong.core.game.GamePhase
 import com.air.pong.core.game.HitResult
+import com.air.pong.core.game.getFlightTimeModifier
+import com.air.pong.core.game.getServeFlightTimeModifier
+import com.air.pong.core.game.isLob
+import com.air.pong.core.game.isSmash
 import com.air.pong.core.network.GameMessage
 import com.air.pong.core.network.MessageCodec
 import com.air.pong.core.network.NetworkMessageHandler
@@ -437,9 +441,27 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
                     audioManager.play(com.air.pong.audio.AudioManager.SoundEvent.SERVE, gameEngine.gameState.value.useDebugTones)
                     hapticManager.playHit()
                     
-                    // Schedule Bounce on Server's side (approx 250ms after hit)
+                    // Calculate Dynamic Bounce Time for Serve
+                    val swingType = gameEngine.gameState.value.lastSwingType ?: com.air.pong.core.game.SwingType.MEDIUM_FLAT
+                    val baseFlight = gameEngine.gameState.value.flightTime
+                    
+                    // Use Serve-Specific Flight Time (Smash travels slow-ish overall due to physics arc)
+                    val actualFlightTime = (baseFlight * swingType.getServeFlightTimeModifier()).toLong()
+                    
+                    // Timing Heuristics:
+                    // SMASH: Fast Down -> Bounces at 15% of flight
+                    // LOB: High Arc -> Bounces at 45% of flight
+                    // FLAT: Standard -> Bounces at 30% of flight
+                    val bounceRatio = when {
+                        swingType.isSmash() -> 0.15f
+                        swingType.isLob() -> 0.45f
+                        else -> 0.30f 
+                    }
+                    
+                    val bounceDelay = (actualFlightTime * bounceRatio).toLong().coerceAtLeast(100L)
+
                     viewModelScope.launch {
-                        kotlinx.coroutines.delay(250)
+                        kotlinx.coroutines.delay(bounceDelay)
                         audioManager.play(com.air.pong.audio.AudioManager.SoundEvent.BOUNCE, gameEngine.gameState.value.useDebugTones)
                         gameEngine.onBounce()
                     }
@@ -448,7 +470,8 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
                     hapticManager.playHit()
                     
                     // Schedule Bounce on Opponent's side
-                    val flightTime = gameEngine.gameState.value.flightTime
+                    val swingType = gameEngine.gameState.value.lastSwingType ?: com.air.pong.core.game.SwingType.MEDIUM_FLAT
+                    val flightTime = (gameEngine.gameState.value.flightTime * swingType.getFlightTimeModifier()).toLong()
                     val bounceDelay = flightTime - GameEngine.BOUNCE_OFFSET_MS
                     
                     if (bounceDelay > 0) {

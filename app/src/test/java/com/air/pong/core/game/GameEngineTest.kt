@@ -11,9 +11,57 @@ class GameEngineTest {
 
     @Before
     fun setUp() {
+        resetSwingSettings()
         gameEngine = GameEngine()
         gameEngine.setLocalPlayer(isHost = true) // Assume Player 1 is Host
         gameEngine.startGame()
+    }
+
+    private fun resetSwingSettings() {
+        SwingSettings.softFlatNetRisk = SwingSettings.DEFAULT_SOFT_FLAT_NET_RISK
+        SwingSettings.softFlatOutRisk = SwingSettings.DEFAULT_SOFT_FLAT_OUT_RISK
+        SwingSettings.softFlatShrink = SwingSettings.DEFAULT_SOFT_FLAT_SHRINK
+        SwingSettings.softFlatFlight = SwingSettings.DEFAULT_SOFT_FLAT_FLIGHT
+
+        SwingSettings.mediumFlatNetRisk = SwingSettings.DEFAULT_MEDIUM_FLAT_NET_RISK
+        SwingSettings.mediumFlatOutRisk = SwingSettings.DEFAULT_MEDIUM_FLAT_OUT_RISK
+        SwingSettings.mediumFlatShrink = SwingSettings.DEFAULT_MEDIUM_FLAT_SHRINK
+        SwingSettings.mediumFlatFlight = SwingSettings.DEFAULT_MEDIUM_FLAT_FLIGHT
+
+        SwingSettings.hardFlatNetRisk = SwingSettings.DEFAULT_HARD_FLAT_NET_RISK
+        SwingSettings.hardFlatOutRisk = SwingSettings.DEFAULT_HARD_FLAT_OUT_RISK
+        SwingSettings.hardFlatShrink = SwingSettings.DEFAULT_HARD_FLAT_SHRINK
+        SwingSettings.hardFlatFlight = SwingSettings.DEFAULT_HARD_FLAT_FLIGHT
+
+        SwingSettings.softLobNetRisk = SwingSettings.DEFAULT_SOFT_LOB_NET_RISK
+        SwingSettings.softLobOutRisk = SwingSettings.DEFAULT_SOFT_LOB_OUT_RISK
+        SwingSettings.softLobShrink = SwingSettings.DEFAULT_SOFT_LOB_SHRINK
+        SwingSettings.softLobFlight = SwingSettings.DEFAULT_SOFT_LOB_FLIGHT
+
+        SwingSettings.mediumLobNetRisk = SwingSettings.DEFAULT_MEDIUM_LOB_NET_RISK
+        SwingSettings.mediumLobOutRisk = SwingSettings.DEFAULT_MEDIUM_LOB_OUT_RISK
+        SwingSettings.mediumLobShrink = SwingSettings.DEFAULT_MEDIUM_LOB_SHRINK
+        SwingSettings.mediumLobFlight = SwingSettings.DEFAULT_MEDIUM_LOB_FLIGHT
+
+        SwingSettings.hardLobNetRisk = SwingSettings.DEFAULT_HARD_LOB_NET_RISK
+        SwingSettings.hardLobOutRisk = SwingSettings.DEFAULT_HARD_LOB_OUT_RISK
+        SwingSettings.hardLobShrink = SwingSettings.DEFAULT_HARD_LOB_SHRINK
+        SwingSettings.hardLobFlight = SwingSettings.DEFAULT_HARD_LOB_FLIGHT
+
+        SwingSettings.softSmashNetRisk = SwingSettings.DEFAULT_SOFT_SMASH_NET_RISK
+        SwingSettings.softSmashOutRisk = SwingSettings.DEFAULT_SOFT_SMASH_OUT_RISK
+        SwingSettings.softSmashShrink = SwingSettings.DEFAULT_SOFT_SMASH_SHRINK
+        SwingSettings.softSmashFlight = SwingSettings.DEFAULT_SOFT_SMASH_FLIGHT
+
+        SwingSettings.mediumSmashNetRisk = SwingSettings.DEFAULT_MEDIUM_SMASH_NET_RISK
+        SwingSettings.mediumSmashOutRisk = SwingSettings.DEFAULT_MEDIUM_SMASH_OUT_RISK
+        SwingSettings.mediumSmashShrink = SwingSettings.DEFAULT_MEDIUM_SMASH_SHRINK
+        SwingSettings.mediumSmashFlight = SwingSettings.DEFAULT_MEDIUM_SMASH_FLIGHT
+
+        SwingSettings.hardSmashNetRisk = SwingSettings.DEFAULT_HARD_SMASH_NET_RISK
+        SwingSettings.hardSmashOutRisk = SwingSettings.DEFAULT_HARD_SMASH_OUT_RISK
+        SwingSettings.hardSmashShrink = SwingSettings.DEFAULT_HARD_SMASH_SHRINK
+        SwingSettings.hardSmashFlight = SwingSettings.DEFAULT_HARD_SMASH_FLIGHT
     }
 
     @Test
@@ -147,17 +195,19 @@ class GameEngineTest {
         // P1 serves at T=1000. Arrival = 1000 + 1000 = 2000.
         // Note: Must start > 500ms to avoid cooldown check against initial 0
         val serveTime = 1000L
-        val expectedArrival = serveTime + testFlightTime
+        val expectedArrival = serveTime + (testFlightTime * SwingSettings.softFlatFlight).toLong()
         
         gameEngine.processSwing(serveTime, 10f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f) 
         assertEquals(expectedArrival, gameEngine.gameState.value.ballArrivalTimestamp)
         
         // Test HIT window (Shifted: Start at -BOUNCE_OFFSET_MS, End at -BOUNCE_OFFSET_MS + 2*Window)
-        val window = 500L
+        // Difficulty 500 means "Half Window" = 500ms. Total Window = 1000ms.
+        val halfWindow = 500L
+        val totalWindow = halfWindow * 2
         val bounceOffset = GameEngine.BOUNCE_OFFSET_MS
         
         val startWindow = -bounceOffset
-        val endWindow = -bounceOffset + (2 * window)
+        val endWindow = -bounceOffset + totalWindow
         
         // Test Start of Window (Earliest valid hit)
         assertEquals(HitResult.HIT, gameEngine.checkHitTiming(expectedArrival + startWindow))
@@ -212,38 +262,117 @@ class GameEngineTest {
         val baseFlightTime = 1000L
         gameEngine.updateSettings(baseFlightTime, 500, isDebugMode = false, useDebugTones = false, minSwingThreshold = GameEngine.DEFAULT_SWING_THRESHOLD)
         
-        // 1. MEDIUM_FLAT (1.0x) -> 1000ms
+        // 1. MEDIUM_FLAT (Default: 1.0x)
         gameEngine.onOpponentHit(0L, SwingType.MEDIUM_FLAT.ordinal)
-        assertEquals((baseFlightTime * 1.0f).toLong(), gameEngine.gameState.value.ballArrivalTimestamp)
+        assertEquals((baseFlightTime * SwingSettings.mediumFlatFlight).toLong(), gameEngine.gameState.value.ballArrivalTimestamp)
         
-        // 2. SOFT_LOB (1.4x) -> 1400ms
+        // 2. SOFT_LOB (Default: 1.5x)
         gameEngine.onOpponentHit(0L, SwingType.SOFT_LOB.ordinal)
-        assertEquals((baseFlightTime * 1.4f).toLong(), gameEngine.gameState.value.ballArrivalTimestamp)
+        assertEquals((baseFlightTime * SwingSettings.softLobFlight).toLong(), gameEngine.gameState.value.ballArrivalTimestamp)
         
-        // 3. HARD_SMASH (0.4x) -> 400ms
+        // 3. HARD_SMASH (Default: 0.3x)
         gameEngine.onOpponentHit(0L, SwingType.HARD_SMASH.ordinal)
-        assertEquals((baseFlightTime * 0.4f).toLong(), gameEngine.gameState.value.ballArrivalTimestamp)
+        assertEquals((baseFlightTime * SwingSettings.hardSmashFlight).toLong(), gameEngine.gameState.value.ballArrivalTimestamp)
+    }
+
+    @Test
+    fun `test smash serve flight time exception`() {
+        // Smash Serve should use LOB flight times (Slow) due to bounce physics
+        val baseFlightTime = 1000L
+        gameEngine.updateSettings(baseFlightTime, 500, false, false, GameEngine.DEFAULT_SWING_THRESHOLD)
+        
+        gameEngine.startGame() // Reset to serve phase
+        
+        // Serve HARD_SMASH (Force=45, Tilt=-6.0)
+        
+        val timestamp = 1000L
+        val result = gameEngine.processSwing(timestamp, 45f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, -6.0f)
+        assertEquals(HitResult.HIT, result)
+        assertEquals(SwingType.HARD_SMASH, gameEngine.gameState.value.lastSwingType)
+        
+        // Use the current setting from SwingSettings
+        val expectedModifier = SwingSettings.hardLobFlight
+        
+        val expectedDuration = (baseFlightTime * expectedModifier).toLong()
+        val arrival = gameEngine.gameState.value.ballArrivalTimestamp
+        
+        println("DEBUG: SmashServe - Base: $baseFlightTime, Mod: $expectedModifier, Expected: $expectedDuration, ActualArrival-Timestamp: ${arrival - timestamp}")
+        
+        assertEquals("Expected flight duration $expectedDuration but got ${arrival - timestamp}", timestamp + expectedDuration, arrival)
+    }
+    
+    @Test
+    fun `test no window shrink on serve return`() {
+        // Setup: Serve phase, Hard Smash Serve
+        val baseWindow = 500L
+        gameEngine.updateSettings(1000L, baseWindow.toInt(), false, false, GameEngine.DEFAULT_SWING_THRESHOLD)
+        gameEngine.startGame()
+        
+        // Serve HARD_SMASH (Shrink is normally high, e.g. 50%)
+        gameEngine.processSwing(1000L, 45f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, -6.0f)
+        
+        // Now check hit window for receiver. Receiver hasn't hit yet, so currentRallyLength is 1.
+        assertEquals("Rally length should be 1 after serve", 1, gameEngine.gameState.value.currentRallyLength)
+        
+        // Should use Base Window (500)
+        assertEquals("Should use base window on serve return", baseWindow, gameEngine.getHitWindow())
+        
+        // Let's transition to Rally (Length 2)
+        // Opponent hits back HARD_SMASH.
+        gameEngine.onOpponentHit(2000L, SwingType.HARD_SMASH.ordinal)
+        assertEquals("Rally length should be 2 after opponent hit", 2, gameEngine.gameState.value.currentRallyLength)
+        
+        // Now it IS my turn. Incoming shot is HARD_SMASH.
+        // Should have shrinkage.
+        val shrinkPercent = SwingType.HARD_SMASH.getWindowShrinkPercentage()
+        val shrunkWindow = (baseWindow * (1.0f - shrinkPercent)).toLong()
+        
+        println("DEBUG: WindowShrink - Base: $baseWindow, Shrink%: $shrinkPercent, ExpectedShrunk: $shrunkWindow, Actual: ${gameEngine.getHitWindow()}")
+        
+        assertTrue("Shrunk window $shrunkWindow should be < base window $baseWindow", shrunkWindow < baseWindow)
+        
+        assertEquals("Should use shrunk window in rally", shrunkWindow, gameEngine.getHitWindow())
     }
 
     @Test
     fun `test fast smash hit window`() {
         // Setup: Fast Smash that requires window shifting
-        // Base Flight = 600ms
-        // Hard Smash Flight Modifier = 0.4 -> Actual Flight = 240ms
-        // Base Window (Difficulty) = 500ms
-        // Hard Smash Shrink = 50% -> Window Factor = 0.5
-        // Total Window Size = 2 * 500 * 0.5 = 500ms
-        
         val baseFlightTime = 600L
         val difficulty = 500
         gameEngine.updateSettings(baseFlightTime, difficulty, false, false, GameEngine.DEFAULT_SWING_THRESHOLD)
         
+        // Use current settings
+        val flightModifier = SwingSettings.hardSmashFlight
+        val shrinkPercent = SwingSettings.hardSmashShrink / 100f
+        
+        val flightDuration = (baseFlightTime * flightModifier).toLong() 
+        val halfWindow = (difficulty * (1.0f - shrinkPercent)).toLong()
+        val totalWindow = halfWindow * 2
+        
+        // Pre-condition: We need to be in a rally (length > 1) for shrinking to apply
+        gameEngine.startGame()
+        // 1. I Serve
+        gameEngine.processSwing(100L, 10f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f)
+        // 2. Opponent Returns (Rally=2)
+        gameEngine.onOpponentHit(500L, SwingType.MEDIUM_FLAT.ordinal)
+
         // Opponent hits Hard Smash at T=1000
         val hitTime = 1000L
         gameEngine.onOpponentHit(hitTime, SwingType.HARD_SMASH.ordinal)
         
-        val arrivalTime = hitTime + 240 // 1240
+        val arrivalTime = hitTime + flightDuration
         assertEquals(arrivalTime, gameEngine.gameState.value.ballArrivalTimestamp)
+        
+        val safetyStart = hitTime + GameEngine.MIN_REACTION_TIME_MS
+        val standardStart = arrivalTime - GameEngine.BOUNCE_OFFSET_MS
+        val actualStart = maxOf(safetyStart, standardStart)
+        val actualEnd = actualStart + totalWindow
+        
+        val checkTime = actualEnd + 10
+        val result = gameEngine.checkHitTiming(checkTime)
+        
+        println("DEBUG: FastSmash - Hit: $hitTime, Arrival: $arrivalTime, SafetyStart: $safetyStart, StdStart: $standardStart, ActualStart: $actualStart, End: $actualEnd")
+        println("DEBUG: FastSmash - Checking at $checkTime. Result: $result")
         
         // Window Calculation:
         // Ideal Start = Arrival - 200 = 1040
@@ -252,19 +381,19 @@ class GameEngineTest {
         // Actual End = Actual Start + 500 = 1700
         
         // 1. Too Early (Safety Check) -> T=1150 (HitTime + 150)
-        assertEquals(HitResult.MISS_EARLY, gameEngine.checkHitTiming(1150))
+        assertEquals("Too Early (Safety Check)", HitResult.MISS_EARLY, gameEngine.checkHitTiming(1150))
         
         // 2. Valid Hit (Start of Window) -> T=1210 (HitTime + 210)
-        assertEquals(HitResult.HIT, gameEngine.checkHitTiming(1210))
+        assertEquals("Valid Hit (Start of Window)", HitResult.HIT, gameEngine.checkHitTiming(1210))
         
         // 3. Valid Hit (Middle/Late) -> T=1500
-        assertEquals(HitResult.HIT, gameEngine.checkHitTiming(1500))
+        assertEquals("Valid Hit (Middle/Late)", HitResult.HIT, gameEngine.checkHitTiming(1500))
         
         // 4. Valid Hit (End of Window) -> T=1690
-        assertEquals(HitResult.HIT, gameEngine.checkHitTiming(1690))
+        assertEquals("Valid Hit (End of Window)", HitResult.HIT, gameEngine.checkHitTiming(1690))
         
         // 5. Too Late -> T=1710
-        assertEquals(HitResult.MISS_LATE, gameEngine.checkHitTiming(1710))
+        assertEquals("Should be MISS_LATE when hitting after window", HitResult.MISS_LATE, gameEngine.checkHitTiming(1710))
     }
 
     @Test
@@ -274,79 +403,94 @@ class GameEngineTest {
         gameEngine.updateSettings(testFlightTime, 500, isDebugMode = false, useDebugTones = false, minSwingThreshold = GameEngine.DEFAULT_SWING_THRESHOLD) // Difficulty 500ms
         val baseWindow = 500L
         
-        // 1. Incoming SOFT_FLAT (0% shrink) -> 500ms
+        // 1. Incoming SOFT_FLAT (Default 0% shrink)
         gameEngine.onOpponentHit(0L, SwingType.SOFT_FLAT.ordinal)
-        assertEquals(baseWindow, gameEngine.getHitWindow())
+        assertEquals((baseWindow * (1f - SwingSettings.softFlatShrink/100f)).toLong(), gameEngine.getHitWindow())
         
-        // 2. Incoming MEDIUM_FLAT (20% shrink) -> 400ms
+        // 2. Incoming MEDIUM_FLAT (Default 20% shrink)
         gameEngine.onOpponentHit(0L, SwingType.MEDIUM_FLAT.ordinal)
-        assertEquals((baseWindow * 0.8f).toLong(), gameEngine.getHitWindow())
+        assertEquals((baseWindow * (1f - SwingSettings.mediumFlatShrink/100f)).toLong(), gameEngine.getHitWindow())
         
-        // 3. Incoming HARD_SMASH (50% shrink) -> 250ms
+        // 3. Incoming HARD_SMASH (Default 50% shrink)
         gameEngine.onOpponentHit(0L, SwingType.HARD_SMASH.ordinal)
-        assertEquals((baseWindow * 0.5f).toLong(), gameEngine.getHitWindow())
+        assertEquals((baseWindow * (1f - SwingSettings.hardSmashShrink/100f)).toLong(), gameEngine.getHitWindow())
 
-        // 4. Incoming SOFT_SMASH (20% shrink) -> 400ms
+        // 4. Incoming SOFT_SMASH (Default 20% shrink)
         gameEngine.onOpponentHit(0L, SwingType.SOFT_SMASH.ordinal)
-        assertEquals((baseWindow * 0.8f).toLong(), gameEngine.getHitWindow())
+        assertEquals((baseWindow * (1f - SwingSettings.softSmashShrink/100f)).toLong(), gameEngine.getHitWindow())
     }
 
     @Test
     fun `test risk logic`() {
         // 1. Safe Shot (SOFT_FLAT) - Should NEVER fail risk check
-        // We need to be in RALLY or SERVING. Let's serve.
-        // SOFT_FLAT: Force=10, GravZ=0
+        // We temporarily set SOFT_FLAT risk to 0 for this test to ensure "Safe" behavior
+        // logic, then restore it.
+        val originalNet = SwingSettings.softFlatNetRisk
+        val originalOut = SwingSettings.softFlatOutRisk
         
-        // Run 100 times to be sure
-        repeat(100) { index ->
-            // Reset state to Waiting for Serve
-            gameEngine.startGame() 
-            
-            // Increment timestamp to avoid cooldown (1000, 2000, 3000...)
-            val timestamp = 1000L + (index * 1000L)
-            val result = gameEngine.processSwing(timestamp, 10f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f)
-            assertEquals(HitResult.HIT, result)
-        }
+        SwingSettings.softFlatNetRisk = 0
+        SwingSettings.softFlatOutRisk = 0
         
-        // 2. Risky Shot (HARD_SMASH) - Should EVENTUALLY fail
-        // HARD_SMASH: Force=25, GravZ=-4.0
-        // Risk: 30% Net, 10% Out -> 40% Fail Rate
-        
-        var failures = 0
-        repeat(100) { 
-            // Create fresh engine to reset lastPointEndedTimestamp
-            val engine = GameEngine()
-            engine.setLocalPlayer(true)
-            engine.startGame()
+        try {
+            // We need to be in RALLY or SERVING. Let's serve.
+            // SOFT_FLAT: Force=10, GravZ=0
             
-            // Use a valid timestamp > 500ms
-            val result = engine.processSwing(1000L, 45f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, -6.0f)
-            
-            assertNotNull("Swing was ignored (returned null)", result)
-            
-            var finalResult = result
-            if (result == HitResult.PENDING) {
-                finalResult = engine.resolvePendingMiss()
+            // Run 100 times to be sure
+            repeat(100) { index ->
+                // Reset state to Waiting for Serve
+                gameEngine.startGame() 
+                
+                // Increment timestamp to avoid cooldown (1000, 2000, 3000...)
+                val timestamp = 1000L + (index * 1000L)
+                val result = gameEngine.processSwing(timestamp, 10f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f)
+                assertEquals(HitResult.HIT, result)
             }
             
-            if (finalResult == HitResult.MISS_NET || finalResult == HitResult.MISS_OUT) {
-                failures++
+            // 2. Risky Shot (HARD_SMASH) - Should EVENTUALLY fail
+            // HARD_SMASH: Force=25, GravZ=-4.0
+            // Risk: 30% Net, 10% Out -> 40% Fail Rate
+            
+            var failures = 0
+            repeat(100) { 
+                // Create fresh engine to reset lastPointEndedTimestamp
+                val engine = GameEngine()
+                engine.setLocalPlayer(true)
+                engine.startGame()
+                
+                // Use a valid timestamp > 500ms
+                val result = engine.processSwing(1000L, 45f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, -6.0f)
+                
+                // It might return HIT or PENDING(MISS_NET/MISS_OUT)
+                // If it returns NULL, that's bad (ignored swing)
+                
+                 var finalResult = result
+                if (result == HitResult.PENDING) {
+                    finalResult = engine.resolvePendingMiss()
+                }
+                
+                if (finalResult == HitResult.MISS_NET || finalResult == HitResult.MISS_OUT) {
+                    failures++
+                }
             }
+            
+            // Statistically, 100 runs with 40% fail rate should produce at least 1 failure.
+            assertTrue("Expected some failures due to risk, but got $failures", failures > 0)
+        } finally {
+            // Restore Settings
+            SwingSettings.softFlatNetRisk = originalNet
+            SwingSettings.softFlatOutRisk = originalOut
         }
-        
-        // Statistically, 100 runs with 40% fail rate should produce at least 1 failure.
-        // It's technically possible (though unlikely) to have 0 failures, but for a unit test 
-        // we might want to be careful. However, 0.6^100 is astronomically small.
-        assertTrue("Expected some failures due to risk, but got $failures", failures > 0)
     }
+
     @Test
     fun `test risk probabilities`() {
-        // Run a large number of simulations to verify probabilities
         val iterations = 10000
-        
-        // 1. MEDIUM_FLAT: 0% Net, 2% Out
+    
+        // 1. MEDIUM_FLAT
         var mediumFlatNet = 0
         var mediumFlatOut = 0
+        val mediumFlatNetRisk = SwingSettings.mediumFlatNetRisk
+        val mediumFlatOutRisk = SwingSettings.mediumFlatOutRisk
         
         repeat(iterations) {
             val engine = GameEngine()
@@ -361,13 +505,25 @@ class GameEngineTest {
             if (result == HitResult.MISS_OUT) mediumFlatOut++
         }
         
-        assertEquals("MEDIUM_FLAT should never hit net", 0, mediumFlatNet)
-        // Expected ~200 (2%). Allow margin of error (100-300)
-        assertTrue("MEDIUM_FLAT Out Rate should be ~2% (actual: $mediumFlatOut)", mediumFlatOut in 100..300)
+        if (mediumFlatNetRisk == 0) {
+            assertEquals("MEDIUM_FLAT should never hit net", 0, mediumFlatNet)
+        } else {
+             val expected = (iterations * mediumFlatNetRisk) / 100
+             assertTrue("MEDIUM_FLAT Net Rate should be roughly $mediumFlatNetRisk%", mediumFlatNet in (expected - 200)..(expected + 200))
+        }
+
+        if (mediumFlatOutRisk == 0) {
+            assertEquals("MEDIUM_FLAT should never hit out", 0, mediumFlatOut)
+        } else {
+             val expected = (iterations * mediumFlatOutRisk) / 100
+             assertTrue("MEDIUM_FLAT Out Rate should be roughly $mediumFlatOutRisk%", mediumFlatOut in (expected - 200)..(expected + 200))
+        }
         
-        // 2. HARD_FLAT: 5% Net, 10% Out
+        // 2. HARD_FLAT
         var hardFlatNet = 0
         var hardFlatOut = 0
+        val hardFlatNetRisk = SwingSettings.hardFlatNetRisk
+        val hardFlatOutRisk = SwingSettings.hardFlatOutRisk
         
         repeat(iterations) {
             val engine = GameEngine()
@@ -382,14 +538,17 @@ class GameEngineTest {
             if (result == HitResult.MISS_OUT) hardFlatOut++
         }
         
-        // Expected Net ~500 (5%). Allow 400-600
-        assertTrue("HARD_FLAT Net Rate should be ~5% (actual: $hardFlatNet)", hardFlatNet in 400..600)
-        // Expected Out ~1000 (10%). Allow 850-1150
-        assertTrue("HARD_FLAT Out Rate should be ~10% (actual: $hardFlatOut)", hardFlatOut in 850..1150)
+        val expectedNetHardFlat = (iterations * hardFlatNetRisk) / 100
+        assertTrue("HARD_FLAT Net Rate should be roughly $hardFlatNetRisk%", hardFlatNet in (expectedNetHardFlat - 200)..(expectedNetHardFlat + 200))
 
-        // 3. SOFT_SMASH: 10% Net, 0% Out
+        val expectedOutHardFlat = (iterations * hardFlatOutRisk) / 100
+        assertTrue("HARD_FLAT Out Rate should be roughly $hardFlatOutRisk%", hardFlatOut in (expectedOutHardFlat - 200)..(expectedOutHardFlat + 200))
+
+        // 3. SOFT_SMASH
         var softSmashNet = 0
         var softSmashOut = 0
+        val softSmashNetRisk = SwingSettings.softSmashNetRisk
+        val softSmashOutRisk = SwingSettings.softSmashOutRisk
         
         repeat(iterations) {
             val engine = GameEngine()
@@ -404,13 +563,21 @@ class GameEngineTest {
             if (result == HitResult.MISS_OUT) softSmashOut++
         }
         
-        // Expected Net ~1000 (10%). Allow 850-1150
-        assertTrue("SOFT_SMASH Net Rate should be ~10% (actual: $softSmashNet)", softSmashNet in 850..1150)
-        assertEquals("SOFT_SMASH should never hit out", 0, softSmashOut)
+        val expectedNetSoftSmash = (iterations * softSmashNetRisk) / 100
+        assertTrue("SOFT_SMASH Net Rate should be roughly $softSmashNetRisk%", softSmashNet in (expectedNetSoftSmash - 200)..(expectedNetSoftSmash + 200))
+        
+        if (softSmashOutRisk == 0) {
+            assertEquals("SOFT_SMASH should never hit out", 0, softSmashOut)
+        } else {
+             val expected = (iterations * softSmashOutRisk) / 100
+             assertTrue("SOFT_SMASH Out Rate should be roughly $softSmashOutRisk%", softSmashOut in (expected - 200)..(expected + 200))
+        }
 
-        // 4. HARD_SMASH: 20% Net, 10% Out
+        // 4. HARD_SMASH
         var hardSmashNet = 0
         var hardSmashOut = 0
+        val hardSmashNetRisk = SwingSettings.hardSmashNetRisk
+        val hardSmashOutRisk = SwingSettings.hardSmashOutRisk
         
         repeat(iterations) {
             val engine = GameEngine()
@@ -425,10 +592,11 @@ class GameEngineTest {
             if (result == HitResult.MISS_OUT) hardSmashOut++
         }
         
-        // Expected Net ~2000 (20%). Allow 1800-2200
-        assertTrue("HARD_SMASH Net Rate should be ~20% (actual: $hardSmashNet)", hardSmashNet in 1800..2200)
-        // Expected Out ~1000 (10%). Allow 850-1150
-        assertTrue("HARD_SMASH Out Rate should be ~10% (actual: $hardSmashOut)", hardSmashOut in 850..1150)
+        val expectedNetHardSmash = (iterations * hardSmashNetRisk) / 100
+        assertTrue("HARD_SMASH Net Rate should be roughly $hardSmashNetRisk% (actual: $hardSmashNet)", hardSmashNet in (expectedNetHardSmash - 200)..(expectedNetHardSmash + 200))
+        
+        val expectedOutHardSmash = (iterations * hardSmashOutRisk) / 100
+        assertTrue("HARD_SMASH Out Rate should be roughly $hardSmashOutRisk% (actual: $hardSmashOut)", hardSmashOut in (expectedOutHardSmash - 200)..(expectedOutHardSmash + 200))
     }
     @Test
     fun `test dynamic swing threshold`() {

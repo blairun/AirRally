@@ -52,6 +52,7 @@ class GameEngine {
 
     companion object {
         const val BOUNCE_OFFSET_MS = 200L
+        const val MIN_REACTION_TIME_MS = 200L
         const val DEFAULT_SWING_THRESHOLD = 14.0f
     }
 
@@ -62,6 +63,13 @@ class GameEngine {
         // Difficulty is now the base window size in ms (200-700)
         val baseWindow = _gameState.value.difficulty.toLong()
         
+        // Window Shrink Logic:
+        // Disabled for Return of Serve (Rally Length <= 1).
+        // Only applies during rallied shots (Rally Length > 1).
+        if (_gameState.value.currentRallyLength <= 1) {
+            return baseWindow
+        }
+
         // Apply Window Shrink based on the LAST swing type (the incoming shot)
         // If lastSwingType is null (e.g. first serve), no shrink.
         val shrinkPercentage = _gameState.value.lastSwingType?.getWindowShrinkPercentage() ?: 0f
@@ -101,7 +109,7 @@ class GameEngine {
         // Earliest valid hit time relative to arrival = (Arrival - FlightTime + 200) - Arrival
         // = 200 - FlightTime
         val flightTime = getCurrentFlightTime()
-        val earliestValidStart = 200 - flightTime
+        val earliestValidStart = MIN_REACTION_TIME_MS - flightTime
         
         // Actual start is the later of the two
         val actualStartWindow = kotlin.math.max(idealStartWindow, earliestValidStart)
@@ -126,7 +134,7 @@ class GameEngine {
                  // Check for "Too Early" relative to launch (prevent hitting instantly after opponent)
                  val flightTime = getCurrentFlightTime()
                  val timeSinceLaunch = flightTime + delta 
-                 if (timeSinceLaunch < 200) { // First 200ms are unhittable
+                 if (timeSinceLaunch < MIN_REACTION_TIME_MS) { // First 200ms are unhittable
                      HitResult.MISS_EARLY
                  } else {
                      HitResult.HIT
@@ -183,14 +191,19 @@ class GameEngine {
 
              // Risk logic applied to serves too
              val riskResult = checkRisk(swingType)
+             
+             // Calculate Serve Flight Time (includes Lob/Smash modifiers)
+             val baseFlightTime = currentState.flightTime
+             val serveModifier = swingType.getServeFlightTimeModifier()
+             val serveFlightTime = (baseFlightTime * serveModifier).toLong()
+
              if (riskResult != HitResult.HIT) {
                  // Fault on serve!
                  // Calculate delay for natural feel
-                 val flightTime = currentState.flightTime
                  val delay = if (riskResult == HitResult.MISS_NET) {
-                     (flightTime * 0.5).toLong() // Hits net halfway
+                     (serveFlightTime * 0.5).toLong() // Hits net halfway
                  } else {
-                     (flightTime * 1.2).toLong() // Goes out (full flight + bit more)
+                     (serveFlightTime * 1.2).toLong() // Goes out (full flight + bit more)
                  }
 
                  _gameState.update {
@@ -205,7 +218,9 @@ class GameEngine {
                  return HitResult.PENDING
              }
 
-             val nextArrival = timestamp + currentState.flightTime
+
+
+             val nextArrival = timestamp + serveFlightTime
              _gameState.update {
                  it.copy(
                      ballArrivalTimestamp = nextArrival,
