@@ -52,11 +52,11 @@ fun FlightTimeVisualization(baseFlightTime: Float, refreshTrigger: Int) {
     val (shortestName, minTime, longestName, maxTime) = calculationResult
 
     Column(modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)) {
-        Text(
-            text = "🏓...............bounce",
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
+        // Text(
+        //     text = "🏓...............bounce",
+        //     style = MaterialTheme.typography.bodyMedium,
+        //     color = MaterialTheme.colorScheme.onSurfaceVariant
+        // )
         // Stacked layout for better localization support
         Column(modifier = Modifier.fillMaxWidth()) {
             Text(
@@ -117,11 +117,11 @@ fun HitWindowVisualization(difficultyWindow: Int, refreshTrigger: Int) {
     val (shortestName, shortestTotal, longestName, longestTotal) = calculationResult
 
     Column(modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)) {
-        Text(
-            text = "🏓..............|bounce.......|",
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
+        // Text(
+        //     text = "🏓..............|bounce.......|",
+        //     style = MaterialTheme.typography.bodyMedium,
+        //     color = MaterialTheme.colorScheme.onSurfaceVariant
+        // )
         // Stacked layout for better localization support
         Column(modifier = Modifier.fillMaxWidth()) {
             Text(

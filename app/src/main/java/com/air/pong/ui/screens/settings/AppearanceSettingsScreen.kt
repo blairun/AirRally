@@ -114,5 +114,48 @@ fun AppearanceSettingsScreen(
             }
             Spacer(modifier = Modifier.height(8.dp))
         }
+
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        Text(
+            "App Icon", // TODO: Add to strings.xml
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(bottom = 16.dp)
+        )
+
+        val context = androidx.compose.ui.platform.LocalContext.current
+        val currentIcon = androidx.compose.runtime.remember { 
+            androidx.compose.runtime.mutableStateOf(com.air.pong.ui.utils.IconManager.getCurrentIcon(context)) 
+        }
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+            com.air.pong.ui.utils.IconManager.AppIcon.values().forEach { icon ->
+                FilterChip(
+                    selected = currentIcon.value == icon,
+                    onClick = { 
+                        com.air.pong.ui.utils.IconManager.setIcon(context, icon)
+                        currentIcon.value = icon
+                    },
+                    label = { Text(icon.displayName) },
+                    leadingIcon = {
+                        val iconRes = if (icon == com.air.pong.ui.utils.IconManager.AppIcon.DEFAULT) 
+                            R.drawable.ic_launcher_foreground_fixed 
+                        else 
+                            R.drawable.ic_launcher_foreground
+                        
+                        androidx.compose.foundation.Image(
+                            painter = androidx.compose.ui.res.painterResource(id = iconRes),
+                            contentDescription = null,
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
+                )
+            }
+        }
     }
 }
