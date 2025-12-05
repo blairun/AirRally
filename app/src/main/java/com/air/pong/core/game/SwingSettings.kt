@@ -145,4 +145,92 @@ object SwingSettings {
     
     // HARD_SMASH_SERVE
     var hardSmashServeFlight: Float = DEFAULT_HARD_SMASH_SERVE_FLIGHT
+
+    /**
+     * Snapshot of all mutable swing settings.
+     */
+    data class Snapshot(
+        val softFlatNetRisk: Int, val softFlatOutRisk: Int, val softFlatShrink: Int, val softFlatFlight: Float,
+        val mediumFlatNetRisk: Int, val mediumFlatOutRisk: Int, val mediumFlatShrink: Int, val mediumFlatFlight: Float,
+        val hardFlatNetRisk: Int, val hardFlatOutRisk: Int, val hardFlatShrink: Int, val hardFlatFlight: Float,
+        val softLobNetRisk: Int, val softLobOutRisk: Int, val softLobShrink: Int, val softLobFlight: Float,
+        val mediumLobNetRisk: Int, val mediumLobOutRisk: Int, val mediumLobShrink: Int, val mediumLobFlight: Float,
+        val hardLobNetRisk: Int, val hardLobOutRisk: Int, val hardLobShrink: Int, val hardLobFlight: Float,
+        val softSmashNetRisk: Int, val softSmashOutRisk: Int, val softSmashShrink: Int, val softSmashFlight: Float,
+        val mediumSmashNetRisk: Int, val mediumSmashOutRisk: Int, val mediumSmashShrink: Int, val mediumSmashFlight: Float,
+        val hardSmashNetRisk: Int, val hardSmashOutRisk: Int, val hardSmashShrink: Int, val hardSmashFlight: Float,
+        val softLobServeFlight: Float, val mediumLobServeFlight: Float, val hardLobServeFlight: Float,
+        val softSmashServeFlight: Float, val mediumSmashServeFlight: Float, val hardSmashServeFlight: Float
+    )
+
+    fun getSnapshot(): Snapshot {
+        return Snapshot(
+            softFlatNetRisk, softFlatOutRisk, softFlatShrink, softFlatFlight,
+            mediumFlatNetRisk, mediumFlatOutRisk, mediumFlatShrink, mediumFlatFlight,
+            hardFlatNetRisk, hardFlatOutRisk, hardFlatShrink, hardFlatFlight,
+            softLobNetRisk, softLobOutRisk, softLobShrink, softLobFlight,
+            mediumLobNetRisk, mediumLobOutRisk, mediumLobShrink, mediumLobFlight,
+            hardLobNetRisk, hardLobOutRisk, hardLobShrink, hardLobFlight,
+            softSmashNetRisk, softSmashOutRisk, softSmashShrink, softSmashFlight,
+            mediumSmashNetRisk, mediumSmashOutRisk, mediumSmashShrink, mediumSmashFlight,
+            hardSmashNetRisk, hardSmashOutRisk, hardSmashShrink, hardSmashFlight,
+            softLobServeFlight, mediumLobServeFlight, hardLobServeFlight,
+            softSmashServeFlight, mediumSmashServeFlight, hardSmashServeFlight
+        )
+    }
+
+    fun restoreSnapshot(snapshot: Snapshot) {
+        softFlatNetRisk = snapshot.softFlatNetRisk
+        softFlatOutRisk = snapshot.softFlatOutRisk
+        softFlatShrink = snapshot.softFlatShrink
+        softFlatFlight = snapshot.softFlatFlight
+        
+        mediumFlatNetRisk = snapshot.mediumFlatNetRisk
+        mediumFlatOutRisk = snapshot.mediumFlatOutRisk
+        mediumFlatShrink = snapshot.mediumFlatShrink
+        mediumFlatFlight = snapshot.mediumFlatFlight
+        
+        hardFlatNetRisk = snapshot.hardFlatNetRisk
+        hardFlatOutRisk = snapshot.hardFlatOutRisk
+        hardFlatShrink = snapshot.hardFlatShrink
+        hardFlatFlight = snapshot.hardFlatFlight
+
+        softLobNetRisk = snapshot.softLobNetRisk
+        softLobOutRisk = snapshot.softLobOutRisk
+        softLobShrink = snapshot.softLobShrink
+        softLobFlight = snapshot.softLobFlight
+        
+        mediumLobNetRisk = snapshot.mediumLobNetRisk
+        mediumLobOutRisk = snapshot.mediumLobOutRisk
+        mediumLobShrink = snapshot.mediumLobShrink
+        mediumLobFlight = snapshot.mediumLobFlight
+        
+        hardLobNetRisk = snapshot.hardLobNetRisk
+        hardLobOutRisk = snapshot.hardLobOutRisk
+        hardLobShrink = snapshot.hardLobShrink
+        hardLobFlight = snapshot.hardLobFlight
+
+        softSmashNetRisk = snapshot.softSmashNetRisk
+        softSmashOutRisk = snapshot.softSmashOutRisk
+        softSmashShrink = snapshot.softSmashShrink
+        softSmashFlight = snapshot.softSmashFlight
+        
+        mediumSmashNetRisk = snapshot.mediumSmashNetRisk
+        mediumSmashOutRisk = snapshot.mediumSmashOutRisk
+        mediumSmashShrink = snapshot.mediumSmashShrink
+        mediumSmashFlight = snapshot.mediumSmashFlight
+        
+        hardSmashNetRisk = snapshot.hardSmashNetRisk
+        hardSmashOutRisk = snapshot.hardSmashOutRisk
+        hardSmashShrink = snapshot.hardSmashShrink
+        hardSmashFlight = snapshot.hardSmashFlight
+
+        softLobServeFlight = snapshot.softLobServeFlight
+        mediumLobServeFlight = snapshot.mediumLobServeFlight
+        hardLobServeFlight = snapshot.hardLobServeFlight
+        
+        softSmashServeFlight = snapshot.softSmashServeFlight
+        mediumSmashServeFlight = snapshot.mediumSmashServeFlight
+        hardSmashServeFlight = snapshot.hardSmashServeFlight
+    }
 }

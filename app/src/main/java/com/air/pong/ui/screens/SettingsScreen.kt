@@ -198,7 +198,8 @@ fun SettingsScreen(
                         onPlayTestSound = { viewModel.playTestSound(it) },
                         onClearDebugData = { viewModel.clearDebugData() },
                         isRallyShrinkEnabled = gameState.isRallyShrinkEnabled,
-                        onRallyShrinkChange = { viewModel.updateRallyShrink(it) }
+                        onRallyShrinkChange = { viewModel.updateRallyShrink(it) },
+                        isReadOnly = viewModel.isSettingsLocked.collectAsState().value
                     )
                     SettingsScreenType.Stats -> StatsScreen(
                         viewModel = viewModel

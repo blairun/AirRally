@@ -186,7 +186,8 @@ fun GameParamsSettingsScreen(
     onPlayTestSound: (com.air.pong.audio.AudioManager.SoundEvent) -> Unit,
     onClearDebugData: () -> Unit,
     isRallyShrinkEnabled: Boolean,
-    onRallyShrinkChange: (Boolean) -> Unit
+    onRallyShrinkChange: (Boolean) -> Unit,
+    isReadOnly: Boolean = false // Default to false for preview/compatibility
 ) {
     val context = LocalContext.current
     
@@ -217,9 +218,31 @@ fun GameParamsSettingsScreen(
             .verticalScroll(scrollState)
     ) {
         // Defaults Button
-        Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
-            TextButton(onClick = onResetMainDefaults) {
-                Text(stringResource(R.string.defaults))
+        if (isReadOnly) {
+            Card(
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                ),
+                modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
+            ) {
+                Row(
+                    modifier = Modifier.padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(Icons.Default.Info, contentDescription = null, modifier = Modifier.padding(end = 8.dp))
+                    Text(
+                        text = "Some settings are currently controlled by the Host", 
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+                    )
+                }
+            }
+        } else {
+            Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
+                TextButton(onClick = onResetMainDefaults) {
+                    Text(stringResource(R.string.defaults))
+                }
             }
         }
         
@@ -317,7 +340,8 @@ fun GameParamsSettingsScreen(
             },
             valueRange = GameEngine.MIN_FLIGHT_TIME.toFloat()..GameEngine.MAX_FLIGHT_TIME.toFloat(),
             steps = 6,
-            onValueChangeFinished = onSettingsChange
+            onValueChangeFinished = onSettingsChange,
+            enabled = !isReadOnly
         )
         
         FlightTimeVisualization(baseFlightTime = flightTime, refreshTrigger = advancedSettingsTrigger)
@@ -348,7 +372,8 @@ fun GameParamsSettingsScreen(
             },
             valueRange = GameEngine.MIN_DIFFICULTY.toFloat()..GameEngine.MAX_DIFFICULTY.toFloat(),
             steps = 15,
-            onValueChangeFinished = onSettingsChange
+            onValueChangeFinished = onSettingsChange,
+            enabled = !isReadOnly
         )
         
         HitWindowVisualization(difficultyWindow = difficulty, refreshTrigger = advancedSettingsTrigger)
@@ -378,7 +403,8 @@ fun GameParamsSettingsScreen(
                 checked = isRallyShrinkEnabled,
                 onCheckedChange = {
                     onRallyShrinkChange(it)
-                }
+                },
+                enabled = !isReadOnly
             )
         }
         
@@ -396,7 +422,8 @@ fun GameParamsSettingsScreen(
                 advancedSettingsTrigger++ // Force refresh of visualizations
             }, 
             onShowInfo = onShowInfo, 
-            onReset = onResetSwingDefaults
+            onReset = onResetSwingDefaults,
+            isReadOnly = isReadOnly
         )
     }
 }
@@ -407,7 +434,8 @@ fun SwingParamsGrid(
     settingsVersion: Int,
     onSettingsChange: () -> Unit, 
     onShowInfo: (String, String) -> Unit, 
-    onReset: () -> Unit
+    onReset: () -> Unit,
+    isReadOnly: Boolean
 ) {
     // Force recomposition when values change (local or remote)
     var refreshTrigger by remember { mutableIntStateOf(0) }
@@ -480,12 +508,14 @@ fun SwingParamsGrid(
                     }
                 }
                 
-                TextButton(onClick = {
-                    onReset()
-                    refreshTrigger++
-                    onSettingsChange()
-                }) {
-                    Text("Defaults")
+                if (!isReadOnly) {
+                    TextButton(onClick = {
+                        onReset()
+                        refreshTrigger++
+                        onSettingsChange()
+                    }) {
+                        Text("Defaults")
+                    }
                 }
             }
 
@@ -628,7 +658,8 @@ fun SwingParamsGrid(
                     onNetChange = { setNet(it); refreshTrigger++; onSettingsChange() },
                     onOutChange = { setOut(it); refreshTrigger++; onSettingsChange() },
                     onShrinkChange = { setShrink(it); refreshTrigger++; onSettingsChange() },
-                    onFlightChange = { setFlight(it); refreshTrigger++; onSettingsChange() }
+                    onFlightChange = { setFlight(it); refreshTrigger++; onSettingsChange() },
+                    isReadOnly = isReadOnly
                 )
                 HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
             }
@@ -646,7 +677,8 @@ fun SwingParamRow(
     onNetChange: (Int) -> Unit,
     onOutChange: (Int) -> Unit,
     onShrinkChange: (Int) -> Unit,
-    onFlightChange: (Float) -> Unit
+    onFlightChange: (Float) -> Unit,
+    isReadOnly: Boolean
 ) {
     Row(
         modifier = Modifier
@@ -657,10 +689,10 @@ fun SwingParamRow(
     ) {
         Text(name, modifier = Modifier.weight(1.5f), style = MaterialTheme.typography.bodySmall)
         
-        CompactFloatInput(value = flightVal, onValueChange = onFlightChange, modifier = Modifier.weight(1f))
-        CompactNumberInput(value = netVal, onValueChange = onNetChange, modifier = Modifier.weight(1f))
-        CompactNumberInput(value = outVal, onValueChange = onOutChange, modifier = Modifier.weight(1f))
-        CompactNumberInput(value = shrinkVal, onValueChange = onShrinkChange, modifier = Modifier.weight(1f))
+        CompactFloatInput(value = flightVal, onValueChange = onFlightChange, modifier = Modifier.weight(1f), isReadOnly = isReadOnly)
+        CompactNumberInput(value = netVal, onValueChange = onNetChange, modifier = Modifier.weight(1f), isReadOnly = isReadOnly)
+        CompactNumberInput(value = outVal, onValueChange = onOutChange, modifier = Modifier.weight(1f), isReadOnly = isReadOnly)
+        CompactNumberInput(value = shrinkVal, onValueChange = onShrinkChange, modifier = Modifier.weight(1f), isReadOnly = isReadOnly)
     }
 }
 
@@ -669,7 +701,8 @@ fun SwingParamRow(
 fun CompactNumberInput(
     value: Int,
     onValueChange: (Int) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isReadOnly: Boolean
 ) {
     var showDialog by remember { mutableStateOf(false) }
     
@@ -699,6 +732,7 @@ fun CompactNumberInput(
 
     Box(
         modifier = modifier.combinedClickable(
+            enabled = !isReadOnly,
             onClick = {
                 // Cycle values: 0, 5, 10... 100, 0
                 val next = if (value >= 100) 0 else value + 5
@@ -725,7 +759,8 @@ fun CompactNumberInput(
 fun CompactFloatInput(
     value: Float,
     onValueChange: (Float) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isReadOnly: Boolean
 ) {
     var showDialog by remember { mutableStateOf(false) }
     
@@ -759,6 +794,7 @@ fun CompactFloatInput(
 
     Box(
         modifier = modifier.combinedClickable(
+            enabled = !isReadOnly,
             onClick = {
                 // Cycle values: 0.2 -> 2.0 -> 0.2
                 val next = if (value >= 2.0f) 0.2f else value + 0.1f
