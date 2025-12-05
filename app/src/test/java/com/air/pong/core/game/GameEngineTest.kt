@@ -219,9 +219,10 @@ class GameEngineTest {
         // P1 serves at T=1000. Arrival = 1000 + 1000 = 2000.
         // Note: Must start > 500ms to avoid cooldown check against initial 0
         val serveTime = 1000L
-        val expectedArrival = serveTime + (testFlightTime * SwingSettings.softFlatFlight).toLong()
+        val expectedArrival = serveTime + (testFlightTime * SwingSettings.mediumFlatFlight).toLong()
         
-        gameEngine.processSwing(serveTime, 10f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f) 
+        // Use Medium Flat (Force 25 > 23) for standard 1.0 flight scale
+        gameEngine.processSwing(serveTime, 25f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f) 
         assertEquals(expectedArrival, gameEngine.gameState.value.ballArrivalTimestamp)
         
         // Test HIT window (Shifted: Start at -BOUNCE_OFFSET_MS, End at -BOUNCE_OFFSET_MS + Window)
@@ -316,12 +317,34 @@ class GameEngineTest {
         assertEquals(SwingType.HARD_SMASH, gameEngine.gameState.value.lastSwingType)
         
         // Use the current setting from SwingSettings
-        val expectedModifier = SwingSettings.hardLobFlight
+        val expectedModifier = SwingSettings.hardSmashServeFlight
         
         val expectedDuration = (baseFlightTime * expectedModifier).toLong()
         val arrival = gameEngine.gameState.value.ballArrivalTimestamp
         
         println("DEBUG: SmashServe - Base: $baseFlightTime, Mod: $expectedModifier, Expected: $expectedDuration, ActualArrival-Timestamp: ${arrival - timestamp}")
+        
+        assertEquals("Expected flight duration $expectedDuration but got ${arrival - timestamp}", timestamp + expectedDuration, arrival)
+    }
+
+    @Test
+    fun `test lob serve flight time`() {
+        disableRisk()
+        val baseFlightTime = 1000L
+        gameEngine.updateSettings(baseFlightTime, 500, false, false, GameEngine.DEFAULT_SWING_THRESHOLD, true)
+        
+        gameEngine.startGame() // Reset to serve phase
+        
+        // Serve HARD_LOB (Force=45, Tilt=6.0)
+        val timestamp = 1000L
+        val result = gameEngine.processSwing(timestamp, 45f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 6.0f)
+        assertEquals(HitResult.HIT, result)
+        assertEquals(SwingType.HARD_LOB, gameEngine.gameState.value.lastSwingType)
+        
+        // Should use hardLobServeFlight, NOT hardLobFlight
+        val expectedModifier = SwingSettings.hardLobServeFlight
+        val expectedDuration = (baseFlightTime * expectedModifier).toLong()
+        val arrival = gameEngine.gameState.value.ballArrivalTimestamp
         
         assertEquals("Expected flight duration $expectedDuration but got ${arrival - timestamp}", timestamp + expectedDuration, arrival)
     }
@@ -740,5 +763,39 @@ class GameEngineTest {
         
         // Check Window (Should be floored at 200)
         assertEquals(200L, gameEngine.getHitWindow())
+    }
+    
+
+    @Test
+    fun `test hit window scaling for slow serves`() {
+        disableRisk()
+        val baseHitWindow = 500
+        val baseFlightTime = 1000L
+        gameEngine.updateSettings(baseFlightTime, baseHitWindow, false, false, GameEngine.DEFAULT_SWING_THRESHOLD, true)
+        
+        gameEngine.startGame()
+        
+        // Serve HARD_LOB (Slow, Modifier 2.5)
+        val serveTime = 1000L
+        gameEngine.processSwing(serveTime, 45f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 6.0f)
+        
+        val arrival = gameEngine.gameState.value.ballArrivalTimestamp
+        
+        // Expected Flight: 1000 * 2.5 = 2500
+        // Expected Scale: 2.5
+        // Expected Total Window: 500 * 2.5 = 1250
+        // Window Start: -200 (Bounce Offset)
+        // Window End: -200 + 1250 = +1050
+        
+        // Try hitting at +700ms (Normally a Miss Late, as Base Window ends at -200+500 = +300)
+        val hitTime = arrival + 700L
+        
+        val result = gameEngine.checkHitTiming(hitTime)
+        assertEquals("Should be a HIT due to scaled window", HitResult.HIT, result)
+        
+        // Try hitting REALLY late (> 1050)
+        val missTime = arrival + 1100L
+        val missResult = gameEngine.checkHitTiming(missTime)
+        assertEquals("Should be MISS_LATE", HitResult.MISS_LATE, missResult)
     }
 }

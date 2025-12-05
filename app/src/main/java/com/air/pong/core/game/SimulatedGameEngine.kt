@@ -152,7 +152,7 @@ class SimulatedGameEngine(
                 else -> 18.0f
             }
 
-            _messages.emit(GameMessage.ActionSwing(now, force, swingType.ordinal))
+            _messages.emit(GameMessage.ActionSwing(now, force, swingType.ordinal, if (gameState.value.isMyTurn) 0 else 1))
         }
     }
 

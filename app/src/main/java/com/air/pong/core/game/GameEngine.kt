@@ -85,25 +85,38 @@ class GameEngine {
     }
 
     private fun getCurrentFlightTime(): Long {
-        val base = _gameState.value.flightTime
-        val type = _gameState.value.lastSwingType ?: return base
-        return (base * type.getFlightTimeModifier()).toLong()
+        val state = _gameState.value
+        val type = state.lastSwingType ?: return state.flightTime
+        
+        // If Rally Length is 1, the LAST shot was a serve.
+        val isServe = state.currentRallyLength == 1
+        
+        val modifier = if (isServe) type.getServeFlightTimeModifier() else type.getFlightTimeModifier()
+        return (state.flightTime * modifier).toLong()
     }
 
     /**
      * Returns the start and end offsets (in ms) relative to ballArrivalTimestamp for the valid hit window.
      */
     private fun getHitWindowBounds(): Pair<Long, Long> {
-        val totalWindow = getHitWindow()
+        val baseHitWindow = getHitWindow()
+        
+        // Scale the hit window for slow shots (Lobs/Smash Serves)
+        // If the ball is in unit-time > 1.0 (slower than base), we expand the window proportionally.
+        // This helps with the "Miss Late" feeling on floaty balls.
+        val currentFlightTime = getCurrentFlightTime()
+        val baseFlightTime = _gameState.value.flightTime
+        val scale = if (baseFlightTime > 0) (currentFlightTime.toFloat() / baseFlightTime.toFloat()) else 1.0f
+        
+        // Only scale UP. Don't shrink fast balls (that's handled by HitWindowShrink separately).
+        val effectiveScale = scale.coerceAtLeast(1.0f)
+        val totalWindow = (baseHitWindow * effectiveScale).toLong()
         
         // Ideal window starts at BOUNCE_OFFSET_MS before arrival
         val idealStartWindow = -BOUNCE_OFFSET_MS
         
         // Safety Check: Cannot hit in first 200ms of flight
-        // Earliest valid hit time relative to arrival = (Arrival - FlightTime + 200) - Arrival
-        // = 200 - FlightTime
-        val flightTime = getCurrentFlightTime()
-        val earliestValidStart = MIN_REACTION_TIME_MS - flightTime
+        val earliestValidStart = MIN_REACTION_TIME_MS - currentFlightTime
         
         // Actual start is the later of the two
         val actualStartWindow = kotlin.math.max(idealStartWindow, earliestValidStart)
@@ -120,20 +133,8 @@ class GameEngine {
         val arrival = _gameState.value.ballArrivalTimestamp
         val delta = swingTimestamp - arrival
         
-        // Use the CURRENT hit window (which represents the window for the incoming shot)
-        // Note: In processSwing, we must ensure we use this BEFORE overwriting lastSwingType
-        val totalWindow = getHitWindow()
-        
-        // Ideal window starts at BOUNCE_OFFSET_MS before arrival
-        val idealStartWindow = -BOUNCE_OFFSET_MS
-        
-        // Safety Check: Cannot hit in first 200ms of flight
-        val flightTime = getCurrentFlightTime()
-        val earliestValidStart = MIN_REACTION_TIME_MS - flightTime
-        
-        // Actual start is the later of the two
-        val startWindow = kotlin.math.max(idealStartWindow, earliestValidStart)
-        val endWindow = startWindow + totalWindow
+        // Use the shared bounds logic which includes scaling for slow shots
+        val (startWindow, endWindow) = getHitWindowBounds()
         
         return when {
             delta < startWindow -> HitResult.MISS_EARLY
@@ -170,6 +171,11 @@ class GameEngine {
 
         val swingType = classifySwing(force, gravZ, _gameState.value.minSwingThreshold)
         
+        // CHECK TIMING BEFORE UPDATING STATS
+        // We must check timing against the INCOMING shot (lastSwingType = Opponent's).
+        // If we update state first, lastSwingType becomes MY swing, and we check timing against my own swing characteristics!
+        val timingResult = checkHitTiming(timestamp)
+
         // Store raw values for debug
         _gameState.update {
             val newState = it.copy(
@@ -247,7 +253,7 @@ class GameEngine {
         }
 
         // RALLY Logic
-        val timingResult = checkHitTiming(timestamp)
+        // timingResult is already calculated above
         
         if (timingResult == HitResult.HIT) {
             // Timing was good. Now check Risk.
@@ -335,8 +341,12 @@ class GameEngine {
          }
          
          // Adjust flight time based on SwingType
+         // CRITICAL FIX: Check if this was a serve. 
+         // If we are in WAITING_FOR_SERVE phase, the incoming hit IS a serve.
+         // We must use serve modifiers (especially for Smash which differs wildly: 0.7 vs 2.1).
+         val isServe = _gameState.value.gamePhase == GamePhase.WAITING_FOR_SERVE
          val baseFlightTime = _gameState.value.flightTime
-         val modifier = swingType.getFlightTimeModifier()
+         val modifier = if (isServe) swingType.getServeFlightTimeModifier() else swingType.getFlightTimeModifier()
          
          val actualFlightTime = (baseFlightTime * modifier).toLong()
          val nextArrival = timestamp + actualFlightTime

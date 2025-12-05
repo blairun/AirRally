@@ -35,7 +35,7 @@ class MessageCodecTest {
 
     @Test
     fun `test ActionSwing encoding and decoding`() {
-        val original = GameMessage.ActionSwing(timestamp = 987654321L, force = 2.5f, swingType = 1)
+        val original = GameMessage.ActionSwing(timestamp = 987654321L, force = 2.5f, swingType = 1, sourcePlayerOrdinal = 0)
         val encoded = MessageCodec.encode(original)
         val decoded = MessageCodec.decode(encoded)
         
@@ -44,6 +44,7 @@ class MessageCodecTest {
         assertEquals(original.timestamp, decodedSwing.timestamp)
         assertEquals(original.force, decodedSwing.force, 0.0f)
         assertEquals(original.swingType, decodedSwing.swingType)
+        assertEquals(original.sourcePlayerOrdinal, decodedSwing.sourcePlayerOrdinal)
     }
 
     @Test

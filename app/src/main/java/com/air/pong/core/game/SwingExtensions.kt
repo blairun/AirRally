@@ -86,15 +86,20 @@ fun SwingType.getFlightTimeModifier(): Float {
  * Special Rule: Smash Serves use LOB flight times (slow) because of the physics (bounce -> high arc).
  */
 fun SwingType.getServeFlightTimeModifier(): Float {
-    return if (this.isSmash()) {
-        when (this) {
-            SwingType.SOFT_SMASH -> SwingSettings.softLobFlight
-            SwingType.MEDIUM_SMASH -> SwingSettings.mediumLobFlight
-            SwingType.HARD_SMASH -> SwingSettings.hardLobFlight
-            else -> this.getFlightTimeModifier() // Should not happen given isSmash check
+    return when {
+        this.isLob() -> when (this) {
+            SwingType.SOFT_LOB -> SwingSettings.softLobServeFlight
+            SwingType.MEDIUM_LOB -> SwingSettings.mediumLobServeFlight
+            SwingType.HARD_LOB -> SwingSettings.hardLobServeFlight
+            else -> this.getFlightTimeModifier()
         }
-    } else {
-        this.getFlightTimeModifier()
+        this.isSmash() -> when (this) {
+            SwingType.SOFT_SMASH -> SwingSettings.softSmashServeFlight
+            SwingType.MEDIUM_SMASH -> SwingSettings.mediumSmashServeFlight
+            SwingType.HARD_SMASH -> SwingSettings.hardSmashServeFlight
+            else -> this.getFlightTimeModifier()
+        }
+        else -> this.getFlightTimeModifier()
     }
 }
 

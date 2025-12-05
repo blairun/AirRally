@@ -38,7 +38,8 @@ sealed class GameMessage {
     data class ActionSwing(
         val timestamp: Long,
         val force: Float,
-        val swingType: Int // Ordinal of SwingType
+        val swingType: Int, // Ordinal of SwingType
+        val sourcePlayerOrdinal: Int // Ordinal of Player (0 or 1) - Used for loopback filtering
     ) : GameMessage()
     
     /**
@@ -64,27 +65,27 @@ sealed class GameMessage {
     /**
      * Sent when app is backgrounded.
      */
-    object Pause : GameMessage()
+    data object Pause : GameMessage()
     
     /**
      * Sent when app resumes from pause.
      */
-    object Resume : GameMessage()
+    data object Resume : GameMessage()
     
     /**
      * Sent on graceful disconnect.
      */
-    object PeerLeft : GameMessage()
+    data object PeerLeft : GameMessage()
     
     /**
      * Sent by Host to restart game from Score Screen.
      */
-    object Rematch : GameMessage()
+    data object Rematch : GameMessage()
 
     /**
      * Sent when a player enters the Lobby screen.
      */
-    object PlayerReady : GameMessage()
+    data object PlayerReady : GameMessage()
 
     /**
      * Sent to exchange player profile information (name, avatar).
@@ -97,7 +98,7 @@ sealed class GameMessage {
     /**
      * Sent when a player leaves the Lobby (e.g. to Settings).
      */
-    object PlayerBusy : GameMessage()
+    data object PlayerBusy : GameMessage()
 }
 
 
@@ -126,4 +127,4 @@ object MessageType {
  * Current protocol version.
  * Increment when making breaking changes to message format.
  */
-const val PROTOCOL_VERSION = 1
+const val PROTOCOL_VERSION = 2

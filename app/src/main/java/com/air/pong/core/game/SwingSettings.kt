@@ -58,6 +58,20 @@ object SwingSettings {
     const val DEFAULT_MEDIUM_SMASH_FLIGHT = 0.5f
     const val DEFAULT_HARD_SMASH_FLIGHT = 0.3f
 
+    // Serve Flight Time Defaults (New for v2)
+    // Lobs serves are slower/higher arc than rally lobs to allow rhythm
+    const val DEFAULT_SOFT_LOB_SERVE_FLIGHT = 1.9f // was 1.5
+    const val DEFAULT_MEDIUM_LOB_SERVE_FLIGHT = 2.2f // was 1.7
+    const val DEFAULT_HARD_LOB_SERVE_FLIGHT = 2.5f // was 1.9
+
+    // Smash serves use Lob rally times originally, but now have their own extended times
+    // Original logic mapped Smash Serve -> Lob Rally Flight.
+    // e.g. Hard Smash Serve used Hard Lob Flight (1.9).
+    // Now we want even longer.
+    const val DEFAULT_SOFT_SMASH_SERVE_FLIGHT = 1.8f
+    const val DEFAULT_MEDIUM_SMASH_SERVE_FLIGHT = 2.1f
+    const val DEFAULT_HARD_SMASH_SERVE_FLIGHT = 2.4f
+
     // SOFT_FLAT
     var softFlatNetRisk: Int = DEFAULT_SOFT_FLAT_NET_RISK
     var softFlatOutRisk: Int = DEFAULT_SOFT_FLAT_OUT_RISK
@@ -111,4 +125,24 @@ object SwingSettings {
     var hardSmashOutRisk: Int = DEFAULT_HARD_SMASH_OUT_RISK
     var hardSmashShrink: Int = DEFAULT_HARD_SMASH_SHRINK
     var hardSmashFlight: Float = DEFAULT_HARD_SMASH_FLIGHT
+
+    // SERVE FLIGHT TIMES
+    
+    // SOFT_LOB_SERVE
+    var softLobServeFlight: Float = DEFAULT_SOFT_LOB_SERVE_FLIGHT
+    
+    // MEDIUM_LOB_SERVE
+    var mediumLobServeFlight: Float = DEFAULT_MEDIUM_LOB_SERVE_FLIGHT
+    
+    // HARD_LOB_SERVE
+    var hardLobServeFlight: Float = DEFAULT_HARD_LOB_SERVE_FLIGHT
+
+    // SOFT_SMASH_SERVE
+    var softSmashServeFlight: Float = DEFAULT_SOFT_SMASH_SERVE_FLIGHT
+    
+    // MEDIUM_SMASH_SERVE
+    var mediumSmashServeFlight: Float = DEFAULT_MEDIUM_SMASH_SERVE_FLIGHT
+    
+    // HARD_SMASH_SERVE
+    var hardSmashServeFlight: Float = DEFAULT_HARD_SMASH_SERVE_FLIGHT
 }

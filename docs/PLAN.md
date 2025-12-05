@@ -453,11 +453,15 @@ This makes aggressive shots significantly harder to return, rewarding the risk t
 3- Types of misses: whiff too early | whiff too late | ball hit into net | ball hit over net but miss opposite side of table | [note that sounds are always played on the player's phone where the action takes place]
 
 ### Serve Mechanics Special Rules
-- **Smash Serve Exception**: A Smash Serve travels fast initially but has a high bounce/arc. Therefore, for **Flight Time** calculation, it uses the **LOB** flight time modifier (Slow) instead of the Smash modifier (Fast).
+### Serve Mechanics Special Rules
+- **Serve Flight Times**: Serves now have their own specific flight time modifiers to ensure a natural rhythm.
+    - **LOB Serve**: Significant flight time extension (~2.0x base) to simulate high arc.
+    - **SMASH Serve**: Significant flight time extension (~2.2x base) to prevent "too fast" gameplay loop on serves.
+    - **FLAT Serve**: Standard flight times.
 - **Hit Window**: The "Window Shrink" mechanic (making the window smaller for hard shots) is **DISABLED** for Return of Serve. Receivers always get the full Base Difficulty Window on the serve.
 - **Bounce Timing**: 
-    - LOB Serve: Bounce on server side at ~45% of flight time (High Arc).
-    - SMASH Serve: Bounce on server side at ~15% of flight time (Fast Down).
+    - LOB Serve: Bounce on server side at ~30% of flight time (High Arc, long tail).
+    - SMASH Serve: Bounce on server side at ~25% of flight time (Fast Down, long tail).
     - FLAT Serve: Bounce on server side at ~30% of flight time (Standard).
 
 ## Verification Plan

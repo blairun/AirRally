@@ -94,12 +94,13 @@ object MessageCodec {
     }
     
     private fun encodeActionSwing(msg: GameMessage.ActionSwing): ByteArray {
-        // [Type: 1][Timestamp: 8][Force: 4][SwingType: 4]
-        val buffer = ByteBuffer.allocate(17).order(ByteOrder.BIG_ENDIAN)
+        // [Type: 1][Timestamp: 8][Force: 4][SwingType: 4][SourcePlayer: 4]
+        val buffer = ByteBuffer.allocate(21).order(ByteOrder.BIG_ENDIAN)
         buffer.put(MessageType.ACTION_SWING)
         buffer.putLong(msg.timestamp)
         buffer.putFloat(msg.force)
         buffer.putInt(msg.swingType)
+        buffer.putInt(msg.sourcePlayerOrdinal)
         return buffer.array()
     }
     
@@ -170,7 +171,8 @@ object MessageCodec {
         val timestamp = buffer.long
         val force = buffer.float
         val swingType = if (buffer.remaining() >= 4) buffer.int else 0
-        return GameMessage.ActionSwing(timestamp, force, swingType)
+        val sourcePlayerOrdinal = if (buffer.remaining() >= 4) buffer.int else -1 // Default to -1 for backwards compat if needed, or handle as error
+        return GameMessage.ActionSwing(timestamp, force, swingType, sourcePlayerOrdinal)
     }
     
     private fun decodeResult(payload: ByteArray): GameMessage.Result {

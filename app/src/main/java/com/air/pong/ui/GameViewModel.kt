@@ -59,6 +59,8 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
     private val _swingSettingsVersion = kotlinx.coroutines.flow.MutableStateFlow(0)
     val swingSettingsVersion = _swingSettingsVersion.asStateFlow()
     
+    private var lastSentSwingTimestamp: Long = 0L
+    
     var isHost = false
         private set
     
@@ -457,7 +459,9 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
         if (result != null) {
             if (result == HitResult.HIT) {
                 val swingType = gameEngine.gameState.value.lastSwingType?.ordinal ?: 0
-                sendMessage(GameMessage.ActionSwing(event.timestamp, event.force, swingType))
+                val myOrdinal = if (isHost) 0 else 1
+                sendMessage(GameMessage.ActionSwing(event.timestamp, event.force, swingType, myOrdinal))
+                lastSentSwingTimestamp = event.timestamp
                 
                 if (wasServing) {
                     audioManager.play(com.air.pong.audio.AudioManager.SoundEvent.SERVE, gameEngine.gameState.value.useDebugTones)
@@ -471,12 +475,16 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
                     val actualFlightTime = (baseFlight * swingType.getServeFlightTimeModifier()).toLong()
                     
                     // Timing Heuristics:
-                    // SMASH: Fast Down -> Bounces at 15% of flight
-                    // LOB: High Arc -> Bounces at 45% of flight
+                    // SMASH: Fast Down -> Bounces at 18% of flight (was 15%, slight increase for rhythm)
+                    // LOB: High Arc -> We want the first bounce to act similar to before in absolute terms, 
+                    // but the flight is now much longer. 
+                    // Old Flight ~1.5x -> New Flight ~2.0x. 
+                    // Old Bounce ~45%. New Bounce Ratio should be smaller to keep absolute time similar.
+                    // Let's try 30% for Lobs now (since flight time increased significantly).
                     // FLAT: Standard -> Bounces at 30% of flight
                     val bounceRatio = when {
-                        swingType.isSmash() -> 0.15f
-                        swingType.isLob() -> 0.45f
+                        swingType.isSmash() -> 0.25f
+                        swingType.isLob() -> 0.30f
                         else -> 0.30f 
                     }
                     
@@ -611,6 +619,33 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
                 }
             }
             is GameMessage.ActionSwing -> {
+                // Fix for Loopback/Premature Swing Bug:
+                // Fix for Loopback/Premature Swing Bug:
+                // Use Source Player ID to filter out our own messages definitively.
+                val myPlayerOrdinal = if (isHost) com.air.pong.core.game.Player.PLAYER_1.ordinal else com.air.pong.core.game.Player.PLAYER_2.ordinal
+                
+                android.util.Log.d("GameViewModel", "Rx ActionSwing: Source=${msg.sourcePlayerOrdinal}, MyOrdinal=$myPlayerOrdinal, Time=${msg.timestamp}")
+
+                if (msg.sourcePlayerOrdinal == -1) {
+                     android.util.Log.e("GameViewModel", "Ignored ActionSwing with INVALID Source ID (-1). Protocol Mismatch or Corruption.")
+                     return
+                }
+
+                if (msg.sourcePlayerOrdinal == myPlayerOrdinal) {
+                     android.util.Log.d("GameViewModel", "Ignored Loopback ActionSwing from myself.")
+                     return
+                }
+                
+                // Legacy Fix: Also check timestamp just in case (redundant but safe)
+                if (msg.timestamp == lastSentSwingTimestamp) {
+                     android.util.Log.w("GameViewModel", "Ignored Loopback ActionSwing by Timestamp matching.")
+                     return
+                }
+
+                // NOTE: We no longer need the "Time to Expected Arrival" check for loopback,
+                // but we might keep it for other validation if strictly necessary.
+                // For now, let's remove the confusing 400ms filter.
+
                 // Fix for Clock Synchronization:
                 // We cannot rely on msg.timestamp because devices have different clocks.
                 // Instead, we assume the swing happened recently (Network Latency ago).
