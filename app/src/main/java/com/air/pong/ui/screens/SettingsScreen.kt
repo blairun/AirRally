@@ -191,7 +191,11 @@ fun SettingsScreen(
                             infoTitle = title
                             infoText = text
                             showInfoDialog = true
-                        }
+                        },
+                        lastSwingType = gameState.lastSwingType,
+                        lastSwingData = gameState.lastSwingData,
+                        onPlayTestSound = { viewModel.playTestSound(it) },
+                        onClearDebugData = { viewModel.clearDebugData() }
                     )
                     SettingsScreenType.Stats -> StatsScreen(
                         viewModel = viewModel
@@ -207,6 +211,7 @@ fun SettingsScreen(
                         onUseDebugTonesChange = {
                             viewModel.updateSettings(flightTime.toLong(), difficulty, isDebugMode, it, minSwingThreshold)
                         },
+                        minSwingThreshold = minSwingThreshold,
                         lastSwingType = gameState.lastSwingType,
                         lastSwingData = gameState.lastSwingData,
                         onPlayTestSound = { viewModel.playTestSound(it) },

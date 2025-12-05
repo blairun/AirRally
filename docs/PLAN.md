@@ -417,18 +417,19 @@ Show on first app launch:
 ### Component 7.5: Swing Types & Risk
 
 **Swing Classification Table**:
+Default values defined in app\src\main\java\com\air\pong\core\game\SwingSettings.kt (chaged from game parameter settings)
 
 | Swing Type | Description | Flight Time Modifier | Net Risk | Out Risk | Window Shrink |
 |---|---|---|---|---|---|---|
-| **SOFT_FLAT** | Gentle push. | 1.2x (Slower) | 0% | 0% | 0% |
-| **MEDIUM_FLAT** | Standard hit. | 1.0x (Normal) | 0% | 2% | 20% |
-| **HARD_FLAT** | Aggressive drive. | 0.8x (Fast) | 5% | 10% | 35% |
-| **SOFT_LOB** | Low lob. | 1.4x (Slow) | 0% | 0% | 0% |
-| **MEDIUM_LOB** | Standard lob. | 1.5x (Slower) | 0% | 5% | 0% |
-| **HARD_LOB** | High lob. | 1.6x (Slowest) | 0% | 15% | 0% |
-| **SOFT_SMASH** | Weak smash. | 0.8x (Fast) | 10% | 0% | 20% |
-| **MEDIUM_SMASH** | Controlled smash. | 0.6x (Faster) | 15% | 5% | 40% |
-| **HARD_SMASH** | Full power smash. | 0.4x (Fastest) | 20% | 10% | 60% |
+| **SOFT_FLAT** | Gentle push. |---|---|---|---|
+| **MEDIUM_FLAT** | Standard hit. |---|---|---|---|
+| **HARD_FLAT** | Aggressive drive. |---|---|---|---|
+| **SOFT_LOB** | Low lob. |---|---|---|---|
+| **MEDIUM_LOB** | Standard lob. |---|---|---|---|
+| **HARD_LOB** | High lob. |---|---|---|---|
+| **SOFT_SMASH** | Weak smash. |---|---|---|---|
+| **MEDIUM_SMASH** | Controlled smash. |---|---|---|---|
+| **HARD_SMASH** | Full power smash. |---|---|---|---|
 
 ### Risk & Difficulty Logic
 

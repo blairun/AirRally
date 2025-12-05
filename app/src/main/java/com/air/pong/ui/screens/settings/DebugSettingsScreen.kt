@@ -30,6 +30,7 @@ fun DebugSettingsScreen(
     onDebugModeChange: (Boolean) -> Unit,
     useDebugTones: Boolean,
     onUseDebugTonesChange: (Boolean) -> Unit,
+    minSwingThreshold: Float, // New parameter
     lastSwingType: SwingType?,
     lastSwingData: SwingData?,
     onPlayTestSound: (AudioManager.SoundEvent) -> Unit,
@@ -114,7 +115,7 @@ fun DebugSettingsScreen(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(140.dp),
+                .height(160.dp), // Increased height to fit new text
                 contentAlignment = Alignment.Center
         ) {
             if (isReady) {
@@ -132,12 +133,19 @@ fun DebugSettingsScreen(
                             Text(stringResource(R.string.accel_fmt, data.accelX, data.accelY, data.accelZ), style = MaterialTheme.typography.labelSmall)
                             Text(stringResource(R.string.gyro_fmt, data.gyroX, data.gyroY, data.gyroZ), style = MaterialTheme.typography.labelSmall)
                             Text(stringResource(R.string.grav_fmt, data.gravX, data.gravY, data.gravZ), style = MaterialTheme.typography.labelSmall)
+                            
+                            // Dynamic Thresholds Display
+                            Text(
+                                text = "Soft: ${minSwingThreshold.toInt()}, Med: ${(minSwingThreshold + 9).toInt()}, Hard: ${(minSwingThreshold + 30).toInt()}",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.secondary
+                            )
 
                             // Play sound based on force for testing
                             LaunchedEffect(data) {
                                 val soundEvent = when {
-                                    data.force > 20.0f -> AudioManager.SoundEvent.HIT_HARD
-                                    data.force > 17.0f -> AudioManager.SoundEvent.HIT_MEDIUM
+                                    data.force > (minSwingThreshold + 30.0f) -> AudioManager.SoundEvent.HIT_HARD
+                                    data.force > (minSwingThreshold + 9.0f) -> AudioManager.SoundEvent.HIT_MEDIUM
                                     else -> AudioManager.SoundEvent.HIT_SOFT
                                 }
                                 onPlayTestSound(soundEvent)

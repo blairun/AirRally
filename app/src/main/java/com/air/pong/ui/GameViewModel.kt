@@ -1000,53 +1000,53 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
     
     fun resetSwingSettings() {
         // Reset to defaults
-        com.air.pong.core.game.SwingSettings.softFlatNetRisk = 0
-        com.air.pong.core.game.SwingSettings.softFlatOutRisk = 0
-        com.air.pong.core.game.SwingSettings.softFlatShrink = 0
+        com.air.pong.core.game.SwingSettings.softFlatNetRisk = com.air.pong.core.game.SwingSettings.DEFAULT_SOFT_FLAT_NET_RISK
+        com.air.pong.core.game.SwingSettings.softFlatOutRisk = com.air.pong.core.game.SwingSettings.DEFAULT_SOFT_FLAT_OUT_RISK
+        com.air.pong.core.game.SwingSettings.softFlatShrink = com.air.pong.core.game.SwingSettings.DEFAULT_SOFT_FLAT_SHRINK
 
-        com.air.pong.core.game.SwingSettings.mediumFlatNetRisk = 0
-        com.air.pong.core.game.SwingSettings.mediumFlatOutRisk = 2
-        com.air.pong.core.game.SwingSettings.mediumFlatShrink = 20
+        com.air.pong.core.game.SwingSettings.mediumFlatNetRisk = com.air.pong.core.game.SwingSettings.DEFAULT_MEDIUM_FLAT_NET_RISK
+        com.air.pong.core.game.SwingSettings.mediumFlatOutRisk = com.air.pong.core.game.SwingSettings.DEFAULT_MEDIUM_FLAT_OUT_RISK
+        com.air.pong.core.game.SwingSettings.mediumFlatShrink = com.air.pong.core.game.SwingSettings.DEFAULT_MEDIUM_FLAT_SHRINK
 
-        com.air.pong.core.game.SwingSettings.hardFlatNetRisk = 5
-        com.air.pong.core.game.SwingSettings.hardFlatOutRisk = 10
-        com.air.pong.core.game.SwingSettings.hardFlatShrink = 35
+        com.air.pong.core.game.SwingSettings.hardFlatNetRisk = com.air.pong.core.game.SwingSettings.DEFAULT_HARD_FLAT_NET_RISK
+        com.air.pong.core.game.SwingSettings.hardFlatOutRisk = com.air.pong.core.game.SwingSettings.DEFAULT_HARD_FLAT_OUT_RISK
+        com.air.pong.core.game.SwingSettings.hardFlatShrink = com.air.pong.core.game.SwingSettings.DEFAULT_HARD_FLAT_SHRINK
 
-        com.air.pong.core.game.SwingSettings.softLobNetRisk = 0
-        com.air.pong.core.game.SwingSettings.softLobOutRisk = 0
-        com.air.pong.core.game.SwingSettings.softLobShrink = 0
+        com.air.pong.core.game.SwingSettings.softLobNetRisk = com.air.pong.core.game.SwingSettings.DEFAULT_SOFT_LOB_NET_RISK
+        com.air.pong.core.game.SwingSettings.softLobOutRisk = com.air.pong.core.game.SwingSettings.DEFAULT_SOFT_LOB_OUT_RISK
+        com.air.pong.core.game.SwingSettings.softLobShrink = com.air.pong.core.game.SwingSettings.DEFAULT_SOFT_LOB_SHRINK
 
-        com.air.pong.core.game.SwingSettings.mediumLobNetRisk = 0
-        com.air.pong.core.game.SwingSettings.mediumLobOutRisk = 5
-        com.air.pong.core.game.SwingSettings.mediumLobShrink = 0
+        com.air.pong.core.game.SwingSettings.mediumLobNetRisk = com.air.pong.core.game.SwingSettings.DEFAULT_MEDIUM_LOB_NET_RISK
+        com.air.pong.core.game.SwingSettings.mediumLobOutRisk = com.air.pong.core.game.SwingSettings.DEFAULT_MEDIUM_LOB_OUT_RISK
+        com.air.pong.core.game.SwingSettings.mediumLobShrink = com.air.pong.core.game.SwingSettings.DEFAULT_MEDIUM_LOB_SHRINK
 
-        com.air.pong.core.game.SwingSettings.hardLobNetRisk = 0
-        com.air.pong.core.game.SwingSettings.hardLobOutRisk = 15
-        com.air.pong.core.game.SwingSettings.hardLobShrink = 0
+        com.air.pong.core.game.SwingSettings.hardLobNetRisk = com.air.pong.core.game.SwingSettings.DEFAULT_HARD_LOB_NET_RISK
+        com.air.pong.core.game.SwingSettings.hardLobOutRisk = com.air.pong.core.game.SwingSettings.DEFAULT_HARD_LOB_OUT_RISK
+        com.air.pong.core.game.SwingSettings.hardLobShrink = com.air.pong.core.game.SwingSettings.DEFAULT_HARD_LOB_SHRINK
 
-        com.air.pong.core.game.SwingSettings.softSmashNetRisk = 10
-        com.air.pong.core.game.SwingSettings.softSmashOutRisk = 0
-        com.air.pong.core.game.SwingSettings.softSmashShrink = 20
+        com.air.pong.core.game.SwingSettings.softSmashNetRisk = com.air.pong.core.game.SwingSettings.DEFAULT_SOFT_SMASH_NET_RISK
+        com.air.pong.core.game.SwingSettings.softSmashOutRisk = com.air.pong.core.game.SwingSettings.DEFAULT_SOFT_SMASH_OUT_RISK
+        com.air.pong.core.game.SwingSettings.softSmashShrink = com.air.pong.core.game.SwingSettings.DEFAULT_SOFT_SMASH_SHRINK
 
-        com.air.pong.core.game.SwingSettings.mediumSmashNetRisk = 15
-        com.air.pong.core.game.SwingSettings.mediumSmashOutRisk = 5
-        com.air.pong.core.game.SwingSettings.mediumSmashShrink = 40
+        com.air.pong.core.game.SwingSettings.mediumSmashNetRisk = com.air.pong.core.game.SwingSettings.DEFAULT_MEDIUM_SMASH_NET_RISK
+        com.air.pong.core.game.SwingSettings.mediumSmashOutRisk = com.air.pong.core.game.SwingSettings.DEFAULT_MEDIUM_SMASH_OUT_RISK
+        com.air.pong.core.game.SwingSettings.mediumSmashShrink = com.air.pong.core.game.SwingSettings.DEFAULT_MEDIUM_SMASH_SHRINK
 
-        com.air.pong.core.game.SwingSettings.hardSmashNetRisk = 20
-        com.air.pong.core.game.SwingSettings.hardSmashOutRisk = 10
-        com.air.pong.core.game.SwingSettings.hardSmashShrink = 60
-        com.air.pong.core.game.SwingSettings.hardSmashFlight = 0.4f
+        com.air.pong.core.game.SwingSettings.hardSmashNetRisk = com.air.pong.core.game.SwingSettings.DEFAULT_HARD_SMASH_NET_RISK
+        com.air.pong.core.game.SwingSettings.hardSmashOutRisk = com.air.pong.core.game.SwingSettings.DEFAULT_HARD_SMASH_OUT_RISK
+        com.air.pong.core.game.SwingSettings.hardSmashShrink = com.air.pong.core.game.SwingSettings.DEFAULT_HARD_SMASH_SHRINK
 
-        com.air.pong.core.game.SwingSettings.softFlatFlight = 1.3f
-        com.air.pong.core.game.SwingSettings.mediumFlatFlight = 1.0f
-        com.air.pong.core.game.SwingSettings.hardFlatFlight = 0.7f
+        com.air.pong.core.game.SwingSettings.softFlatFlight = com.air.pong.core.game.SwingSettings.DEFAULT_SOFT_FLAT_FLIGHT
+        com.air.pong.core.game.SwingSettings.mediumFlatFlight = com.air.pong.core.game.SwingSettings.DEFAULT_MEDIUM_FLAT_FLIGHT
+        com.air.pong.core.game.SwingSettings.hardFlatFlight = com.air.pong.core.game.SwingSettings.DEFAULT_HARD_FLAT_FLIGHT
 
-        com.air.pong.core.game.SwingSettings.softLobFlight = 1.5f
-        com.air.pong.core.game.SwingSettings.mediumLobFlight = 1.5f
-        com.air.pong.core.game.SwingSettings.hardLobFlight = 1.6f
+        com.air.pong.core.game.SwingSettings.softLobFlight = com.air.pong.core.game.SwingSettings.DEFAULT_SOFT_LOB_FLIGHT
+        com.air.pong.core.game.SwingSettings.mediumLobFlight = com.air.pong.core.game.SwingSettings.DEFAULT_MEDIUM_LOB_FLIGHT
+        com.air.pong.core.game.SwingSettings.hardLobFlight = com.air.pong.core.game.SwingSettings.DEFAULT_HARD_LOB_FLIGHT
 
-        com.air.pong.core.game.SwingSettings.softSmashFlight = 0.8f
-        com.air.pong.core.game.SwingSettings.mediumSmashFlight = 0.6f
+        com.air.pong.core.game.SwingSettings.softSmashFlight = com.air.pong.core.game.SwingSettings.DEFAULT_SOFT_SMASH_FLIGHT
+        com.air.pong.core.game.SwingSettings.mediumSmashFlight = com.air.pong.core.game.SwingSettings.DEFAULT_MEDIUM_SMASH_FLIGHT
+        com.air.pong.core.game.SwingSettings.hardSmashFlight = com.air.pong.core.game.SwingSettings.DEFAULT_HARD_SMASH_FLIGHT
         
         updateSwingSettings()
     }

@@ -52,22 +52,17 @@ fun FlightTimeVisualization(baseFlightTime: Float, refreshTrigger: Int) {
     val (shortestName, minTime, longestName, maxTime) = calculationResult
 
     Column(modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)) {
-        // Text(
-        //     text = "🏓...............bounce",
-        //     style = MaterialTheme.typography.bodyMedium,
-        //     color = MaterialTheme.colorScheme.onSurfaceVariant
-        // )
         // Stacked layout for better localization support
         Column(modifier = Modifier.fillMaxWidth()) {
-            Text(
-                text = "shortest: $shortestName ${minTime}ms",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.secondary
+            AlignedParamRow(
+                label = "shortest:",
+                shotType = shortestName,
+                timeValue = "${minTime}ms"
             )
-            Text(
-                text = "longest: $longestName ${maxTime}ms",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.secondary
+            AlignedParamRow(
+                label = "longest:",
+                shotType = longestName,
+                timeValue = "${maxTime}ms"
             )
         }
     }
@@ -117,28 +112,58 @@ fun HitWindowVisualization(difficultyWindow: Int, refreshTrigger: Int) {
     val (shortestName, shortestTotal, longestName, longestTotal) = calculationResult
 
     Column(modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)) {
-        // Text(
-        //     text = "🏓..............|bounce.......|",
-        //     style = MaterialTheme.typography.bodyMedium,
-        //     color = MaterialTheme.colorScheme.onSurfaceVariant
-        // )
         // Stacked layout for better localization support
         Column(modifier = Modifier.fillMaxWidth()) {
-            Text(
-                text = "shortest: $shortestName ${shortestTotal}ms",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.secondary
+            AlignedParamRow(
+                label = "shortest:",
+                shotType = shortestName,
+                timeValue = "${shortestTotal}ms"
             )
-            Text(
-                text = "longest: $longestName ${longestTotal}ms",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.secondary
+            AlignedParamRow(
+                label = "longest:",
+                shotType = longestName,
+                timeValue = "${longestTotal}ms"
             )
         }
     }
 }
 
-// Helper data class for the result (since Pair/Triple are limited)
+@Composable
+fun AlignedParamRow(
+    label: String,
+    shotType: String,
+    timeValue: String
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        // Column 1: Label (Fixed width)
+        Text(
+            text = label,
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.secondary,
+            modifier = Modifier.width(60.dp)
+        )
+        
+        // Column 2: Shot Type (Fixed width for alignment, but not taking full space)
+        Text(
+            text = shotType,
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.secondary,
+            modifier = Modifier.width(110.dp)
+        )
+        
+        // Column 3: Time Value (Fixed width)
+        Text(
+            text = timeValue,
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.secondary,
+            modifier = Modifier.width(50.dp)
+        )
+    }
+}
+
 data class Quadruple<A, B, C, D>(val first: A, val second: B, val third: C, val fourth: D)
 
 @Composable
@@ -152,12 +177,25 @@ fun GameParamsSettingsScreen(
     onSettingsChange: () -> Unit,
     onResetMainDefaults: () -> Unit,
     onResetSwingDefaults: () -> Unit,
-    onShowInfo: (String, String) -> Unit
+    onShowInfo: (String, String) -> Unit,
+    // New parameters for swing testing
+    lastSwingType: com.air.pong.core.game.SwingType?,
+    lastSwingData: com.air.pong.core.game.SwingData?,
+    onPlayTestSound: (com.air.pong.audio.AudioManager.SoundEvent) -> Unit,
+    onClearDebugData: () -> Unit
 ) {
     val context = LocalContext.current
     
     // Shared trigger to refresh visualizations when advanced settings change
     var advancedSettingsTrigger by remember { mutableIntStateOf(0) }
+
+    // Cleanup on enter/exit
+    DisposableEffect(Unit) {
+        onClearDebugData()
+        onDispose {
+            onClearDebugData()
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -193,6 +231,41 @@ fun GameParamsSettingsScreen(
             steps = 13,
             onValueChangeFinished = onSettingsChange
         )
+
+        // Swing Test Feedback
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            if (lastSwingType != null) {
+                Text(
+                    text = lastSwingType.name.replace("_", " "),
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.primary,
+                    fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+                )
+
+                // Play sound based on force
+                lastSwingData?.let { data ->
+                    LaunchedEffect(data) {
+                        val soundEvent = when {
+                            data.force > 20.0f -> com.air.pong.audio.AudioManager.SoundEvent.HIT_HARD
+                            data.force > 17.0f -> com.air.pong.audio.AudioManager.SoundEvent.HIT_MEDIUM
+                            else -> com.air.pong.audio.AudioManager.SoundEvent.HIT_SOFT
+                        }
+                        onPlayTestSound(soundEvent)
+                    }
+                }
+            } else {
+                Text(
+                    text = "Swing device to test",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        }
 
         Spacer(modifier = Modifier.height(16.dp))
 
