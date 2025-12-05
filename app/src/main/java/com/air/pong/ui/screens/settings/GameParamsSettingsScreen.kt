@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import com.air.pong.R
 import com.air.pong.core.game.getWindowShrinkPercentage
 import com.air.pong.core.game.getFlightTimeModifier
+import com.air.pong.core.game.GameEngine
 
 
 
@@ -93,12 +94,12 @@ fun HitWindowVisualization(difficultyWindow: Int, refreshTrigger: Int) {
         val startWindow = -200 // Fixed bounce offset
         
         // Shortest Window (Max Shrink)
-        val shortestHalf = difficultyWindow * (1.0f - maxShrink)
+        val shortestHalf = (difficultyWindow / 2.0f) * (1.0f - maxShrink)
         val shortestEnd = startWindow + (2 * shortestHalf).toInt()
         val shortestTotal = shortestEnd - startWindow
         
         // Longest Window (Min Shrink)
-        val longestHalf = difficultyWindow * (1.0f - minShrink)
+        val longestHalf = (difficultyWindow / 2.0f) * (1.0f - minShrink)
         val longestEnd = startWindow + (2 * longestHalf).toInt()
         val longestTotal = longestEnd - startWindow
         
@@ -283,15 +284,26 @@ fun GameParamsSettingsScreen(
 
         // Flight Time
         val flightTimeLabel = when {
-            flightTime <= 600 -> stringResource(R.string.difficulty_hard)
-            flightTime <= 900 -> stringResource(R.string.difficulty_medium)
+            flightTime <= GameEngine.FLIGHT_TIME_HARD_THRESHOLD -> stringResource(R.string.difficulty_hard)
+            flightTime <= GameEngine.FLIGHT_TIME_MEDIUM_THRESHOLD -> stringResource(R.string.difficulty_medium)
             else -> stringResource(R.string.difficulty_easy)
         }
 
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(stringResource(R.string.flight_time_label, flightTime.toInt(), flightTimeLabel), style = MaterialTheme.typography.bodyLarge)
             IconButton(onClick = {
-                onShowInfo(context.getString(R.string.info_flight_time_title), context.getString(R.string.info_flight_time_text))
+                onShowInfo(
+                    context.getString(R.string.info_flight_time_title), 
+                    context.getString(
+                        R.string.info_flight_time_text, 
+                        GameEngine.MIN_FLIGHT_TIME, 
+                        GameEngine.FLIGHT_TIME_HARD_THRESHOLD,
+                        GameEngine.FLIGHT_TIME_HARD_THRESHOLD + 100,
+                        GameEngine.FLIGHT_TIME_MEDIUM_THRESHOLD,
+                        GameEngine.FLIGHT_TIME_MEDIUM_THRESHOLD + 100,
+                        GameEngine.MAX_FLIGHT_TIME
+                    )
+                )
             }) {
                 Icon(Icons.Default.Info, contentDescription = "Info", modifier = Modifier.size(20.dp))
             }
@@ -303,7 +315,7 @@ fun GameParamsSettingsScreen(
                 // Snap to 100ms
                 onFlightTimeChange((it / 100).toInt() * 100f)
             },
-            valueRange = 500f..1200f,
+            valueRange = GameEngine.MIN_FLIGHT_TIME.toFloat()..GameEngine.MAX_FLIGHT_TIME.toFloat(),
             steps = 6,
             onValueChangeFinished = onSettingsChange
         )
@@ -314,15 +326,15 @@ fun GameParamsSettingsScreen(
 
         // Difficulty (Hit Window)
         val difficultyLabel = when {
-            difficulty <= 300 -> stringResource(R.string.difficulty_hard)
-            difficulty <= 500 -> stringResource(R.string.difficulty_medium)
+            difficulty <= 400 -> stringResource(R.string.difficulty_hard)
+            difficulty <= 700 -> stringResource(R.string.difficulty_medium)
             else -> stringResource(R.string.difficulty_easy)
         }
 
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(stringResource(R.string.hit_window_label, difficulty, difficultyLabel), style = MaterialTheme.typography.bodyLarge)
             IconButton(onClick = {
-                onShowInfo(context.getString(R.string.info_hit_window_title), context.getString(R.string.info_hit_window_text))
+                onShowInfo(context.getString(R.string.info_hit_window_title), context.getString(R.string.info_hit_window_text, GameEngine.MIN_DIFFICULTY, GameEngine.MAX_DIFFICULTY))
             }) {
                 Icon(Icons.Default.Info, contentDescription = "Info", modifier = Modifier.size(20.dp))
             }
@@ -334,8 +346,8 @@ fun GameParamsSettingsScreen(
                 val snapped = (it / 50).toInt() * 50
                 onDifficultyChange(snapped)
             },
-            valueRange = 200f..700f,
-            steps = 9,
+            valueRange = GameEngine.MIN_DIFFICULTY.toFloat()..GameEngine.MAX_DIFFICULTY.toFloat(),
+            steps = 15,
             onValueChangeFinished = onSettingsChange
         )
         

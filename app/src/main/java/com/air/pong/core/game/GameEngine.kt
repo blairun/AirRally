@@ -54,6 +54,15 @@ class GameEngine {
         const val BOUNCE_OFFSET_MS = 200L
         const val MIN_REACTION_TIME_MS = 200L
         const val DEFAULT_SWING_THRESHOLD = 14.0f
+        const val DEFAULT_FLIGHT_TIME = 700L
+        const val MIN_FLIGHT_TIME = 500L
+        const val MAX_FLIGHT_TIME = 1200L
+        const val FLIGHT_TIME_HARD_THRESHOLD = 600L
+        const val FLIGHT_TIME_MEDIUM_THRESHOLD = 900L
+        
+        const val DEFAULT_DIFFICULTY = 600
+        const val MIN_DIFFICULTY = 200
+        const val MAX_DIFFICULTY = 1000
     }
 
     /**
@@ -85,8 +94,7 @@ class GameEngine {
      * Returns the start and end offsets (in ms) relative to ballArrivalTimestamp for the valid hit window.
      */
     private fun getHitWindowBounds(): Pair<Long, Long> {
-        val halfWindow = getHitWindow()
-        val totalWindow = halfWindow * 2
+        val totalWindow = getHitWindow()
         
         // Ideal window starts at BOUNCE_OFFSET_MS before arrival
         val idealStartWindow = -BOUNCE_OFFSET_MS
@@ -114,8 +122,7 @@ class GameEngine {
         
         // Use the CURRENT hit window (which represents the window for the incoming shot)
         // Note: In processSwing, we must ensure we use this BEFORE overwriting lastSwingType
-        val halfWindow = getHitWindow()
-        val totalWindow = halfWindow * 2
+        val totalWindow = getHitWindow()
         
         // Ideal window starts at BOUNCE_OFFSET_MS before arrival
         val idealStartWindow = -BOUNCE_OFFSET_MS

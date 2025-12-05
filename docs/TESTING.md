@@ -63,3 +63,4 @@ Certain features rely on hardware sensors and Bluetooth hardware, making them im
 | **Sensors** | Player performs "Lob" motion | Game logs "LOB" swing type |
 | **Lifecycle** | Press Home button during game | Game pauses, opponent notified |
 | **Lifecycle** | Resume app | Game resumes or offers rematch |
+| **Lifecycle** | Background/Resume in Settings | Sensor testing continues to work after resume |

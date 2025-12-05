@@ -376,7 +376,7 @@ Replace placeholder with Compose Navigation:
 
 **Settings**:
 - Flight time: Slider from 500ms to 2000ms
-- Difficulty: Easy/Medium/Hard (affects hit window ± 300/200/100ms)
+- Difficulty: Easy/Medium/Hard (Total Hit Window: 750-1000/450-700/200-400ms)
 - Debug mode: Toggle debug overlay
 - Sensor sensitivity: Adjust swing threshold
 - About Section: Version, Credits, Links

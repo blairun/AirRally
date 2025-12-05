@@ -371,6 +371,10 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
     
+
+
+
+    
     fun resetStats() {
         viewModelScope.launch {
             statsRepository.resetStats()
@@ -378,12 +382,19 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun resetGameSettings() {
-        gameEngine.updateSettings(700L, 400, false, false, GameEngine.DEFAULT_SWING_THRESHOLD, true)
+        gameEngine.updateSettings(
+            GameEngine.DEFAULT_FLIGHT_TIME, 
+            GameEngine.DEFAULT_DIFFICULTY, 
+            false, 
+            false, 
+            GameEngine.DEFAULT_SWING_THRESHOLD, 
+            true
+        )
         sensorProvider.setSwingThreshold(GameEngine.DEFAULT_SWING_THRESHOLD)
         // Also update shared prefs so it persists
         with(sharedPrefs.edit()) {
-            putLong("flight_time", 700L)
-            putInt("difficulty", 400)
+            putLong("flight_time", GameEngine.DEFAULT_FLIGHT_TIME)
+            putInt("difficulty", GameEngine.DEFAULT_DIFFICULTY)
             putBoolean("debug_mode", false)
             putBoolean("debug_tones", false)
             putFloat("min_swing_threshold", GameEngine.DEFAULT_SWING_THRESHOLD)
@@ -392,8 +403,6 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-
-    
     fun updateRallyShrink(isEnabled: Boolean) {
         val currentState = gameEngine.gameState.value
         gameEngine.updateSettings(currentState.flightTime, currentState.difficulty, currentState.isDebugMode, currentState.useDebugTones, currentState.minSwingThreshold, isEnabled)
@@ -829,10 +838,12 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
     
+    private var isSwingTesting = false
+
     fun onResume() {
         val phase = gameState.value.gamePhase
-        // Resume sensors if we are in a game state (active or paused)
-        if (phase == GamePhase.RALLY || phase == GamePhase.WAITING_FOR_SERVE || phase == GamePhase.PAUSED || phase == GamePhase.POINT_SCORED) {
+        // Resume sensors if we are in a game state (active or paused) OR if we are testing swings
+        if (phase == GamePhase.RALLY || phase == GamePhase.WAITING_FOR_SERVE || phase == GamePhase.PAUSED || phase == GamePhase.POINT_SCORED || isSwingTesting) {
              sensorProvider.startListening()
         }
 
@@ -1104,10 +1115,12 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun startSensorTesting() {
+        isSwingTesting = true
         sensorProvider.startListening()
     }
 
     fun stopSensorTesting() {
+        isSwingTesting = false
         // Only stop if we are NOT in a game
         if (gameState.value.gamePhase == GamePhase.IDLE || gameState.value.gamePhase == GamePhase.GAME_OVER) {
             sensorProvider.stopListening()

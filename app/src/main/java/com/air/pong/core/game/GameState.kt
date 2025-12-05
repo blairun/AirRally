@@ -17,8 +17,8 @@ data class GameState(
     val servingPlayer: Player = Player.PLAYER_1,
     val ballArrivalTimestamp: Long = 0L, // When the ball is expected to arrive
     val isMyTurn: Boolean = false, // Helper for UI
-    val flightTime: Long = 700L, // Configurable flight time
-    val difficulty: Int = 1, // 0: Easy, 1: Medium, 2: Hard
+    val flightTime: Long = GameEngine.DEFAULT_FLIGHT_TIME, // Configurable flight time
+    val difficulty: Int = GameEngine.DEFAULT_DIFFICULTY, // 0: Easy, 1: Medium, 2: Hard
     val isDebugMode: Boolean = false,
     val useDebugTones: Boolean = false,
     val isRallyShrinkEnabled: Boolean = true,
@@ -36,7 +36,7 @@ data class GameState(
     val longestRally: Int = 0,
     
     // Dynamic State
-    val currentHitWindow: Long = 400L // Calculated hit window for the NEXT shot
+    val currentHitWindow: Long = GameEngine.DEFAULT_DIFFICULTY.toLong() // Calculated hit window for the NEXT shot
 )
 
 /**

@@ -47,10 +47,10 @@
     <string name="difficulty_medium">Medium</string>
     <string name="difficulty_easy">Easy</string>
     <string name="info_flight_time_title">Flight Time</string>
-    <string name="info_flight_time_text">Make the game feel faster or slower by changing the default time the ball stays in the air (from hit to bounce on opponent\'s side). Swing force and phone tilt will increase or decrease this time.\n\n500-600ms: Hard (Fast)\n700-900ms: Medium\n1000-1200ms: Easy (Slow)\n\n(Synced with opponent)</string>
+    <string name="info_flight_time_text">Make the game feel faster or slower by changing the default time the ball stays in the air (from hit to bounce on opponent\'s side). Swing force and phone tilt will increase or decrease this time.\n\n%1$d-%2$dms: Hard (Fast)\n%3$d-%4$dms: Medium\n%5$d-%6$dms: Easy (Slow)\n\n(Synced with opponent)</string>
     <string name="hit_window_label">Hit Window: %1$d ms (%2$s)</string>
     <string name="info_hit_window_title">Hit Window (Difficulty)</string>
-    <string name="info_hit_window_text">Changes the margin of error for your swing timing; the valid swing window.\n\nLarger Window = Easier to hit.\nSmaller Window = Harder to hit.\n\nRange: 200ms (Hard) to 700ms (Easy)\n\n(Synced with opponent)</string>
+    <string name="info_hit_window_text">Sets the base total time window you have to hit the ball. Harder shots (like Smashes) from your opponent may shrink this window further.\n\nLarger Window = Easier\nSmaller Window = Harder\n\nRange: %1$dms (Hard) to %2$dms (Easy)\n\n(Synced with opponent)</string>
     <string name="swing_sensitivity_label">Swing Sensitivity: %1$.1f</string>
     <string name="info_sensitivity_title">Swing Sensitivity</string>
     <string name="info_sensitivity_text">Minimum swing force required to trigger a soft swing. Medium and hard swings are scaled up from the minimum.\n\nLower = More Sensitive (Easier to trigger)\nHigher = Less Sensitive (Harder to trigger)\n\n(Local only)</string>

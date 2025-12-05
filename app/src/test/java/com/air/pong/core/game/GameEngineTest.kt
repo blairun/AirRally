@@ -224,10 +224,9 @@ class GameEngineTest {
         gameEngine.processSwing(serveTime, 10f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f) 
         assertEquals(expectedArrival, gameEngine.gameState.value.ballArrivalTimestamp)
         
-        // Test HIT window (Shifted: Start at -BOUNCE_OFFSET_MS, End at -BOUNCE_OFFSET_MS + 2*Window)
-        // Difficulty 500 means "Half Window" = 500ms. Total Window = 1000ms.
-        val halfWindow = 500L
-        val totalWindow = halfWindow * 2
+        // Test HIT window (Shifted: Start at -BOUNCE_OFFSET_MS, End at -BOUNCE_OFFSET_MS + Window)
+        // Difficulty 500 means "Total Window" = 500ms.
+        val totalWindow = 500L
         val bounceOffset = GameEngine.BOUNCE_OFFSET_MS
         
         val startWindow = -bounceOffset
@@ -394,8 +393,7 @@ class GameEngineTest {
         // Rally Length = 3. Shrink = 30ms.
         val rallyShrink = 30L
         val adjustedBaseWindow = (difficulty - rallyShrink).coerceAtLeast(200L)
-        val halfWindow = (adjustedBaseWindow * (1.0f - shrinkPercent)).toLong()
-        val totalWindow = halfWindow * 2
+        val totalWindow = (adjustedBaseWindow * (1.0f - shrinkPercent)).toLong()
         
         val arrivalTime = hitTime + flightDuration
         assertEquals(arrivalTime, gameEngine.gameState.value.ballArrivalTimestamp)
@@ -417,8 +415,8 @@ class GameEngineTest {
         // 2. Valid Hit (Start of Window) -> T=3210 (HitTime + 210)
         assertEquals("Valid Hit (Start of Window)", HitResult.HIT, gameEngine.checkHitTiming(hitTime + 210))
         
-        // 3. Valid Hit (Middle/Late) -> T=3500
-        assertEquals("Valid Hit (Middle/Late)", HitResult.HIT, gameEngine.checkHitTiming(hitTime + 500))
+        // 3. Valid Hit (Middle/Late) -> T=3300
+        assertEquals("Valid Hit (Middle/Late)", HitResult.HIT, gameEngine.checkHitTiming(hitTime + 300))
         
         // 4. Valid Hit (End of Window)
         assertEquals("Valid Hit (End of Window)", HitResult.HIT, gameEngine.checkHitTiming(actualEnd))
