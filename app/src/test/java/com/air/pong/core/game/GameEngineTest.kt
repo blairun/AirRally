@@ -14,7 +14,7 @@ class GameEngineTest {
         resetSwingSettings()
         gameEngine = GameEngine()
         gameEngine.setLocalPlayer(isHost = true) // Assume Player 1 is Host
-        gameEngine.startGame()
+        gameEngine.startGame(GameMode.CLASSIC)
     }
 
     private fun resetSwingSettings() {
@@ -555,7 +555,7 @@ class GameEngineTest {
         repeat(iterations) {
             val engine = GameEngine()
             engine.setLocalPlayer(true)
-            engine.startGame()
+            engine.startGame(GameMode.CLASSIC)
             // Force=25 (Medium), GravZ=0 (Flat)
             var result = engine.processSwing(1000L, 25f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f)
             if (result == HitResult.PENDING) {
@@ -588,7 +588,7 @@ class GameEngineTest {
         repeat(iterations) {
             val engine = GameEngine()
             engine.setLocalPlayer(true)
-            engine.startGame()
+            engine.startGame(GameMode.CLASSIC)
             // Force=45 (Hard), GravZ=0 (Flat)
             var result = engine.processSwing(1000L, 45f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f)
             if (result == HitResult.PENDING) {
@@ -613,7 +613,7 @@ class GameEngineTest {
         repeat(iterations) {
             val engine = GameEngine()
             engine.setLocalPlayer(true)
-            engine.startGame()
+            engine.startGame(GameMode.CLASSIC)
             // Force=10 (Soft), GravZ=-6.0 (Smash)
             var result = engine.processSwing(1000L, 10f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, -6.0f)
             if (result == HitResult.PENDING) {
@@ -642,7 +642,7 @@ class GameEngineTest {
         repeat(iterations) {
             val engine = GameEngine()
             engine.setLocalPlayer(true)
-            engine.startGame()
+            engine.startGame(GameMode.CLASSIC)
             // Force=45 (Hard), GravZ=-6.0 (Smash)
             var result = engine.processSwing(1000L, 45f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, -6.0f)
             if (result == HitResult.PENDING) {
