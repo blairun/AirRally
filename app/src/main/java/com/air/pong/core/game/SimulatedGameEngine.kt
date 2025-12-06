@@ -111,7 +111,14 @@ class SimulatedGameEngine(
 
             // Risk-Based Miss Logic
             // Use the actual risk percentages from the SwingType
-            val (netRisk, outRisk) = swingType.getRiskPercentages()
+            var (netRisk, outRisk) = swingType.getRiskPercentages()
+            
+            // Rally Mode: Halve the risk percentages (partners are placing shots more nicely)
+            if (gameState.value.gameMode == GameMode.RALLY) {
+                netRisk /= 2
+                outRisk /= 2
+            }
+            
             val riskRoll = Random.nextInt(100)
             
             val missResult = when {

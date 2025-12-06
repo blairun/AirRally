@@ -11,6 +11,7 @@ import com.air.pong.core.game.getServeFlightTimeModifier
 import com.air.pong.core.game.isLob
 import com.air.pong.core.game.isSmash
 import com.air.pong.core.game.SwingSettings
+import com.air.pong.core.game.GameMode
 import com.air.pong.core.network.GameMessage
 import com.air.pong.core.network.MessageCodec
 import com.air.pong.core.network.NetworkMessageHandler
@@ -74,6 +75,7 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
     private var savedFlightTime: Long = 700L
     private var savedDifficulty: Int = 400
     private var savedRallyShrink: Boolean = true
+    private var savedGameMode: GameMode = GameMode.RALLY
     
     private val sharedPrefs = application.getSharedPreferences("airrally_prefs", android.content.Context.MODE_PRIVATE)
 
@@ -86,6 +88,14 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
     val lossCount = statsRepository.lossCount
     val longestRally = statsRepository.longestRally
     val totalHits = statsRepository.totalHits
+
+    // Rally High Score
+    private val _rallyHighScore = kotlinx.coroutines.flow.MutableStateFlow(0)
+    val rallyHighScore = _rallyHighScore.asStateFlow()
+    private val _rallyLongestRally = kotlinx.coroutines.flow.MutableStateFlow(0)
+    val rallyLongestRally = _rallyLongestRally.asStateFlow()
+    private val _isNewHighScore = kotlinx.coroutines.flow.MutableStateFlow(false)
+    val isNewHighScore = _isNewHighScore.asStateFlow()
 
     // Debug State
     var isDebugGameSession = false
@@ -116,6 +126,7 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
         val savedPlayerName = sharedPrefs.getString("player_name", null) ?: fetchDeviceName()
         val savedMinSwingThreshold = sharedPrefs.getFloat("min_swing_threshold", GameEngine.DEFAULT_SWING_THRESHOLD)
         val savedRallyShrink = sharedPrefs.getBoolean("rally_shrink", true)
+        val savedGameMode = GameMode.entries[sharedPrefs.getInt("game_mode", 1)] // Default to RALLY (1)
         
         // Avatar Logic
         val savedAvatarIndex = sharedPrefs.getInt("avatar_index", -1)
@@ -130,8 +141,12 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
         _avatarIndex.value = initialAvatarIndex
         _playerName.value = savedPlayerName
 
-        gameEngine.updateSettings(savedFlightTime, savedDifficulty, savedDebugMode, savedDebugTones, savedMinSwingThreshold, savedRallyShrink)
+        gameEngine.updateSettings(savedFlightTime, savedDifficulty, savedDebugMode, savedDebugTones, savedMinSwingThreshold, savedRallyShrink, savedGameMode)
         sensorProvider.setSwingThreshold(savedMinSwingThreshold)
+        
+        // Load Rally High Score and Longest Rally
+        _rallyHighScore.value = sharedPrefs.getInt("rally_high_score", 0)
+        _rallyLongestRally.value = sharedPrefs.getInt("rally_longest_rally", 0)
 
         // Load Swing Settings
         com.air.pong.core.game.SwingSettings.softFlatNetRisk = sharedPrefs.getInt("softFlatNetRisk", com.air.pong.core.game.SwingSettings.DEFAULT_SOFT_FLAT_NET_RISK)
@@ -218,7 +233,7 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
                     if (isHost) {
                         // Sync settings to the newly connected guest
                         val currentState = gameState.value
-                        sendMessage(GameMessage.Settings(currentState.flightTime, currentState.difficulty, getFlattenedSwingSettings(), currentState.isRallyShrinkEnabled))
+                        sendMessage(GameMessage.Settings(currentState.flightTime, currentState.difficulty, getFlattenedSwingSettings(), currentState.isRallyShrinkEnabled, currentState.gameMode))
                     } else {
                         // We are guest. Lock settings.
                         _isSettingsLocked.value = true
@@ -243,7 +258,8 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
                             currentState.isDebugMode, 
                             currentState.useDebugTones, 
                             currentState.minSwingThreshold, 
-                            savedRallyShrink
+                            savedRallyShrink,
+                            savedGameMode
                         )
                         _swingSettingsVersion.value++
                         savedLocalSettings = null
@@ -312,10 +328,24 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
                         if (isFinished) {
                             saveGame(state, iWonGame)
                         }
+                        
+                        // Force Sync on Game Over to ensure opponent sees final score/state
+                        if (isHost) {
+                            sendGameStateSync()
+                        }
                     }
 
 
                 }
+        }
+        // Periodic Game State Sync (Host Only)
+        viewModelScope.launch {
+            while (true) {
+                if (isHost && networkAdapter.connectionState.value == com.air.pong.core.network.NetworkAdapter.ConnectionState.CONNECTED) {
+                    sendGameStateSync()
+                }
+                kotlinx.coroutines.delay(500)
+            }
         }
     }
     
@@ -421,18 +451,19 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
             false, 
             false, 
             GameEngine.DEFAULT_SWING_THRESHOLD, 
-            true
+            true,
+            GameMode.RALLY
         )
     }
 
     fun updateRallyShrink(isEnabled: Boolean) {
         val currentState = gameEngine.gameState.value
-        gameEngine.updateSettings(currentState.flightTime, currentState.difficulty, currentState.isDebugMode, currentState.useDebugTones, currentState.minSwingThreshold, isEnabled)
+        gameEngine.updateSettings(currentState.flightTime, currentState.difficulty, currentState.isDebugMode, currentState.useDebugTones, currentState.minSwingThreshold, isEnabled, currentState.gameMode)
         sharedPrefs.edit().putBoolean("rally_shrink", isEnabled).apply()
         
         // Sync if host
         if (isHost && connectionState.value == com.air.pong.core.network.NetworkAdapter.ConnectionState.CONNECTED) {
-            sendMessage(GameMessage.Settings(currentState.flightTime, currentState.difficulty, getFlattenedSwingSettings(), isEnabled))
+            sendMessage(GameMessage.Settings(currentState.flightTime, currentState.difficulty, getFlattenedSwingSettings(), isEnabled, currentState.gameMode))
         }
     }
     
@@ -441,6 +472,16 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             gameEngine.setLocalPlayer(true)
             networkAdapter.startAdvertising(playerName.value)
+            // Ensure default mode or saved mode is set
+            gameEngine.updateSettings(
+                gameState.value.flightTime,
+                gameState.value.difficulty,
+                gameState.value.isDebugMode,
+                gameState.value.useDebugTones,
+                gameState.value.minSwingThreshold,
+                gameState.value.isRallyShrinkEnabled,
+                savedGameMode // Restore mode
+            )
         }
     }
     
@@ -463,8 +504,8 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
         // Start sensor
         sensorProvider.startListening()
         
-        // Start game logic
-        gameEngine.startGame()
+        // Start game logic with current mode
+        gameEngine.startGame(gameState.value.gameMode)
         
         // Notify peer
         sendMessage(GameMessage.StartGame)
@@ -643,23 +684,24 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
         when (msg) {
             is GameMessage.StartGame -> {
                 sensorProvider.startListening()
-                gameEngine.startGame()
+                gameEngine.startGame(gameEngine.gameState.value.gameMode) // Ensure we stick to the synced mode
                 audioManager.play(com.air.pong.audio.AudioManager.SoundEvent.GAME_START, gameEngine.gameState.value.useDebugTones)
             }
             is GameMessage.Settings -> {
                 // If this is the first time we receive authoritative settings, backup our local ones
-                if (!isHost && savedLocalSettings == null) {
+                if (savedLocalSettings == null) {
                     savedLocalSettings = SwingSettings.getSnapshot()
                     val state = gameEngine.gameState.value
                     savedFlightTime = state.flightTime
                     savedDifficulty = state.difficulty
                     savedRallyShrink = state.isRallyShrinkEnabled
+                    savedGameMode = state.gameMode
                 }
 
                 val currentDebug = gameEngine.gameState.value.isDebugMode
                 val currentUseDebugTones = gameEngine.gameState.value.useDebugTones
                 val currentMinThreshold = gameEngine.gameState.value.minSwingThreshold
-                gameEngine.updateSettings(msg.flightTime, msg.difficulty, currentDebug, currentUseDebugTones, currentMinThreshold, msg.isRallyShrinkEnabled)
+                gameEngine.updateSettings(msg.flightTime, msg.difficulty, currentDebug, currentUseDebugTones, currentMinThreshold, msg.isRallyShrinkEnabled, msg.gameMode)
                 
                 // Update Swing Settings from Host
                 if (msg.swingSettings.size == 36) {
@@ -726,23 +768,27 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
                 // Schedule Auto-Miss Check
                 val hitWindow = gameEngine.getHitWindow()
                 val autoMissDelay = timeToArrival + hitWindow + 500 // 500ms buffer for late swings
+                val expectedArrival = gameEngine.gameState.value.ballArrivalTimestamp // Capture for stale check
                 
                 if (autoMissDelay > 0) {
                     viewModelScope.launch {
                         kotlinx.coroutines.delay(autoMissDelay)
-                        // Check if we missed
-                        if (gameEngine.checkAutoMiss()) {
-                            // We missed!
-                            sendMessage(GameMessage.Result(HitResult.MISS_TIMEOUT, null))
-                            
-                            // Local Sound: I didn't swing, ball passed me.
-                            audioManager.play(com.air.pong.audio.AudioManager.SoundEvent.MISS_NO_SWING, gameEngine.gameState.value.useDebugTones)
-                            hapticManager.playMiss()
-                            
-                            // Play Lose Point sound after a delay
-                            viewModelScope.launch {
-                                kotlinx.coroutines.delay(1000)
-                                audioManager.play(com.air.pong.audio.AudioManager.SoundEvent.LOSE_POINT, gameEngine.gameState.value.useDebugTones)
+                        // Check if we missed - but only if this is still the same ball!
+                        // If ballArrivalTimestamp changed, a new rally started and this check is stale.
+                        if (gameEngine.gameState.value.ballArrivalTimestamp == expectedArrival) {
+                            if (gameEngine.checkAutoMiss()) {
+                                // We missed!
+                                sendMessage(GameMessage.Result(HitResult.MISS_TIMEOUT, null))
+                                
+                                // Local Sound: I didn't swing, ball passed me.
+                                audioManager.play(com.air.pong.audio.AudioManager.SoundEvent.MISS_NO_SWING, gameEngine.gameState.value.useDebugTones)
+                                hapticManager.playMiss()
+                                
+                                // Play Lose Point sound after a delay
+                                viewModelScope.launch {
+                                    kotlinx.coroutines.delay(1000)
+                                    audioManager.play(com.air.pong.audio.AudioManager.SoundEvent.LOSE_POINT, gameEngine.gameState.value.useDebugTones)
+                                }
                             }
                         }
                     }
@@ -864,6 +910,9 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
             is GameMessage.PlayerBusy -> {
                 _isOpponentInLobby.value = false
             }
+            is GameMessage.GameStateSync -> {
+                gameEngine.syncState(msg)
+            }
             else -> {
                 // Handle other messages
             }
@@ -871,10 +920,47 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
     }
     
     fun rematch() {
+        // Reset high score flag when starting a new game
+        _isNewHighScore.value = false
+        
         sensorProvider.startListening()
         gameEngine.rematch(isInitiator = true)
         sendMessage(GameMessage.Rematch)
         audioManager.play(com.air.pong.audio.AudioManager.SoundEvent.GAME_START, gameEngine.gameState.value.useDebugTones)
+    }
+    
+    /**
+     * Checks if the current Rally score is a new high score.
+     * Also tracks longest rally for Rally mode.
+     * Should be called when navigating to game over screen in Rally mode.
+     */
+    fun checkRallyHighScore(): Boolean {
+        val currentScore = gameEngine.gameState.value.rallyScore
+        val currentLongestRally = gameEngine.gameState.value.longestRally
+        val currentHighScore = _rallyHighScore.value
+        val currentBestLongestRally = _rallyLongestRally.value
+        
+        var isNewRecord = false
+        
+        if (currentScore > currentHighScore) {
+            _rallyHighScore.value = currentScore
+            _isNewHighScore.value = true
+            sharedPrefs.edit().putInt("rally_high_score", currentScore).apply()
+            isNewRecord = true
+        } else {
+            _isNewHighScore.value = false
+        }
+        
+        if (currentLongestRally > currentBestLongestRally) {
+            _rallyLongestRally.value = currentLongestRally
+            sharedPrefs.edit().putInt("rally_longest_rally", currentLongestRally).apply()
+        }
+        
+        return isNewRecord
+    }
+    
+    fun resetNewHighScoreFlag() {
+        _isNewHighScore.value = false
     }
     
     private fun sendMessage(msg: GameMessage) {
@@ -942,12 +1028,12 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
     
-    fun updateSettings(flightTime: Long, difficulty: Int, isDebugMode: Boolean, useDebugTones: Boolean, minSwingThreshold: Float, isRallyShrinkEnabled: Boolean = true) {
-        gameEngine.updateSettings(flightTime, difficulty, isDebugMode, useDebugTones, minSwingThreshold, isRallyShrinkEnabled)
+    fun updateSettings(flightTime: Long, difficulty: Int, isDebugMode: Boolean, useDebugTones: Boolean, minSwingThreshold: Float, isRallyShrinkEnabled: Boolean = true, gameMode: GameMode = GameMode.RALLY) {
+        gameEngine.updateSettings(flightTime, difficulty, isDebugMode, useDebugTones, minSwingThreshold, isRallyShrinkEnabled, gameMode)
         sensorProvider.setSwingThreshold(minSwingThreshold)
         
-        // Only sync synced settings (Flight Time, Difficulty)
-        sendMessage(GameMessage.Settings(flightTime, difficulty, getFlattenedSwingSettings(), isRallyShrinkEnabled))
+        // Only sync synced settings (Flight Time, Difficulty, Mode)
+        sendMessage(GameMessage.Settings(flightTime, difficulty, getFlattenedSwingSettings(), isRallyShrinkEnabled, gameMode))
         
         // Save to SharedPreferences
         sharedPrefs.edit().apply {
@@ -956,6 +1042,7 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
             putBoolean("debug_mode", isDebugMode)
             putBoolean("debug_tones", useDebugTones)
             putFloat("min_swing_threshold", minSwingThreshold)
+            putInt("game_mode", gameMode.ordinal)
             
             // Save Swing Settings
             putInt("softFlatNetRisk", com.air.pong.core.game.SwingSettings.softFlatNetRisk)
@@ -1033,8 +1120,53 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
         // If I am host, sync my settings to the guest
         if (isHost) {
             val state = gameState.value
-            sendMessage(GameMessage.Settings(state.flightTime, state.difficulty, getFlattenedSwingSettings(), state.isRallyShrinkEnabled))
+            sendMessage(GameMessage.Settings(state.flightTime, state.difficulty, getFlattenedSwingSettings(), state.isRallyShrinkEnabled, state.gameMode))
+            sendGameStateSync() // Initial State Sync
         }
+    }
+
+    private fun sendGameStateSync() {
+        if (!isHost) return
+        val state = gameState.value
+        
+        // Encode Bitmasks
+        val rallyGridBitmask = encodeGridBitmask(state.rallyGrid)
+        val rallyLinesBitmask = encodeLinesBitmask(state.rallyLinesCompleted)
+        val opponentRallyGridBitmask = encodeGridBitmask(state.opponentRallyGrid)
+        val opponentRallyLinesBitmask = encodeLinesBitmask(state.opponentRallyLinesCompleted)
+        
+        val msg = GameMessage.GameStateSync(
+            player1Score = state.player1Score,
+            player2Score = state.player2Score,
+            currentPhase = state.gamePhase,
+            servingPlayer = state.servingPlayer,
+            gameMode = state.gameMode,
+            rallyScore = state.rallyScore,
+            rallyLives = state.rallyLives,
+            rallyGridBitmask = rallyGridBitmask,
+            rallyLinesBitmask = rallyLinesBitmask,
+            opponentRallyGridBitmask = opponentRallyGridBitmask,
+            opponentRallyLinesBitmask = opponentRallyLinesBitmask,
+            longestRally = state.longestRally
+        )
+        sendMessage(msg)
+    }
+    
+    // Bitmask Helpers
+    private fun encodeGridBitmask(grid: List<Boolean>): Short {
+        var mask = 0
+        grid.forEachIndexed { index, checked ->
+            if (checked) mask = mask or (1 shl index)
+        }
+        return mask.toShort()
+    }
+    
+    private fun encodeLinesBitmask(lines: List<Boolean>): Byte {
+        var mask = 0
+        lines.forEachIndexed { index, completed ->
+            if (completed) mask = mask or (1 shl index)
+        }
+        return mask.toByte()
     }
 
     fun notifyBusy() {
@@ -1152,7 +1284,7 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
         
         // Sync if connected
         val state = gameState.value
-        sendMessage(GameMessage.Settings(state.flightTime, state.difficulty, getFlattenedSwingSettings(), state.isRallyShrinkEnabled))
+        sendMessage(GameMessage.Settings(state.flightTime, state.difficulty, getFlattenedSwingSettings(), state.isRallyShrinkEnabled, state.gameMode))
     }
     
     fun resetSwingSettings() {
@@ -1257,9 +1389,10 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
         _isOpponentInLobby.value = true
         _isOpponentInLobby.value = true
         // Mock opponent name
+        // Mock opponent name
         networkAdapter.setConnectedEndpointName("Simulated Opponent")
         
-        gameEngine.startGame()
+        gameEngine.startGame(gameState.value.gameMode) // Support current mode
         audioManager.play(com.air.pong.audio.AudioManager.SoundEvent.GAME_START, gameEngine.gameState.value.useDebugTones)
     }
 
@@ -1349,4 +1482,19 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
     }
 
 
+    fun setGameMode(mode: GameMode) {
+        // Only host can set mode
+        if (isHost) {
+            val currentState = gameState.value
+            updateSettings(
+                currentState.flightTime,
+                currentState.difficulty,
+                currentState.isDebugMode,
+                currentState.useDebugTones,
+                currentState.minSwingThreshold,
+                currentState.isRallyShrinkEnabled,
+                mode
+            )
+        }
+    }
 }

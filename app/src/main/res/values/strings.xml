@@ -142,6 +142,14 @@
     <string name="play_again">PLAY AGAIN</string>
     <string name="main_menu">MAIN MENU</string>
 
+    <!-- Game Modes -->
+    <string name="game_mode_classic">CLASSIC</string>
+    <string name="game_mode_classic_desc">1 vs 1\n2 Serves. First to 11.</string>
+    <string name="game_mode_rally">RALLY</string>
+    <string name="game_mode_rally_desc">Co-op\nKeep the ball alive!</string>
+    <string name="partner">Partner</string>
+    <string name="waiting_for_partner">Waiting for Partner...</string>
+
     <!-- Dialogs -->
     <string name="device_incompatible">Device Incompatible</string>
     <string name="missing_sensors_text">This game requires specific sensors to function. Your device is missing: %1$s.\n\nThe app will now close.</string>
@@ -193,7 +201,9 @@
     <string name="stats_wins">Wins</string>
     <string name="stats_losses">Losses</string>
     <string name="stats_total_hits">Total Hits</string>
-    <string name="stats_longest_rally">Longest Rally</string>
+    <string name="stats_longest_rally">Longest Classic Rally</string>
+    <string name="stats_rally_high_score">High Rally Score</string>
+    <string name="stats_rally_longest_rally">Longest Rally Rally</string>
     <string name="stats_shot_distribution">Shot Distribution</string>
     <string name="stats_filter_all">All</string>
     <string name="stats_filter_won">winning shots</string>

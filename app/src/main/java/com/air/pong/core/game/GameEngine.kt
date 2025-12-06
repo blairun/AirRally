@@ -31,7 +31,11 @@ class GameEngine {
         this.isHost = isHost
     }
 
-    fun startGame() {
+    fun startGame(mode: GameMode? = null) {
+        // Use provided mode, or fall back to current mode (which was likely synced via Settings)
+        // Only default to CLASSIC if absolutely nothing is set (though enum handles that)
+        val targetMode = mode ?: _gameState.value.gameMode
+        
         _gameState.update {
             it.copy(
                 gamePhase = GamePhase.WAITING_FOR_SERVE,
@@ -45,36 +49,96 @@ class GameEngine {
                 lastSwingData = null,
                 currentPointShots = emptyList(),
                 currentRallyLength = 0,
-                longestRally = 0
+                longestRally = 0,
+                // Rally Mode Init
+                gameMode = targetMode,
+                rallyScore = 0,
+                rallyLives = RALLY_STARTING_LIVES,
+                rallyGrid = List(9) { false },
+                rallyLinesCompleted = List(8) { false },
+                rallyScorePoints = 0,
+                rallyBonusMultiplier = 1,
+                // Opponent State
+                opponentRallyGrid = List(9) { false },
+                opponentRallyLinesCompleted = List(8) { false }
             )
         }
     }
 
     companion object {
-        const val BOUNCE_OFFSET_MS = 200L
-        const val MIN_REACTION_TIME_MS = 200L
-        const val DEFAULT_SWING_THRESHOLD = 14.0f
         const val DEFAULT_FLIGHT_TIME = 700L
-        const val MIN_FLIGHT_TIME = 500L
-        const val MAX_FLIGHT_TIME = 1200L
-        const val FLIGHT_TIME_HARD_THRESHOLD = 600L
-        const val FLIGHT_TIME_MEDIUM_THRESHOLD = 900L
+        const val DEFAULT_SWING_THRESHOLD = 14.0f
+        const val SERVE_ROTATION = 2
+        const val SCORE_LIMIT = 11
+        const val BOUNCE_OFFSET_MS = 200L // Time before arrival that bounce sound plays
         
         const val DEFAULT_DIFFICULTY = 600
         const val MIN_DIFFICULTY = 200
         const val MAX_DIFFICULTY = 1000
-    }
 
+        // Rally Mode Constants
+        const val RALLY_HIT_POINTS = 10
+        const val RALLY_LINE_BONUS = 500
+        const val RALLY_BLACKOUT_BONUS_LIFE = 1
+        const val RALLY_STARTING_LIVES = 3
+        
+        const val MIN_REACTION_TIME_MS = 200L // Minimum time after launch before a hit is valid
+        
+        const val MIN_FLIGHT_TIME = 400L
+        const val MAX_FLIGHT_TIME = 1500L
+        const val FLIGHT_TIME_HARD_THRESHOLD = 600L
+        const val FLIGHT_TIME_MEDIUM_THRESHOLD = 900L
+    }
+    
     /**
-     * Returns the hit window in milliseconds.
-     * Delegates to the pre-calculated value in GameState.
+     * Returns the current hit window size in ms.
+     * Starts with Base Difficulty and shrinks based on Rally Logic.
      */
     fun getHitWindow(): Long {
         return _gameState.value.currentHitWindow
     }
+    
+    fun syncState(msg: com.air.pong.core.network.GameMessage.GameStateSync) {
+        _gameState.update {
+            it.copy(
+                player1Score = msg.player1Score,
+                player2Score = msg.player2Score,
+                gamePhase = msg.currentPhase,
+                servingPlayer = msg.servingPlayer,
+                // Rally Sync - SHARED STATE ONLY
+                gameMode = msg.gameMode,
+                rallyScore = msg.rallyScore,
+                rallyLives = msg.rallyLives,
+                // Only sync OPPONENT's grid (sender's "my grid" = my "opponent grid")
+                // Keep my own grid locally authoritative - don't overwrite!
+                opponentRallyGrid = decodeGridBitmask(msg.rallyGridBitmask),
+                opponentRallyLinesCompleted = decodeLinesBitmask(msg.rallyLinesBitmask),
+                longestRally = msg.longestRally
+            )
+        }
+    }
+    
+    private fun decodeGridBitmask(mask: Short): List<Boolean> {
+        return List(9) { i ->
+            ((mask.toInt() shr i) and 1) == 1
+        }
+    }
+    
+    private fun decodeLinesBitmask(mask: Byte): List<Boolean> {
+        return List(8) { i ->
+            ((mask.toInt() shr i) and 1) == 1
+        }
+    }
 
     private fun checkRisk(swingType: SwingType): HitResult {
-        val (netRisk, outRisk) = swingType.getRiskPercentages()
+        var (netRisk, outRisk) = swingType.getRiskPercentages()
+        
+        // Rally Mode: Halve the risk percentages (partners are placing shots more nicely)
+        if (_gameState.value.gameMode == GameMode.RALLY) {
+            netRisk /= 2
+            outRisk /= 2
+        }
+        
         val roll = Random.nextInt(100) // 0 to 99
         
         return when {
@@ -275,10 +339,18 @@ class GameEngine {
                         eventLog = (it.eventLog + GameEvent.YouHit(swingType)).takeLast(50),
                         currentPointShots = it.currentPointShots + swingType,
                         currentRallyLength = it.currentRallyLength + 1,
-                        ballState = BallState.IN_AIR
+                        ballState = BallState.IN_AIR,
+                        longestRally = kotlin.math.max(it.longestRally, it.currentRallyLength + 1) // Track longest rally (local hit)
                     )
                     // Recalculate window for opponent based on new rally length
-                    newState.copy(currentHitWindow = newState.calculateHitWindow())
+                    val stateWithWindow = newState.copy(currentHitWindow = newState.calculateHitWindow())
+                    
+                    // RALLY MODE LOGIC
+                    if (currentState.gameMode == GameMode.RALLY) {
+                        updateRallyState(stateWithWindow, swingType, isOpponent = false)
+                    } else {
+                        stateWithWindow
+                    }
                 }
                 return HitResult.HIT
             } else {
@@ -362,7 +434,14 @@ class GameEngine {
                  lastSwingType = swingType, // Store this so we can calculate window shrink later
                  currentRallyLength = it.currentRallyLength + 1
              )
-             newState.copy(currentHitWindow = newState.calculateHitWindow())
+             val stateWithWindow = newState.copy(currentHitWindow = newState.calculateHitWindow())
+             
+             // RALLY MODE: Update opponent's grid and calculate their bonuses
+             if (it.gameMode == GameMode.RALLY) {
+                 updateRallyState(stateWithWindow, swingType, isOpponent = true)
+             } else {
+                 stateWithWindow
+             }
          }
     }
 
@@ -443,38 +522,71 @@ class GameEngine {
             val p1Score = if (whoMissed == Player.PLAYER_2) state.player1Score + 1 else state.player1Score
             val p2Score = if (whoMissed == Player.PLAYER_1) state.player2Score + 1 else state.player2Score
             
-            // Check Win (Win by 2)
-            val scoreDiff = abs(p1Score - p2Score)
-            if ((p1Score >= SCORE_LIMIT || p2Score >= SCORE_LIMIT) && scoreDiff >= 2) {
-                 state.copy(
-                     player1Score = p1Score,
-                     player2Score = p2Score,
-                     gamePhase = GamePhase.GAME_OVER,
-                     lastEvent = "Game Over!"
-                 )
-            } else {
-                // Rotate Serve
-                val totalPoints = p1Score + p2Score
-                val isDeuce = p1Score >= 10 && p2Score >= 10
-                
-                val serveChangeInterval = if (isDeuce) 1 else SERVE_ROTATION
-                
-                val rotationIndex = totalPoints / serveChangeInterval
-                val nextServer = if (rotationIndex % 2 == 0) Player.PLAYER_1 else Player.PLAYER_2
-                
-                val winner = if (whoMissed == Player.PLAYER_1) Player.PLAYER_2 else Player.PLAYER_1
-                val iWon = (isHost && winner == Player.PLAYER_1) || (!isHost && winner == Player.PLAYER_2)
-                val winnerName = if (iWon) "You" else "Opponent"
+            if (state.gameMode == GameMode.RALLY) {
+                 val newLives = state.rallyLives - 1
+                 if (newLives <= 0) {
+                     state.copy(
+                         rallyLives = 0,
+                         gamePhase = GamePhase.GAME_OVER,
+                         lastEvent = "Game Over! Score: ${state.rallyScore}"
+                     )
+                 } else {
+                     // Rally Mode: Lose life, reset rally, switch server?
+                     // Let's rotate server same as Classic for fairness
+                     val totalPoints = p1Score + p2Score // Track total misses nicely? Or just use rotation
+                     // Simply rotate serve every miss for Rally mode to keep it moving
+                     val nextServer = if (state.servingPlayer == Player.PLAYER_1) Player.PLAYER_2 else Player.PLAYER_1
+                     
+                     state.copy(
+                         rallyLives = newLives,
+                         servingPlayer = nextServer,
+                         isMyTurn = (isHost && nextServer == Player.PLAYER_1) || (!isHost && nextServer == Player.PLAYER_2),
+                         eventLog = (state.eventLog + GameEvent.PointScored(false)).takeLast(50), // No "winner" in rally
+                         gamePhase = GamePhase.POINT_SCORED,
+                         lastEvent = "Life Lost! $newLives Left",
 
-                state.copy(
-                    player1Score = p1Score,
-                    player2Score = p2Score,
-                    servingPlayer = nextServer,
-                    isMyTurn = (isHost && nextServer == Player.PLAYER_1) || (!isHost && nextServer == Player.PLAYER_2),
-                    eventLog = (state.eventLog + GameEvent.PointScored(iWon)).takeLast(50),
-                    gamePhase = GamePhase.POINT_SCORED, // Enter cooldown
-                    longestRally = kotlin.math.max(state.longestRally, state.currentRallyLength)
-                )
+                         rallyGrid = state.rallyGrid, // Keep grid! (Bingo style)
+                         rallyLinesCompleted = state.rallyLinesCompleted,
+                         opponentRallyGrid = state.opponentRallyGrid,
+                         opponentRallyLinesCompleted = state.opponentRallyLinesCompleted,
+                         longestRally = kotlin.math.max(state.longestRally, state.currentRallyLength) // Ensure stats updated on miss
+                     )
+                 }
+            } else {
+                // CLASSIC MODE LOGIC
+                // Check Win (Win by 2)
+                val scoreDiff = abs(p1Score - p2Score)
+                if ((p1Score >= SCORE_LIMIT || p2Score >= SCORE_LIMIT) && scoreDiff >= 2) {
+                     state.copy(
+                         player1Score = p1Score,
+                         player2Score = p2Score,
+                         gamePhase = GamePhase.GAME_OVER,
+                         lastEvent = "Game Over!"
+                     )
+                } else {
+                    // Rotate Serve
+                    val totalPoints = p1Score + p2Score
+                    val isDeuce = p1Score >= 10 && p2Score >= 10
+                    
+                    val serveChangeInterval = if (isDeuce) 1 else SERVE_ROTATION
+                    
+                    val rotationIndex = totalPoints / serveChangeInterval
+                    val nextServer = if (rotationIndex % 2 == 0) Player.PLAYER_1 else Player.PLAYER_2
+                    
+                    val winner = if (whoMissed == Player.PLAYER_1) Player.PLAYER_2 else Player.PLAYER_1
+                    val iWon = (isHost && winner == Player.PLAYER_1) || (!isHost && winner == Player.PLAYER_2)
+                    val winnerName = if (iWon) "You" else "Opponent"
+    
+                    state.copy(
+                        player1Score = p1Score,
+                        player2Score = p2Score,
+                        servingPlayer = nextServer,
+                        isMyTurn = (isHost && nextServer == Player.PLAYER_1) || (!isHost && nextServer == Player.PLAYER_2),
+                        eventLog = (state.eventLog + GameEvent.PointScored(iWon)).takeLast(50),
+                        gamePhase = GamePhase.POINT_SCORED, // Enter cooldown
+                        longestRally = kotlin.math.max(state.longestRally, state.currentRallyLength)
+                    )
+                }
             }
         }
     }
@@ -531,7 +643,7 @@ class GameEngine {
         }
     }
 
-    fun updateSettings(flightTime: Long, difficulty: Int, isDebugMode: Boolean, useDebugTones: Boolean, minSwingThreshold: Float, isRallyShrinkEnabled: Boolean) {
+    fun updateSettings(flightTime: Long, difficulty: Int, isDebugMode: Boolean, useDebugTones: Boolean, minSwingThreshold: Float, isRallyShrinkEnabled: Boolean, gameMode: GameMode = GameMode.RALLY) {
         _gameState.update {
             val newState = it.copy(
                 flightTime = flightTime,
@@ -539,7 +651,8 @@ class GameEngine {
                 isDebugMode = isDebugMode,
                 useDebugTones = useDebugTones,
                 minSwingThreshold = minSwingThreshold,
-                isRallyShrinkEnabled = isRallyShrinkEnabled
+                isRallyShrinkEnabled = isRallyShrinkEnabled,
+                gameMode = gameMode
             )
             // Recalculate because difficulty or enabled flag changed
             newState.copy(currentHitWindow = newState.calculateHitWindow())
@@ -578,7 +691,15 @@ class GameEngine {
                 lastSwingData = null,
                 currentPointShots = emptyList(),
                 currentRallyLength = 0,
-                longestRally = 0
+                longestRally = 0,
+                // Reset Rally Mode Stats too!
+                rallyScore = 0,
+                rallyLives = RALLY_STARTING_LIVES,
+                rallyGrid = List(9) { false },
+                rallyLinesCompleted = List(8) { false },
+                opponentRallyGrid = List(9) { false },
+                opponentRallyLinesCompleted = List(8) { false },
+                rallyScorePoints = 0
             )
             // Reset hit window
             newState.copy(currentHitWindow = newState.calculateHitWindow())
@@ -626,7 +747,16 @@ class GameEngine {
                 lastSwingData = null,
                 currentPointShots = emptyList(),
                 currentRallyLength = 0,
-                longestRally = 0
+                longestRally = 0,
+                // Rally Reset
+                rallyScore = 0,
+                rallyLives = RALLY_STARTING_LIVES,
+                rallyGrid = List(9) { false },
+                rallyLinesCompleted = List(8) { false },
+                rallyScorePoints = 0,
+                rallyBonusMultiplier = 1,
+                opponentRallyGrid = List(9) { false },
+                opponentRallyLinesCompleted = List(8) { false }
             )
             newState.copy(currentHitWindow = newState.calculateHitWindow())
         }
@@ -640,6 +770,74 @@ class GameEngine {
                 player2Score = p2Score,
                 lastEvent = "Debug Game Over"
             )
+        }
+    }
+    
+    private fun updateRallyState(state: GameState, swingType: SwingType, isOpponent: Boolean): GameState {
+        // 1. Mark Grid (My Grid or Opponent Grid)
+        val gridIndex = swingType.getGridIndex()
+        val currentGrid = if (isOpponent) state.opponentRallyGrid else state.rallyGrid
+        val newGrid = currentGrid.toMutableList()
+        val wasMarked = newGrid[gridIndex]
+        newGrid[gridIndex] = true
+        
+        // 2. Check Lines
+        // Lines: Rows (0-2, 3-5, 6-8), Cols (036, 147, 258), Diagonals (048, 246)
+        val lines = listOf(
+            listOf(0, 1, 2), listOf(3, 4, 5), listOf(6, 7, 8), // Rows
+            listOf(0, 3, 6), listOf(1, 4, 7), listOf(2, 5, 8), // Cols
+            listOf(0, 4, 8), listOf(2, 4, 6)                   // Diagonals
+        )
+        
+        var pointsToAdd = RALLY_HIT_POINTS
+        // var bonusMultiplier = 1 // Not used yet
+        val currentLinesCompleted = if (isOpponent) state.opponentRallyLinesCompleted else state.rallyLinesCompleted
+        var newLinesCompleted = currentLinesCompleted.toMutableList()
+        var linesCompletedThisTurn = 0
+        
+        lines.forEachIndexed { index, indices ->
+            val isLineComplete = indices.all { newGrid[it] }
+            if (isLineComplete && !currentLinesCompleted[index]) {
+                // New Line Completed!
+                newLinesCompleted[index] = true
+                pointsToAdd += RALLY_LINE_BONUS
+                linesCompletedThisTurn++
+            }
+        }
+        
+        // 3. Blackout Check (All Lines)
+        var newLives = state.rallyLives
+
+        val allLinesCompleted = newLinesCompleted.all { it }
+        val allLinesPreviouslyCompleted = currentLinesCompleted.all { it }
+        
+        if (allLinesCompleted && !allLinesPreviouslyCompleted) {
+            // New Blackout!
+            if (newLives < 3) {
+                 newLives++ // Extra Life!
+                 // Reset Grid logic if we wanted to allow multiple blackouts
+                 newGrid.fill(false) // Clear grid
+                 newLinesCompleted.fill(false) // Clear lines
+                 pointsToAdd += 1000 // Huge bonus
+            }
+        }
+
+        return if (isOpponent) {
+             state.copy(
+                 opponentRallyGrid = newGrid,
+                 opponentRallyLinesCompleted = newLinesCompleted,
+                 rallyScore = state.rallyScore + pointsToAdd,
+                 rallyLives = newLives,
+                 rallyScorePoints = pointsToAdd // Show points added by opponent too? Maybe distinct UI event later.
+             )
+        } else {
+             state.copy(
+                 rallyGrid = newGrid,
+                 rallyLinesCompleted = newLinesCompleted,
+                 rallyScore = state.rallyScore + pointsToAdd,
+                 rallyLives = newLives,
+                 rallyScorePoints = pointsToAdd
+             )
         }
     }
 }

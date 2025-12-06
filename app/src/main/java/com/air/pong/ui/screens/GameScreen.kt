@@ -34,6 +34,8 @@ import com.air.pong.core.game.GameEvent
 import com.air.pong.core.game.GamePhase
 import com.air.pong.core.game.SwingType
 import com.air.pong.ui.GameViewModel
+import com.air.pong.core.game.GameMode
+import com.air.pong.ui.components.RallyGrid
 import kotlinx.coroutines.launch
 
 @Composable
@@ -102,242 +104,355 @@ fun GameScreen(
             .fillMaxSize()
             .background(backgroundColor)
     ) {
-        val minHeight = maxHeight
+        val screenHeight = maxHeight
         
         Box(modifier = Modifier.fillMaxSize()) {
             // Main Content Layer
-            // Score Section (Top)
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .align(Alignment.TopCenter)
-                    .padding(top = 16.dp),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                    val opponentName by viewModel.connectedPlayerName.collectAsState()
-                    val myAvatarIndex by viewModel.avatarIndex.collectAsState()
-                    val opponentAvatarIndex by viewModel.opponentAvatarIndex.collectAsState()
-                    
-                    // My Score Column
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier.weight(1f)
-                    ) {
-                        Text(
-                            stringResource(R.string.you), 
-                            style = MaterialTheme.typography.titleMedium, 
-                            color = Color.White
-                        )
-                        Text(
-                            text = if (viewModel.isHost) gameState.player1Score.toString() else gameState.player2Score.toString(),
-                            style = MaterialTheme.typography.displayLarge,
-                            color = Color.White,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        // My Avatar
-                        val myAvatarResId = com.air.pong.ui.AvatarUtils.avatarResources.getOrElse(myAvatarIndex) { com.air.pong.ui.AvatarUtils.avatarResources.first() }
-                        
-                        // Determine My Avatar State
-                        val (myOutlineColor, myAnimation) = getAvatarState(
-                            isMe = true,
-                            gameState = gameState
-                        )
-
-                        AvatarView(
-                            avatarResId = myAvatarResId,
-                            outlineColor = myOutlineColor,
-                            animationType = myAnimation,
-                            modifier = Modifier.size(120.dp)
-                        )
-                    }
-                    
-                    // Small spacer for visual separation between the two weighted columns
-                    Spacer(modifier = Modifier.width(16.dp))
-                    
-                    // Opponent Score Column
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier.weight(1f)
-                    ) {
-                        Text(
-                            text = opponentName ?: stringResource(R.string.opponent), 
-                            style = MaterialTheme.typography.titleMedium, 
-                            color = Color.White,
-                            maxLines = 1,
-                            overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
-                        )
-                        Text(
-                            text = if (viewModel.isHost) gameState.player2Score.toString() else gameState.player1Score.toString(),
-                            style = MaterialTheme.typography.displayLarge,
-                            color = Color.White,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        // Opponent Avatar
-                        val oppAvatarResId = com.air.pong.ui.AvatarUtils.avatarResources.getOrElse(opponentAvatarIndex) { com.air.pong.ui.AvatarUtils.avatarResources.first() }
-                        
-                        // Determine Opponent Avatar State
-                        val (oppOutlineColor, oppAnimation) = getAvatarState(
-                            isMe = false,
-                            gameState = gameState
-                        )
-
-                        AvatarView(
-                            avatarResId = oppAvatarResId,
-                            outlineColor = oppOutlineColor,
-                            animationType = oppAnimation,
-                            modifier = Modifier.size(120.dp)
-                        )
-                    }
-                }
-
-            // Status Message (Center)
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .align(Alignment.Center),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
+                modifier = Modifier.fillMaxSize()
             ) {
-                    if (gameState.gamePhase == GamePhase.WAITING_FOR_SERVE) {
-                        if (gameState.isMyTurn) {
-                            Text(
-                                stringResource(R.string.your_serve),
-                                style = MaterialTheme.typography.headlineLarge,
-                                color = Color.White,
-                                fontWeight = FontWeight.Bold,
-                                textAlign = TextAlign.Center
-                            )
-                            Text(
-                                stringResource(R.string.swing_to_serve),
-                                style = MaterialTheme.typography.titleLarge,
-                                color = Color.White,
-                                textAlign = TextAlign.Center
-                            )
-                        } else {
-                            Text(
-                                stringResource(R.string.opponent_serving),
-                                style = MaterialTheme.typography.headlineMedium,
-                                color = Color.White,
-                                textAlign = TextAlign.Center
-                            )
-                        }
-                    } else if (gameState.gamePhase == GamePhase.POINT_SCORED) {
-                        Text(
-                            stringResource(R.string.point_scored),
-                            style = MaterialTheme.typography.headlineMedium,
-                            color = Color.White,
-                            fontWeight = FontWeight.Bold,
-                            textAlign = TextAlign.Center
-                        )
-                        Text(
-                            stringResource(R.string.get_ready),
-                            style = MaterialTheme.typography.titleMedium,
-                            color = Color.White.copy(alpha = 0.8f),
-                            textAlign = TextAlign.Center
-                        )
-                    } else {
-                        if (gameState.isMyTurn) {
-                            // Only show HIT! if the ball has bounced (Green state)
-                            if (hasBounced) {
+                // Score Section (Top)
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 16.dp),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                        val opponentName by viewModel.connectedPlayerName.collectAsState()
+                        val myAvatarIndex by viewModel.avatarIndex.collectAsState()
+                        val opponentAvatarIndex by viewModel.opponentAvatarIndex.collectAsState()
+                        
+                        // My Score Column
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            if (gameState.gameMode == GameMode.RALLY) {
                                 Text(
-                                    stringResource(R.string.hit),
+                                    "LIVES", 
+                                    style = MaterialTheme.typography.titleMedium, 
+                                    color = Color.White
+                                )
+                                Text(
+                                    text = gameState.rallyLives.toString(),
                                     style = MaterialTheme.typography.displayLarge,
                                     color = Color.White,
-                                    fontWeight = FontWeight.ExtraBold,
-                                    textAlign = TextAlign.Center
+                                    fontWeight = FontWeight.Bold
+                                )
+                            } else {
+                                Text(
+                                    stringResource(R.string.you), 
+                                    style = MaterialTheme.typography.titleMedium, 
+                                    color = Color.White
+                                )
+                                Text(
+                                    text = if (viewModel.isHost) gameState.player1Score.toString() else gameState.player2Score.toString(),
+                                    style = MaterialTheme.typography.displayLarge,
+                                    color = Color.White,
+                                    fontWeight = FontWeight.Bold
                                 )
                             }
-                        } else {
-                            Text(
-                                stringResource(R.string.wait),
-                                style = MaterialTheme.typography.displayLarge,
-                                color = Color.White.copy(alpha = 0.7f),
-                                fontWeight = FontWeight.ExtraBold,
-                                textAlign = TextAlign.Center
+                            
+                            Spacer(modifier = Modifier.height(8.dp))
+                            // My Avatar
+                            val myAvatarResId = com.air.pong.ui.AvatarUtils.avatarResources.getOrElse(myAvatarIndex) { com.air.pong.ui.AvatarUtils.avatarResources.first() }
+                            
+                            // Determine My Avatar State
+                            val (myOutlineColor, myAnimation) = getAvatarState(
+                                isMe = true,
+                                gameState = gameState
+                            )
+
+                            AvatarView(
+                                avatarResId = myAvatarResId,
+                                outlineColor = myOutlineColor,
+                                animationType = myAnimation,
+                                modifier = Modifier.size(120.dp)
+                            )
+                        }
+                        
+                        // Small spacer for visual separation between the two weighted columns
+                        Spacer(modifier = Modifier.width(16.dp))
+                        
+                        // Opponent Score Column
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            if (gameState.gameMode == GameMode.RALLY) {
+                                Text(
+                                    "SCORE", 
+                                    style = MaterialTheme.typography.titleMedium, 
+                                    color = Color.White
+                                )
+                                Text(
+                                    text = gameState.rallyScore.toString(),
+                                    style = MaterialTheme.typography.displayLarge,
+                                    color = Color.White,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            } else {
+                                Text(
+                                    text = opponentName ?: stringResource(R.string.opponent), 
+                                    style = MaterialTheme.typography.titleMedium, 
+                                    color = Color.White,
+                                    maxLines = 1,
+                                    overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+                                )
+                                Text(
+                                    text = if (viewModel.isHost) gameState.player2Score.toString() else gameState.player1Score.toString(),
+                                    style = MaterialTheme.typography.displayLarge,
+                                    color = Color.White,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+
+                            Spacer(modifier = Modifier.height(8.dp))
+                            // Opponent Avatar
+                            val oppAvatarResId = com.air.pong.ui.AvatarUtils.avatarResources.getOrElse(opponentAvatarIndex) { com.air.pong.ui.AvatarUtils.avatarResources.first() }
+                            
+                            // Determine Opponent Avatar State
+                            val (oppOutlineColor, oppAnimation) = getAvatarState(
+                                isMe = false,
+                                gameState = gameState
+                            )
+
+                            AvatarView(
+                                avatarResId = oppAvatarResId,
+                                outlineColor = oppOutlineColor,
+                                animationType = oppAnimation,
+                                modifier = Modifier.size(120.dp)
                             )
                         }
                     }
-                }
                 
-
-        
-        
-        // Debug Game Controls
-        if (viewModel.isDebugGameSession) {
-            DebugGameControls(
-                viewModel = viewModel,
-                onStopDebug = onStopDebug,
-                modifier = Modifier.align(Alignment.TopCenter).padding(top = 130.dp)
-            )
-        }
-        
-        // Debug Overlay + Action Feed Panel (Bottom Sheet)
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .align(Alignment.BottomCenter),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            // --- Debug Overlay (Moved Here) ---
-            if (gameState.isDebugMode) {
-                Card(
-                    colors = CardDefaults.cardColors(
-                        containerColor = Color.Black.copy(alpha = 0.5f)
-                    ),
-                    modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
-                ) {
-                    Column(
-                        modifier = Modifier.padding(8.dp)
+                // Rally Mode: Instruction text right below avatars, then grid fills remaining space
+                if (gameState.gameMode == GameMode.RALLY) {
+                    // Instruction text (compact, below avatars) - fixed height container
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(80.dp)
+                            .padding(top = 8.dp),
+                        contentAlignment = Alignment.Center
                     ) {
-                        Text(
-                            stringResource(R.string.debug_info), 
-                            style = MaterialTheme.typography.labelSmall, 
-                            color = Color.Green,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Row(modifier = Modifier.fillMaxWidth()) {
-                            // Column 1: Game State
-                            Column(modifier = Modifier.weight(1f)) {
-                                Text(stringResource(R.string.phase_fmt, gameState.gamePhase), color = Color.White, style = MaterialTheme.typography.bodySmall)
-                                Text(stringResource(R.string.difficulty_fmt, gameState.difficulty), color = Color.White, style = MaterialTheme.typography.bodySmall)
-                                Text(stringResource(R.string.flight_time_fmt, gameState.flightTime), color = Color.White, style = MaterialTheme.typography.bodySmall)
-                                Text(stringResource(R.string.hit_window_fmt, gameState.currentHitWindow), color = Color.White, style = MaterialTheme.typography.bodySmall)
-                            }
-                            Spacer(modifier = Modifier.width(8.dp))
-                            // Column 2: Timing
-                            Column(modifier = Modifier.weight(1f)) {
-                                Text(stringResource(R.string.arrival_fmt, gameState.ballArrivalTimestamp), color = Color.White, style = MaterialTheme.typography.bodySmall)
-                                Text(stringResource(R.string.now_fmt, System.currentTimeMillis()), color = Color.White, style = MaterialTheme.typography.bodySmall)
-                                Text(stringResource(R.string.delta_fmt, gameState.ballArrivalTimestamp - System.currentTimeMillis()), color = Color.White, style = MaterialTheme.typography.bodySmall)
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            if (gameState.gamePhase == GamePhase.WAITING_FOR_SERVE) {
+                                if (gameState.isMyTurn) {
+                                    Text(
+                                        stringResource(R.string.your_serve),
+                                        style = MaterialTheme.typography.headlineMedium,
+                                        color = Color.White,
+                                        fontWeight = FontWeight.Bold,
+                                        textAlign = TextAlign.Center
+                                    )
+                                    Text(
+                                        stringResource(R.string.swing_to_serve),
+                                        style = MaterialTheme.typography.titleMedium,
+                                        color = Color.White,
+                                        textAlign = TextAlign.Center
+                                    )
+                                } else {
+                                    Text(
+                                        stringResource(R.string.opponent_serving),
+                                        style = MaterialTheme.typography.headlineSmall,
+                                        color = Color.White,
+                                        textAlign = TextAlign.Center
+                                    )
+                                }
+                            } else if (gameState.gamePhase == GamePhase.POINT_SCORED) {
+                                Text(
+                                    stringResource(R.string.point_scored),
+                                    style = MaterialTheme.typography.headlineMedium,
+                                    color = Color.White,
+                                    fontWeight = FontWeight.Bold,
+                                    textAlign = TextAlign.Center
+                                )
+                            } else {
+                                if (gameState.isMyTurn) {
+                                    if (hasBounced) {
+                                        Text(
+                                            stringResource(R.string.hit),
+                                            style = MaterialTheme.typography.displayMedium,
+                                            color = Color.White,
+                                            fontWeight = FontWeight.ExtraBold,
+                                            textAlign = TextAlign.Center
+                                        )
+                                    }
+                                } else {
+                                    Text(
+                                        stringResource(R.string.wait),
+                                        style = MaterialTheme.typography.displayMedium,
+                                        color = Color.White.copy(alpha = 0.7f),
+                                        fontWeight = FontWeight.ExtraBold,
+                                        textAlign = TextAlign.Center
+                                    )
+                                }
                             }
                         }
-                        
-                        Spacer(modifier = Modifier.height(4.dp))
-                        Text(stringResource(R.string.last_swing), color = Color.Yellow, style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold)
-                        Row(modifier = Modifier.fillMaxWidth()) {
-                            gameState.lastSwingType?.let {
-                                Text(stringResource(R.string.type_fmt, it), color = Color.White, style = MaterialTheme.typography.bodySmall, modifier = Modifier.padding(end = 8.dp))
-                            }
-                            gameState.lastSwingData?.let {
-                                Text(stringResource(R.string.force_fmt, it.force), color = Color.White, style = MaterialTheme.typography.bodySmall, modifier = Modifier.padding(end = 8.dp))
-                                Text(stringResource(R.string.grav_z_fmt, "%.2f".format(it.gravZ)), color = Color.White, style = MaterialTheme.typography.bodySmall)
+                    }
+                    
+                    // Grid fills remaining space, but with bottom padding for action log (100dp)
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f)
+                            .padding(start = 24.dp, end = 24.dp, top = 8.dp, bottom = 100.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        RallyGrid(
+                            gridState = gameState.rallyGrid,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    }
+                } else {
+                    // Classic Mode: Use Box with center alignment for proper vertical centering
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            if (gameState.gamePhase == GamePhase.WAITING_FOR_SERVE) {
+                                if (gameState.isMyTurn) {
+                                    Text(
+                                        stringResource(R.string.your_serve),
+                                        style = MaterialTheme.typography.headlineLarge,
+                                        color = Color.White,
+                                        fontWeight = FontWeight.Bold,
+                                        textAlign = TextAlign.Center
+                                    )
+                                    Text(
+                                        stringResource(R.string.swing_to_serve),
+                                        style = MaterialTheme.typography.titleLarge,
+                                        color = Color.White,
+                                        textAlign = TextAlign.Center
+                                    )
+                                } else {
+                                    Text(
+                                        stringResource(R.string.opponent_serving),
+                                        style = MaterialTheme.typography.headlineMedium,
+                                        color = Color.White,
+                                        textAlign = TextAlign.Center
+                                    )
+                                }
+                            } else if (gameState.gamePhase == GamePhase.POINT_SCORED) {
+                                Text(
+                                    stringResource(R.string.point_scored),
+                                    style = MaterialTheme.typography.headlineMedium,
+                                    color = Color.White,
+                                    fontWeight = FontWeight.Bold,
+                                    textAlign = TextAlign.Center
+                                )
+                                Text(
+                                    stringResource(R.string.get_ready),
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = Color.White.copy(alpha = 0.8f),
+                                    textAlign = TextAlign.Center
+                                )
+                            } else {
+                                if (gameState.isMyTurn) {
+                                    if (hasBounced) {
+                                        Text(
+                                            stringResource(R.string.hit),
+                                            style = MaterialTheme.typography.displayLarge,
+                                            color = Color.White,
+                                            fontWeight = FontWeight.ExtraBold,
+                                            textAlign = TextAlign.Center
+                                        )
+                                    }
+                                } else {
+                                    Text(
+                                        stringResource(R.string.wait),
+                                        style = MaterialTheme.typography.displayLarge,
+                                        color = Color.White.copy(alpha = 0.7f),
+                                        fontWeight = FontWeight.ExtraBold,
+                                        textAlign = TextAlign.Center
+                                    )
+                                }
                             }
                         }
                     }
                 }
             }
+
+            // Debug Game Controls (Overlay layer)
+            if (viewModel.isDebugGameSession) {
+                DebugGameControls(
+                    viewModel = viewModel,
+                    onStopDebug = onStopDebug,
+                    modifier = Modifier.align(Alignment.TopCenter).padding(top = 130.dp)
+                )
+            }
             
-            ActionFeedPanel(
-                events = gameState.eventLog,
-                // modifier = Modifier.align(Alignment.BottomCenter) // Removed align, parent column handles it
-            )
+            // Debug Overlay + Action Feed Panel (Bottom Sheet - overlays everything)
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.BottomCenter),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                // --- Debug Overlay ---
+                if (gameState.isDebugMode) {
+                    Card(
+                        colors = CardDefaults.cardColors(
+                            containerColor = Color.Black.copy(alpha = 0.5f)
+                        ),
+                        modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(8.dp)
+                        ) {
+                            Text(
+                                stringResource(R.string.debug_info), 
+                                style = MaterialTheme.typography.labelSmall, 
+                                color = Color.Green,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Row(modifier = Modifier.fillMaxWidth()) {
+                                // Column 1: Game State
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text(stringResource(R.string.phase_fmt, gameState.gamePhase), color = Color.White, style = MaterialTheme.typography.bodySmall)
+                                    Text(stringResource(R.string.difficulty_fmt, gameState.difficulty), color = Color.White, style = MaterialTheme.typography.bodySmall)
+                                    Text(stringResource(R.string.flight_time_fmt, gameState.flightTime), color = Color.White, style = MaterialTheme.typography.bodySmall)
+                                    Text(stringResource(R.string.hit_window_fmt, gameState.currentHitWindow), color = Color.White, style = MaterialTheme.typography.bodySmall)
+                                }
+                                Spacer(modifier = Modifier.width(8.dp))
+                                // Column 2: Timing
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text(stringResource(R.string.arrival_fmt, gameState.ballArrivalTimestamp), color = Color.White, style = MaterialTheme.typography.bodySmall)
+                                    Text(stringResource(R.string.now_fmt, System.currentTimeMillis()), color = Color.White, style = MaterialTheme.typography.bodySmall)
+                                    Text(stringResource(R.string.delta_fmt, gameState.ballArrivalTimestamp - System.currentTimeMillis()), color = Color.White, style = MaterialTheme.typography.bodySmall)
+                                }
+                            }
+                            
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(stringResource(R.string.last_swing), color = Color.Yellow, style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold)
+                            Row(modifier = Modifier.fillMaxWidth()) {
+                                gameState.lastSwingType?.let {
+                                    Text(stringResource(R.string.type_fmt, it), color = Color.White, style = MaterialTheme.typography.bodySmall, modifier = Modifier.padding(end = 8.dp))
+                                }
+                                gameState.lastSwingData?.let {
+                                    Text(stringResource(R.string.force_fmt, it.force), color = Color.White, style = MaterialTheme.typography.bodySmall, modifier = Modifier.padding(end = 8.dp))
+                                    Text(stringResource(R.string.grav_z_fmt, "%.2f".format(it.gravZ)), color = Color.White, style = MaterialTheme.typography.bodySmall)
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                ActionFeedPanel(
+                    events = gameState.eventLog,
+                )
+            }
         }
         }
     }
-}
 
 @Composable
 fun DebugGameControls(
@@ -617,6 +732,11 @@ enum class AvatarAnimation {
 @Composable
 fun getAvatarState(isMe: Boolean, gameState: com.air.pong.core.game.GameState): Pair<Color, AvatarAnimation> {
     if (gameState.gamePhase != GamePhase.POINT_SCORED) {
+        return Color.White to AvatarAnimation.NONE
+    }
+
+    // RALLY MODE OVERRIDE: No winner/loser, just cooperative play.
+    if (gameState.gameMode == GameMode.RALLY) {
         return Color.White to AvatarAnimation.NONE
     }
 

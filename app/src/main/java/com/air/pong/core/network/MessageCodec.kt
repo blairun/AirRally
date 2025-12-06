@@ -3,6 +3,7 @@ package com.air.pong.core.network
 import com.air.pong.core.game.GamePhase
 import com.air.pong.core.game.Player
 import com.air.pong.core.game.HitResult
+import com.air.pong.core.game.GameMode
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
@@ -81,15 +82,16 @@ object MessageCodec {
     }
     
     private fun encodeSettings(msg: GameMessage.Settings): ByteArray {
-        // [Type: 1][FlightTime: 8][Difficulty: 4][ListSize: 4][Values: N*4][RallyShrink: 1]
+        // [Type: 1][FlightTime: 8][Difficulty: 4][ListSize: 4][Values: N*4][RallyShrink: 1][GameMode: 1]
         val listSize = msg.swingSettings.size
-        val buffer = ByteBuffer.allocate(13 + 4 + (listSize * 4) + 1).order(ByteOrder.BIG_ENDIAN)
+        val buffer = ByteBuffer.allocate(13 + 4 + (listSize * 4) + 1 + 1).order(ByteOrder.BIG_ENDIAN)
         buffer.put(MessageType.SETTINGS)
         buffer.putLong(msg.flightTime)
         buffer.putInt(msg.difficulty)
         buffer.putInt(listSize)
         msg.swingSettings.forEach { buffer.putInt(it) }
         buffer.put(if (msg.isRallyShrinkEnabled) 1.toByte() else 0.toByte())
+        buffer.put(msg.gameMode.ordinal.toByte())
         return buffer.array()
     }
     
@@ -113,14 +115,25 @@ object MessageCodec {
         return buffer.array()
     }
     
+
     private fun encodeGameStateSync(msg: GameMessage.GameStateSync): ByteArray {
         // [Type: 1][P1Score: 4][P2Score: 4][Phase: 1][ServingPlayer: 1]
-        val buffer = ByteBuffer.allocate(11).order(ByteOrder.BIG_ENDIAN)
+        // [GameMode: 1][RallyScore: 4][RallyLives: 1][Grid: 2][Lines: 1][OppGrid: 2][OppLines: 1][LongestRally: 4]
+        val buffer = ByteBuffer.allocate(11 + 1 + 4 + 1 + 2 + 1 + 2 + 1 + 4).order(ByteOrder.BIG_ENDIAN)
         buffer.put(MessageType.GAME_STATE_SYNC)
         buffer.putInt(msg.player1Score)
         buffer.putInt(msg.player2Score)
         buffer.put(msg.currentPhase.ordinal.toByte())
         buffer.put(msg.servingPlayer.ordinal.toByte())
+        // Rally Params
+        buffer.put(msg.gameMode.ordinal.toByte())
+        buffer.putInt(msg.rallyScore)
+        buffer.put(msg.rallyLives.toByte())
+        buffer.putShort(msg.rallyGridBitmask)
+        buffer.put(msg.rallyLinesBitmask)
+        buffer.putShort(msg.opponentRallyGridBitmask)
+        buffer.put(msg.opponentRallyLinesBitmask)
+        buffer.putInt(msg.longestRally)
         return buffer.array()
     }
 
@@ -162,8 +175,14 @@ object MessageCodec {
         } else {
             true 
         }
+
+        val gameMode = if (buffer.remaining() >= 1) {
+             GameMode.entries[buffer.get().toInt()]
+        } else {
+             GameMode.CLASSIC
+        }
         
-        return GameMessage.Settings(flightTime, difficulty, swingSettings, isRallyShrinkEnabled)
+        return GameMessage.Settings(flightTime, difficulty, swingSettings, isRallyShrinkEnabled, gameMode)
     }
     
     private fun decodeActionSwing(payload: ByteArray): GameMessage.ActionSwing {
@@ -186,14 +205,27 @@ object MessageCodec {
         }
         return GameMessage.Result(hitResult, scoringPlayer)
     }
-    
+
     private fun decodeGameStateSync(payload: ByteArray): GameMessage.GameStateSync {
         val buffer = ByteBuffer.wrap(payload).order(ByteOrder.BIG_ENDIAN)
         val p1Score = buffer.int
         val p2Score = buffer.int
         val phase = GamePhase.entries[buffer.get().toInt()]
         val servingPlayer = Player.entries[buffer.get().toInt()]
-        return GameMessage.GameStateSync(p1Score, p2Score, phase, servingPlayer)
+        
+        val gameMode = if (buffer.remaining() >= 1) GameMode.entries[buffer.get().toInt()] else GameMode.CLASSIC
+        val rallyScore = if (buffer.remaining() >= 4) buffer.int else 0
+        val rallyLives = if (buffer.remaining() >= 1) buffer.get().toInt() else 3
+        val rallyGridBitmask = if (buffer.remaining() >= 2) buffer.short else 0
+        val rallyLinesBitmask = if (buffer.remaining() >= 1) buffer.get() else 0
+        val opponentRallyGridBitmask = if (buffer.remaining() >= 2) buffer.short else 0
+        val opponentRallyLinesBitmask = if (buffer.remaining() >= 1) buffer.get() else 0
+        val longestRally = if (buffer.remaining() >= 4) buffer.int else 0
+        
+        return GameMessage.GameStateSync(
+            p1Score, p2Score, phase, servingPlayer, gameMode, rallyScore, rallyLives, 
+            rallyGridBitmask, rallyLinesBitmask, opponentRallyGridBitmask, opponentRallyLinesBitmask, longestRally
+        )
     }
 
     private fun decodePlayerProfile(payload: ByteArray): GameMessage.PlayerProfile {

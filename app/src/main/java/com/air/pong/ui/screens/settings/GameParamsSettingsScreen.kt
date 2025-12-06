@@ -501,6 +501,7 @@ fun SwingParamsGrid(
                             "Net%: Chance of hitting the net (losing point).\n" +
                             "Out%: Chance of hitting out of bounds (losing point).\n" +
                             "Shrink%: How much this shot shrinks the opponent's timing window (making it harder for them).\n\n" +
+                            "Rally Mode: Net% and Out% are halved since partners are placing shots more nicely.\n\n" +
                             "Note: Very fast shots (Low Flight Time) may shift the opponent's hit window slightly later to ensure it remains hittable."
                         )
                     }) {

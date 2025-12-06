@@ -16,6 +16,8 @@ import com.air.pong.R
 import com.air.pong.core.game.GamePhase
 import com.air.pong.ui.GameViewModel
 
+import com.air.pong.core.game.GameMode
+
 @Composable
 fun LobbyScreen(
     viewModel: GameViewModel,
@@ -95,14 +97,15 @@ fun LobbyScreen(
                 )
             }
 
-            // VS Text
+            // VS / Partner Text
+            val isRally = gameState.gameMode == GameMode.RALLY
             Text(
-                text = "VS",
-                style = MaterialTheme.typography.titleLarge,
+                text = if (isRally) "&" else "VS",
+                style = MaterialTheme.typography.headlineMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
-            // Opponent Player
+            // Opponent/Partner Player
             if (isOpponentInLobby) {
                 val opponentAvatarIndex by viewModel.opponentAvatarIndex.collectAsState()
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -114,7 +117,7 @@ fun LobbyScreen(
                         modifier = Modifier
                             .size(100.dp)
                             .clip(androidx.compose.foundation.shape.CircleShape)
-                            .border(2.dp, MaterialTheme.colorScheme.error, androidx.compose.foundation.shape.CircleShape) // Red border for opponent
+                            .border(2.dp, if (isRally) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error, androidx.compose.foundation.shape.CircleShape) // Blue for partner, Red for opponent
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
@@ -138,7 +141,7 @@ fun LobbyScreen(
                     }
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = stringResource(R.string.waiting_for_opponent),
+                        text = if (isRally) stringResource(R.string.waiting_for_partner) else stringResource(R.string.waiting_for_opponent),
                         style = MaterialTheme.typography.bodyMedium,
                         textAlign = androidx.compose.ui.text.style.TextAlign.Center,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -147,7 +150,69 @@ fun LobbyScreen(
             }
         }
         
-        Spacer(modifier = Modifier.height(48.dp))
+        Spacer(modifier = Modifier.height(32.dp))
+
+        // Game Mode Selection - Rally Left, Classic Right
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            // Rally Mode (Left)
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.weight(1f)
+            ) {
+                Button(
+                    onClick = { if (isHost) viewModel.setGameMode(GameMode.RALLY) },
+                    modifier = Modifier.fillMaxWidth().height(48.dp),
+                    colors = if (gameState.gameMode == GameMode.RALLY) 
+                        ButtonDefaults.buttonColors() 
+                    else 
+                        ButtonDefaults.outlinedButtonColors(containerColor = MaterialTheme.colorScheme.surface),
+                    border = if (gameState.gameMode != GameMode.RALLY) 
+                        androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outline) 
+                    else null
+                ) {
+                    Text(stringResource(R.string.game_mode_rally))
+                }
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = stringResource(R.string.game_mode_rally_desc),
+                    style = MaterialTheme.typography.bodySmall,
+                    textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+            
+            // Classic Mode (Right)
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.weight(1f)
+            ) {
+                Button(
+                    onClick = { if (isHost) viewModel.setGameMode(GameMode.CLASSIC) },
+                    modifier = Modifier.fillMaxWidth().height(48.dp),
+                    colors = if (gameState.gameMode == GameMode.CLASSIC) 
+                        ButtonDefaults.buttonColors() 
+                    else 
+                        ButtonDefaults.outlinedButtonColors(containerColor = MaterialTheme.colorScheme.surface),
+                    border = if (gameState.gameMode != GameMode.CLASSIC) 
+                        androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outline) 
+                    else null
+                ) {
+                    Text(stringResource(R.string.game_mode_classic))
+                }
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = stringResource(R.string.game_mode_classic_desc),
+                    style = MaterialTheme.typography.bodySmall,
+                    textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        }
+        
+        Spacer(modifier = Modifier.height(32.dp))
         
         if (isHost) {
             Button(

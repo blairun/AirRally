@@ -36,8 +36,26 @@ data class GameState(
     val longestRally: Int = 0,
     
     // Dynamic State
-    val currentHitWindow: Long = GameEngine.DEFAULT_DIFFICULTY.toLong() // Calculated hit window for the NEXT shot
+    val currentHitWindow: Long = GameEngine.DEFAULT_DIFFICULTY.toLong(), // Calculated hit window for the NEXT shot
+    
+    // Rally Mode State
+    val gameMode: GameMode = GameMode.RALLY,
+    val rallyScore: Int = 0,
+    val rallyLives: Int = 3,
+    val rallyScorePoints: Int = 0, // Points from current hit/rally
+    val rallyBonusMultiplier: Int = 1,
+    val rallyGrid: List<Boolean> = List(9) { false }, // 3x3 grid state (My Grid)
+    val rallyLinesCompleted: List<Boolean> = List(8) { false }, // Track which lines are done (My Lines)
+    
+    // Opponent Rally State (Tracked locally for score calculation)
+    val opponentRallyGrid: List<Boolean> = List(9) { false },
+    val opponentRallyLinesCompleted: List<Boolean> = List(8) { false }
 )
+
+enum class GameMode {
+    CLASSIC,
+    RALLY
+}
 
 /**
  * Calculates what the hit window SHOULD be based on the current state.

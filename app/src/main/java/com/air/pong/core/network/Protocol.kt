@@ -3,6 +3,7 @@ package com.air.pong.core.network
 import com.air.pong.core.game.GamePhase
 import com.air.pong.core.game.Player
 import com.air.pong.core.game.HitResult
+import com.air.pong.core.game.GameMode
 
 /**
  * Defines all message types that can be sent between devices.
@@ -23,7 +24,8 @@ sealed class GameMessage {
         val flightTime: Long,
         val difficulty: Int,
         val swingSettings: List<Int>, // Flattened list of 27 integers
-        val isRallyShrinkEnabled: Boolean = true
+        val isRallyShrinkEnabled: Boolean = true,
+        val gameMode: GameMode = GameMode.CLASSIC
     ) : GameMessage()
     
     /**
@@ -59,7 +61,16 @@ sealed class GameMessage {
         val player1Score: Int,
         val player2Score: Int,
         val currentPhase: GamePhase,
-        val servingPlayer: Player
+        val servingPlayer: Player,
+        // Rally Mode Sync
+        val gameMode: GameMode = GameMode.CLASSIC,
+        val rallyScore: Int = 0,
+        val rallyLives: Int = 3,
+        val rallyGridBitmask: Short = 0,
+        val rallyLinesBitmask: Byte = 0,
+        val opponentRallyGridBitmask: Short = 0,
+        val opponentRallyLinesBitmask: Byte = 0,
+        val longestRally: Int = 0
     ) : GameMessage()
     
     /**
@@ -127,4 +138,4 @@ object MessageType {
  * Current protocol version.
  * Increment when making breaking changes to message format.
  */
-const val PROTOCOL_VERSION = 2
+const val PROTOCOL_VERSION = 3

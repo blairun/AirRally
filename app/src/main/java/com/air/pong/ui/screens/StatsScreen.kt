@@ -35,6 +35,8 @@ fun StatsScreen(
     val lossCount by viewModel.lossCount.collectAsState(initial = 0)
     val longestRally by viewModel.longestRally.collectAsState(initial = 0)
     val totalHits by viewModel.totalHits.collectAsState(initial = 0)
+    val rallyHighScore by viewModel.rallyHighScore.collectAsState()
+    val rallyLongestRally by viewModel.rallyLongestRally.collectAsState()
 
     var filter by remember { mutableStateOf(StatsFilter.ALL) }
     
@@ -156,6 +158,25 @@ fun StatsScreen(
             )
         }
 
+        Spacer(modifier = Modifier.height(8.dp))
+        
+        // Row 3: Rally Mode Stats - High Score / Longest Rally
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            StatCard(
+                title = stringResource(R.string.stats_rally_high_score),
+                value = "$rallyHighScore",
+                modifier = Modifier.weight(1f)
+            )
+            StatCard(
+                title = stringResource(R.string.stats_rally_longest_rally),
+                value = "$rallyLongestRally",
+                modifier = Modifier.weight(1f)
+            )
+        }
+
         Spacer(modifier = Modifier.height(24.dp))
 
         // Heatmap Section
@@ -224,9 +245,9 @@ fun StatCard(title: String, value: String, modifier: Modifier = Modifier) {
         modifier = modifier,
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
+        Column(modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp)) {
             Text(title, style = MaterialTheme.typography.labelMedium)
-            Text(value, style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
+            Text(value, style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
         }
     }
 }
