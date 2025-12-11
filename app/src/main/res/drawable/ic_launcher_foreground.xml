@@ -1,0 +1,25 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    
+    <!-- Main Ball: White with Purple Stroke -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:strokeColor="#FF3700B3"
+        android:strokeWidth="0"
+        android:pathData="M54,54m-20,0a20,20 0 1,1 40,0a20,20 0 1,1 -40,0"/>
+        
+    <!-- Shadow: Crescent shape using clip-path -->
+    <group>
+        <!-- Clip to the ball shape -->
+        <clip-path android:pathData="M54,54m-20,0a20,20 0 1,1 40,0a20,20 0 1,1 -40,0"/>
+        
+        <!-- Offset circle to create shadow on bottom-right -->
+        <!-- Center at 58,58 (offset 4,4) -->
+        <path
+            android:fillColor="#33000000"
+            android:pathData="M58,58m-20,0a20,20 0 1,1 40,0a20,20 0 1,1 -40,0"/>
+    </group>
+</vector>

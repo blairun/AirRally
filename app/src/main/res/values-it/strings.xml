@@ -1,0 +1,389 @@
+<resources>
+    <string name="app_name">AirRally</string>
+    
+    <!-- Main Menu -->
+    <string name="bluetooth_permission_required">Permessi Bluetooth richiesti per giocare.</string>
+    <string name="connected_to">Connesso a %1$s</string>
+    <string name="unknown">Sconosciuto</string>
+    <string name="redirecting_lobby">Reindirizzamento alla lobby...</string>
+    <string name="disconnect">DISCONNETTI</string>
+    <string name="host_game">OSPITA PARTITA</string>
+    <string name="join_game">UNISCITI A PARTITA</string>
+    <string name="settings">IMPOSTAZIONI</string>
+    <string name="waiting_for_players">In attesa di giocatori...</string>
+    <string name="cancel">ANNULLA</string>
+    <string name="looking_for_games">Cercando partite vicine...</string>
+    <string name="available_games">Partite disponibili:</string>
+    <string name="connect_to">Connetti a %1$s</string>
+    <string name="auto_connecting">Connessione auto in %1$ds...</string>
+    <string name="connecting">Connessione...</string>
+    <string name="error_prefix">Errore: %1$s</string>
+    <string name="reset">Reimposta</string>
+    <string name="share_game_content">Dai un\'occhiata a AirRally - Ping Pong senza tavolo! https://github.com/blairun/AirRally</string>
+    
+    <!-- Taglines -->
+    <string name="tagline_1">Ping pong senza palline 👀</string>
+    <string name="tagline_2">Ping pong immaginAIRio</string>
+    <string name="tagline_3">Niente tavolo, niente racchetta, nessun problema.</string>
+    <string name="tagline_4">È tutto nel polso.</string>
+    <string name="tagline_5">Non lasciare andare il telefono!</string>
+    <string name="tagline_6" formatted="false">100% invisibile, 100% reale.</string>
+    <string name="tagline_7">La palla è una bugia.</string>
+    <string name="tagline_8">È una battaglia di racchette!</string>
+    <string name="tagline_9">Pongogo!</string>
+    <string name="tagline_10">Oscilla come se nessuno stesse guardando.</string>
+
+    <!-- Settings -->
+    <string name="appearance">Aspetto</string>
+    <string name="theme">Tema</string>
+    <string name="theme_system">Sistema</string>
+    <string name="theme_light">Chiaro</string>
+    <string name="theme_dark">Scuro</string>
+    <string name="player_name">Nome giocatore</string>
+    <string name="game_parameters">Parametri di gioco</string>
+    <string name="defaults">Predefiniti</string>
+    <string name="flight_time_label">Tempo di volo: %1$d ms (%2$s)</string>
+    <string name="difficulty_hard">Difficile</string>
+    <string name="difficulty_medium">Medio</string>
+    <string name="difficulty_easy">Facile</string>
+    <string name="info_flight_time_title">Tempo di volo</string>
+    <string name="info_flight_time_text">Controlla il tempo predefinito in cui la palla rimane in aria. (La forza dell\'oscillazione e l\'inclinazione del telefono aumenteranno o diminuiranno questo tempo.)\n\n500-600ms: Difficile (Veloce)\n700-900ms: Medio\n1000-1200ms: Facile (Lento)\n\n(Sincronizzato con l\'avversario)</string>
+    <string name="hit_window_label">Finestra di colpo: %1$d ms (%2$s)</string>
+    <string name="info_hit_window_title">Finestra di colpo (Difficoltà)</string>
+    <string name="info_hit_window_text">Modifica il margine di errore per il tempo del tuo colpo.\n\nFinestra più grande = Più facile da colpire.\nFinestra più piccola = Più difficile da colpire.\n\nIntervallo: 200ms (Difficile) a 700ms (Facile)\n\n(Sincronizzato con l\'avversario)</string>
+    <string name="how_to_play_safety">Come giocare e sicurezza</string>
+    <string name="safety_first">Sicurezza prima di tutto</string>
+    <string name="safety_strap">• Usa un cinturino da polso.</string>
+    <string name="safety_area">• Sgombra la tua area di gioco.</string>
+    <string name="gameplay">Gameplay</string>
+    <string name="gameplay_hold">• Tieni il telefono con lo schermo rivolto verso l\'ESTERNO (lontano dal palmo).</string>
+    <string name="gameplay_yellow">• GIALLO significa In arrivo (Preparati).</string>
+    <string name="gameplay_green">• VERDE significa Colpisci (Dopo il rimbalzo).</string>
+    <string name="gameplay_red">• ROSSO significa Turno dell\'avversario.</string>
+    <string name="shot_types_risks">Tipi di colpo e rischi</string>
+    <string name="shot_types_desc">La forza dell\'oscillazione e l\'inclinazione del telefono cambiano il tuo colpo:</string>
+    <string name="shot_flat">• Schermo Verticale = COLPO PIATTO</string>
+    <string name="shot_flat_desc">  Colpo standard. Sicuro e affidabile.</string>
+    <string name="shot_lob">• Schermo Su = PALLONETTO</string>
+    <string name="shot_lob_desc">  Arco lento e alto.</string>
+    <string name="shot_lob_safe">  Sicuro, ti dà tempo per recuperare.</string>
+    <string name="shot_smash">• Schermo Giù = SCHIACCIATA</string>
+    <string name="shot_smash_desc">  Veloce e aggressivo!</string>
+    <string name="shot_smash_risk">  Rende la finestra di colpo dell\'avversario più breve, ma</string>
+    <string name="shot_smash_net">  Maggiore possibilità di colpire la rete o andare fuori.</string>
+    <string name="use_debug_tones">Usa toni di debug</string>
+    <string name="info_debug_tones_title">Toni di debug</string>
+    <string name="info_debug_tones_text">Se abilitato, riproduce semplici segnali acustici invece degli effetti sonori del gioco.</string>
+    <string name="debug_mode">Modalità debug</string>
+    <string name="info_debug_mode_title">Modalità debug</string>
+    <string name="info_debug_mode_text">Abilita una sovrapposizione nella schermata di gioco che mostra statistiche tecniche come il tempo di andata e ritorno (RTT), lo stato esatto del gioco e i valori grezzi dei sensori.\n\n(Solo locale)</string>
+    <string name="sensor_hit_test">Test colpo sensore</string>
+    <string name="force_fmt">Forza: %1$.1f</string>
+    <string name="accel_fmt">Accel: X: %1$.1f, Y: %2$.1f, Z: %3$.1f</string>
+    <string name="gyro_fmt">Giro: X: %1$.1f, Y: %2$.1f, Z: %3$.1f</string>
+    <string name="grav_fmt">Grav: X: %1$.1f, Y: %2$.1f, Z: %3$.1f</string>
+    <string name="swing_test_prompt">Oscilla il telefono per testare!</string>
+    <string name="about_airrally">Informazioni su AirRally</string>
+    <string name="version">Versione</string>
+    <string name="credits">Crediti</string>
+    <string name="created_by">Creato da bl</string>
+    <string name="created_by_ai">AI</string>
+    <string name="created_by_r">r</string>
+    <string name="license">Licenza</string>
+    <string name="license_name">CC BY-NC 4.0</string>
+    <string name="source_code">Codice sorgente</string>
+    <string name="view_github_repo">Vedi repository GitHub</string>
+    <string name="problems">Problemi?</string>
+    <string name="report_bug">Segnala un bug</string>
+    <string name="back">Indietro</string>
+    <string name="close">Chiudi</string>
+
+    <!-- Lobby -->
+    <string name="lobby_title">LOBBY</string>
+    <string name="start_game">INIZIA PARTITA</string>
+    <string name="waiting_for_opponent">IN ATTESA DELL\'AVVERSARIO...</string>
+    <string name="waiting_for_host">In attesa dell\'host...</string>
+    <string name="leave">ESCI</string>
+
+    <!-- Game Screen -->
+    <string name="you">TU</string>
+    <string name="opponent">AVVERSARIO</string>
+    <string name="your_serve">TUO SERVIZIO</string>
+    <string name="swing_to_serve">Oscilla per servire!</string>
+    <string name="opponent_serving">AVVERSARIO AL SERVIZIO</string>
+    <string name="point_scored">PUNTO SEGNATO</string>
+    <string name="get_ready">Preparati...</string>
+    <string name="hit">COLPITO!</string>
+    <string name="wait">ASPETTA...</string>
+    <string name="action_feed">FEED AZIONI</string>
+    <string name="debug_info">INFO DEBUG</string>
+    <string name="phase_fmt">Fase: %1$s</string>
+    <string name="arrival_fmt">Arrivo: %1$d</string>
+    <string name="now_fmt">Ora: %1$d</string>
+    <string name="delta_fmt">Delta: %1$dms</string>
+    <string name="difficulty_fmt">Difficoltà: %1$d</string>
+    <string name="flight_time_fmt">TempoVolo: %1$d</string>
+    <string name="last_swing">ULTIMO COLPO:</string>
+    <string name="type_fmt">Tipo: %1$s</string>
+    <string name="grav_z_fmt">GravZ: %1$s</string>
+
+    <!-- Game Over -->
+    <string name="you_won">HAI VINTO!</string>
+    <string name="you_lost">HAI PERSO</string>
+    <string name="game_over">GAME OVER</string>
+    <string name="final_score">Punteggio Finale</string>
+    <string name="score">Punteggio</string>
+    <string name="play_again">GIOCA ANCORA</string>
+    <string name="main_menu">MENU PRINCIPALE</string>
+
+    <!-- Dialogs -->
+    <string name="device_incompatible">Dispositivo Incompatibile</string>
+    <string name="missing_sensors_text">Questo gioco richiede sensori specifici per funzionare. Al tuo dispositivo manca: %1$s.\n\nL\'app ora si chiuderà.</string>
+    <string name="exit">Esci</string>
+    <string name="hey_listen">Ehi ascolta!</string>
+    <string name="swing_warning">Questo gioco richiede di oscillare il telefono.</string>
+    <string name="warning_strap">• Usa un cinturino per assicurare il telefono</string>
+    <string name="warning_surroundings">• Fai attenzione a ciò che ti circonda</string>
+    <string name="warning_hold">• Tieni il telefono con lo schermo rivolto verso l\'ESTERNO (lontano dal palmo)</string>
+    <string name="nah">No</string>
+    <string name="cool">Fico</string>
+    <string name="event_you_served">Hai servito: %1$s</string>
+    <string name="event_you_hit">Hai colpito: %1$s</string>
+    <string name="event_opponent_hit">Avversario ha colpito: %1$s</string>
+    <string name="event_ball_bounced">Palla rimbalzata</string>
+    <string name="event_fault_net">✖️ Fallo (Rete) ✖️</string>
+    <string name="event_fault_out">✖️ Fallo (Fuori) ✖️</string>
+    <string name="event_hit_net">✖️ Hai colpito la rete! (%1$s) ✖️</string>
+    <string name="event_hit_out">✖️ Hai colpito fuori! (%1$s) ✖️</string>
+    <string name="event_whiff_early">✖️ Hai mancato (Troppo presto) ✖️</string>
+    <string name="event_miss_late">✖️ Hai mancato (Troppo tardi) ✖️</string>
+    <string name="event_miss_no_swing">✖️ Hai mancato (Nessun colpo) ✖️</string>
+    <string name="event_opp_net">✔️ Avversario ha colpito la rete! ✔️</string>
+    <string name="event_opp_out">✔️ Avversario ha colpito fuori! ✔️</string>
+    <string name="event_opp_whiff">✔️ Avversario ha mancato! ✔️</string>
+    <string name="event_opp_miss_no_swing">✔️ Avversario ha mancato (Nessun colpo) ✔️</string>
+    <string name="event_opp_miss">✔️ Avversario ha mancato! ✔️</string>
+    <string name="event_point_to">Punto a %1$s</string>
+
+    <!-- Swing Types -->
+    <string name="swing_soft_flat">PIATTO LEGGERO</string>
+    <string name="swing_medium_flat">PIATTO MEDIO</string>
+    <string name="swing_hard_flat">PIATTO FORTE</string>
+    <string name="swing_soft_lob">PALLONETTO LEGGERO</string>
+    <string name="swing_medium_lob">PALLONETTO MEDIO</string>
+    <string name="swing_hard_lob">PALLONETTO FORTE</string>
+    <string name="swing_soft_smash">SCHIACCIATA LEGGERA</string>
+    <string name="swing_medium_smash">SCHIACCIATA MEDIA</string>
+    <string name="swing_hard_smash">SCHIACCIATA FORTE</string>
+    <string name="swing_sensitivity_label">Sensibilità Swing: %1$.1f</string>
+    <string name="info_sensitivity_title">Sensibilità Swing</string>
+    <string name="info_sensitivity_text">Regola la forza minima richiesta per registrare uno swing.\n\nMinore = Più sensibile (Più facile da attivare)\nMaggiore = Meno sensibile (Più difficile da attivare)\n\n(Solo locale)</string>
+    <string name="debug_settings">Impostazioni Debug</string>
+
+    <!-- Debug Controls -->
+    <string name="debug_controls_title">CONTROLLI DEBUG</string>
+    <string name="debug_simulate_my_hit">Simula\nMio Colpo</string>
+    <string name="debug_auto_play">Auto-Play</string>
+    <string name="debug_simulate_opp_hit">Simula\nColpo Avv.</string>
+    <string name="debug_return">Ritorna</string>
+
+    <!-- Stats Screen -->
+    <string name="stats_title">Statistiche Gioco</string>
+    <string name="stats_wins">Vittorie</string>
+    <string name="stats_losses">Sconfitte</string>
+    <string name="stats_total_hits">Colpi Totali</string>
+    <string name="stats_longest_rally">Scambio Più Lungo</string>
+    <string name="stats_shot_distribution">Distribuzione Colpi</string>
+    <string name="stats_filter_all">Tutti</string>
+    <string name="stats_filter_won">Colpi vincenti</string>
+    <string name="stats_filter_lost">Colpi perdenti</string>
+    <string name="stats_reset_title">Resetta Statistiche</string>
+    <string name="stats_reset_message">Sei sicuro di voler resettare tutte le statistiche di gioco? Questa azione non può essere annullata.</string>
+    <string name="stats_reset_confirm">Resetta</string>
+    <string name="stats_reset_cancel">Annulla</string>
+
+    <!-- Heatmap Labels -->
+    <string name="heatmap_soft">MORBIDO</string>
+    <string name="heatmap_med">MEDIO</string>
+    <string name="heatmap_hard">FORTE</string>
+    <string name="heatmap_lob">PALLONETTO</string>
+    <string name="heatmap_flat">PIATTO</string>
+    <string name="heatmap_smash">SCHIACCIATA</string>
+
+    <!-- Play With Friend -->
+    <string name="play_with_friend">GIOCA CON UN AMICO</string>
+    <string name="looking_for_friends">Cercando amici...</string>
+    <string name="waiting_for_friends">In attesa di amici...</string>
+
+    <!-- Game Modes -->
+    <string name="game_mode_classic">CLASSICO</string>
+    <string name="game_mode_classic_desc">1 vs 1\n2 Servizi. Primo a 11.</string>
+    <string name="game_mode_rally">RALLY</string>
+    <string name="game_mode_rally_desc">Coop\nMantieni la palla viva!</string>
+    <string name="partner">PARTNER</string>
+    <string name="waiting_for_partner">In attesa del partner...</string>
+    
+    <!-- Game Modes Help -->
+    <string name="game_modes_title">Modalità di Gioco</string>
+    <string name="mode_classic_title">🏓 Modalità Classica (1v1)</string>
+    <string name="mode_classic_rules">• Primo a 11 punti vince (per 2)</string>
+    <string name="mode_classic_serve">• Il servizio cambia ogni 2 punti</string>
+    <string name="mode_classic_scoring">• Segna quando l\'avversario manca</string>
+    <string name="mode_rally_title">🤝 Modalità Rally (Coop)</string>
+    <string name="mode_rally_goal">• Lavorate insieme per mantenere il rally!</string>
+    <string name="mode_rally_lives">• Iniziate con 3 vite condivise</string>
+    <string name="mode_rally_grid">• Completa la griglia 3×3 per salire di livello</string>
+    <string name="mode_rally_scoring">• Punti: Livello 1 = 1pt, Livello 2 = 3pts, Livello 3 = 8pts...</string>
+    <string name="mode_rally_lines">• Completa linee per punti bonus</string>
+    <string name="mode_rally_xclear">• X-Clear: Entrambe le diagonali = livello istantaneo!</string>
+    <string name="mode_rally_life">• Guadagna una vita extra ogni livello</string>
+
+    <!-- Rally Mode UI -->
+    <string name="partner_serving">SERVIZIO DEL PARTNER</string>
+    <string name="one_life_down">UNA VITA IN MENO</string>
+    <string name="next_up">Prossimo...</string>
+    <string name="no_events_yet">Nessun evento ancora</string>
+    <string name="hit_window_fmt">FinestraColpo: %1$d</string>
+    <string name="swing_to_serve_prompt">OSCILLA PER SERVIRE!</string>
+    
+    <!-- Rally Mode Stats -->
+    <string name="stats_rally_high_score">Punteggio Più Alto</string>
+    <string name="stats_rally_longest_rally">Rally Più Lungo</string>
+    <string name="stats_rally_lines_cleared">Linee Completate</string>
+    <string name="stats_rally_highest_level">Livello Più Alto</string>
+    
+    <!-- End Game Rally Mode -->
+    <string name="game_over_metric">Metrica</string>
+    <string name="game_over_you">Tu</string>
+    <string name="game_over_partner">Partner</string>
+    <string name="game_over_lines_cleared">Linee Completate</string>
+    <string name="game_over_grid_level">Livello</string>
+    <string name="game_over_new_high_score">Nuovo Record!</string>
+    <string name="game_over_high_score">Punteggio Più Alto</string>
+    <string name="game_over_longest_rally">Rally Più Lungo</string>
+    
+    <!-- Exit Confirmation Dialog -->
+    <string name="exit_game_title">Esci?</string>
+    <string name="exit_game_message">Sei sicuro di voler uscire? Questo terminerà la partita in corso.</string>
+    <string name="exit_game_yes">Sì</string>
+    <string name="exit_game_no">Non importa</string>
+
+    <!-- Scrolling Tips -->
+    <string name="tip_safety_strap">🛡️ Sicurezza prima: Usa un cinturino da polso!</string>
+    <string name="tip_safety_area">🛡️ Sgombra l\'area di gioco prima di oscillare</string>
+    <string name="tip_hold_screen">📱 Tieni lo schermo verso l\'ESTERNO, lontano dal palmo</string>
+    <string name="tip_yellow_incoming">🟡 GIALLO = Palla in arrivo, preparati!</string>
+    <string name="tip_green_swing">🟢 VERDE = Il tuo turno, oscilla ora!</string>
+    <string name="tip_red_wait">🔴 ROSSO = Aspetta il tuo partner/avversario</string>
+    <string name="tip_flat_shot">📱 Schermo Verticale = Colpo PIATTO (affidabile)</string>
+    <string name="tip_lob_shot">⬆️ Inclina schermo SU = PALLONETTO (lento, arco alto)</string>
+    <string name="tip_smash_shot">⬇️ Inclina schermo GIÙ = SCHIACCIATA (veloce!)</string>
+    <string name="tip_harder_faster">💪 Oscilla più forte per colpi più veloci</string>
+    <string name="tip_soft_more_time">🪶 I colpi morbidi ti danno più tempo</string>
+    <string name="tip_lobs_safe">🎯 I PALLONETTI sono sicuri e danno tempo per recuperare</string>
+    <string name="tip_smash_shrinks">⚡ Le SCHIACCIATE riducono la finestra di colpo avversaria</string>
+    <string name="tip_smash_risk">⚠️ Le schiacciate forti rischiano rete o fuori!</string>
+    <string name="tip_classic_first_11">🏓 Primo a 11 punti, vinci per 2!</string>
+    <string name="tip_classic_serve_switch">🔄 Il servizio cambia ogni 2 punti</string>
+    <string name="tip_classic_score_miss">💥 Segna quando il tuo avversario manca</string>
+    <string name="tip_classic_mix_shots">🎯 Mescola pallonetti e schiacciate per confonderli</string>
+    <string name="tip_rally_9_types">🎯 Colpisci tutti i 9 tipi di colpo per salire!</string>
+    <string name="tip_rally_multi_line">✨ Completa 2 o 3 linee insieme per punti bonus!</string>
+    <string name="tip_rally_3_lines">🤔 3 linee insieme… è possibile?</string>
+    <string name="tip_rally_x_clear">❌ X-Clears FTW! Entrambe le diagonali = livello istantaneo</string>
+    <string name="tip_rally_points_scale">📈 I punti aumentano per livello (1, 7, 10, 13…)</string>
+    <string name="tip_rally_extra_life">❤️ Completa un livello per una vita extra!</string>
+    <string name="tip_rally_happy_numbers">🔢 Sequenza numeri felici? Cercala!</string>
+    <string name="tip_rally_vertical_bonus">💡 Le linee verticali danno più delle orizzontali</string>
+    <string name="tip_rally_diagonal_bonus">💡 Le linee diagonali danno di più!</string>
+    <string name="tip_rally_window_shrink">⚡ La finestra si riduce di 50ms per livello</string>
+    <string name="tip_coop_teamwork">🤝 Lavora insieme per battere il tuo record!</string>
+    <string name="tip_coop_lobs_partner">💡 Prova pallonetti mentre il partner sale</string>
+    <string name="tip_coop_3_lives">🎮 Iniziate con 3 vite condivise</string>
+    <string name="tip_solo_practice">🏋️ Modalità pratica: perfeziona la tua tecnica!</string>
+    <string name="tip_solo_personal_best">🏆 Competi per il tuo record personale!</string>
+    <string name="tip_solo_longer_flight">⏱️ Solo ha tempi di volo leggermente più lunghi</string>
+    <string name="tip_fact_ball_speed">🏓 Le palline da ping pong possono raggiungere 110+ km/h!</string>
+    <string name="tip_fact_accelerometer">📱 L\'accelerometro del telefono si aggiorna 200x/sec</string>
+    <string name="tip_fact_olympic">🏓 Il tennis da tavolo è diventato olimpico nel 1988</string>
+    <string name="tip_fact_whiff_whaff">📱 Nome originale: \"Whiff-Whaff\" (anni 1880)</string>
+    <string name="tip_fact_no_balls">🎮 Questo gioco non usa palline vere 🤯</string>
+    <string name="tip_fact_spin_rpm">🏓 I migliori fanno ruotare la palla a 9.000 RPM!</string>
+    <string name="tip_fact_longest_rally">🏓 Record rally più lungo: 8 ore, 40 minuti ⏱️</string>
+    <string name="tip_fact_reaction_time">⚡ I tempi di reazione pro sono sotto 0,1 secondi</string>
+    <string name="tip_fact_calories">🏃 Un\'ora di gioco brucia ~270 calorie</string>
+    <string name="tip_fact_pong_arcade">🎮 \"Pong\" (1972) ha lanciato l\'industria dei videogiochi</string>
+    <string name="tip_fact_grip_safety">📱 Pro Tip: Tieni il telefono, non lanciarlo! 😅</string>
+    <string name="tip_fact_ball_weight">⚖️ Una pallina standard pesa solo 2,7 grammi</string>
+    <string name="tip_fact_bluetooth_king">👑 Bluetooth prende il nome da un re vichingo</string>
+    <string name="tip_fact_gyro_vs_accel">🧭 Accelerometri misurano velocità; Giroscopi rotazione</string>
+    <string name="tip_fact_freq_hop">📻 Bluetooth cambia frequenza 1.600 volte/sec</string>
+    <string name="tip_fact_mems_tech">🔬 I sensori del telefono sono macchine microscopiche (MEMS)</string>
+    <string name="tip_fact_packet_speed">📨 I pacchetti dati volano alla velocità della luce!</string>
+
+    <!-- Stats Screen Mode Labels -->
+    <string name="stats_rally_mode">Modalità Rally</string>
+    <string name="stats_classic_mode">Modalità Classica</string>
+
+    <!-- Game Params Settings -->
+    <string name="settings_controlled_by_host">Alcune impostazioni sono controllate dall\'Host</string>
+    <string name="swing_device_to_test">Oscilla il dispositivo per testare</string>
+    <string name="advanced">Avanzato</string>
+    <string name="swing_parameters">Parametri Swing</string>
+    <string name="swing_type">Tipo</string>
+    <string name="swing_flight">Volo</string>
+    <string name="swing_net_percent">Rete%</string>
+    <string name="swing_out_percent">Fuori%</string>
+    <string name="swing_shrink_percent">Riduzione%</string>
+    <string name="fine_tune_value">Regolazione Fine</string>
+    <string name="current_percent">Attuale: %1$d%%</string>
+    <string name="done">Fatto</string>
+    <string name="flight_time_modifier">Modificatore Tempo Volo</string>
+    <string name="current_multiplier">Attuale: %1$.1fx</string>
+    <string name="shrinking_hit_window">Finestra Colpo Riducibile</string>
+    <string name="info_shrinking_window_title">Finestra Colpo Riducibile</string>
+    <string name="info_shrinking_window_text">Se abilitato, la finestra di colpo si riduce leggermente ad ogni colpo.\n\n(Sincronizzato con avversario)</string>
+    <string name="info_rally_no_risk_text">In modalità Rally, i rischi rete/fuori sono eliminati dato che i giocatori cooperano.</string>
+
+    <!-- Debug Settings -->
+    <string name="soft_med_hard_thresholds">Morbido: %1$d, Medio: %2$d, Forte: %3$d</string>
+    <string name="open_debug_game">Apri Gioco Debug</string>
+    <string name="open_debug_end_game">Apri Fine Gioco Debug</string>
+
+    <!-- Main Menu -->
+    <string name="new_avatar_unlocked">🎉 Nuovo avatar sbloccato! Tocca per vedere</string>
+    <string name="play_solo_rally">GIOCA RALLY SOLO</string>
+
+    <!-- Game Over Screen -->
+    <string name="tier_points_format">%1$dpt</string>
+    <string name="longest_rally_hits">Rally Più Lungo: %1$d colpi</string>
+    <string name="debug_mode_label">MODALITÀ DEBUG</string>
+    <string name="change_score">Cambia Punteggio</string>
+    <string name="return_label">Ritorna</string>
+
+    <!-- Appearance Settings -->
+    <string name="avatar">Avatar</string>
+    <string name="rally_score_unlocks">Sblocchi Punteggio Rally</string>
+    <string name="rally_length_unlocks">Sblocchi Lunghezza Rally</string>
+    <string name="classic_wins_unlocks">Sblocchi Vittorie Classiche</string>
+    <string name="app_icon">Icona App</string>
+    <string name="icon_modern">Moderno</string>
+    <string name="icon_classic">Classico</string>
+
+    <!-- Avatar Unlock Hints -->
+    <string name="unlock_hint_score">Raggiungi %1$d+ pts</string>
+    <string name="unlock_hint_rally">Rally %1$d+</string>
+    <string name="unlock_hint_wins">Vinci %1$d+ partite</string>
+
+    <!-- Content Descriptions -->
+    <string name="cd_navigate">Naviga</string>
+    <string name="cd_info">Info</string>
+    <string name="cd_user_avatar">Avatar Utente</string>
+    <string name="cd_share_game">Condividi Gioco</string>
+    <string name="cd_my_avatar">Mio Avatar</string>
+    <string name="cd_opponent_avatar">Avatar Avversario</string>
+    <string name="cd_partner_avatar">Avatar Partner</string>
+    <string name="cd_your_avatar">Tuo Avatar</string>
+    <string name="cd_avatar">Avatar</string>
+    <string name="cd_avatar_index">Avatar %1$d</string>
+</resources>
