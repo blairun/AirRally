@@ -1,0 +1,408 @@
+<resources>
+    <string name="app_name">AirRally</string>
+    
+    <!-- Main Menu -->
+    <string name="bluetooth_permission_required">プレイするにはBluetoothの権限が必要です。</string>
+    <string name="connected_to">%1$s に接続しました</string>
+    <string name="unknown">不明</string>
+    <string name="redirecting_lobby">ロビーにリダイレクト中...</string>
+    <string name="disconnect">切断</string>
+    <string name="host_game">ゲームをホスト</string>
+    <string name="join_game">ゲームに参加</string>
+    <string name="settings">設定</string>
+    <string name="waiting_for_players">プレイヤーを待機中...</string>
+    <string name="cancel">キャンセル</string>
+    <string name="looking_for_games">近くのゲームを探しています...</string>
+    <string name="available_games">利用可能なゲーム:</string>
+    <string name="connect_to">%1$s に接続</string>
+    <string name="auto_connecting">%1$d秒後に自動接続...</string>
+    <string name="connecting">接続中...</string>
+    <string name="error_prefix">エラー: %1$s</string>
+    <string name="reset">リセット</string>
+    <string name="share_game_content">AirRallyをチェック - テーブルのない卓球！ https://github.com/blairun/AirRally</string>
+    
+    <!-- Taglines -->
+    <string name="tagline_1">ボールのない卓球 👀</string>
+    <string name="tagline_2">イマジナリー卓球</string>
+    <string name="tagline_3">テーブルなし、ラケットなし、問題なし。</string>
+    <string name="tagline_4">すべては手首にかかっている。</string>
+    <string name="tagline_5">スマホを離さないで！</string>
+    <string name="tagline_6" formatted="false">100% 見えない、100% リアル。</string>
+    <string name="tagline_7">ボールは嘘。</string>
+    <string name="tagline_8">ラケットバトルだ！</string>
+    <string name="tagline_9">ポンゴーゴー！</string>
+    <string name="tagline_10">誰も見ていないかのようにスイングしよう。</string>
+
+    <!-- Settings -->
+    <string name="appearance">外観</string>
+    <string name="theme">テーマ</string>
+    <string name="theme_system">システム</string>
+    <string name="theme_light">ライト</string>
+    <string name="theme_dark">ダーク</string>
+    <string name="player_name">プレイヤー名</string>
+    <string name="game_parameters">ゲームパラメータ</string>
+    <string name="defaults">デフォルト</string>
+    <string name="flight_time_label">滞空時間: %1$d ms (%2$s)</string>
+    <string name="difficulty_hard">難しい</string>
+    <string name="difficulty_medium">普通</string>
+    <string name="difficulty_easy">簡単</string>
+    <string name="info_flight_time_title">滞空時間</string>
+    <string name="info_flight_time_text">ボールが空中に留まるデフォルトの時間を制御します。(スイングの強さとスマホの傾きがこの時間を増減させます。)\n\n500-600ms: 難しい (速い)\n700-900ms: 普通\n1000-1200ms: 簡単 (遅い)\n\n(対戦相手と同期)</string>
+    <string name="hit_window_label">ヒット判定: %1$d ms (%2$s)</string>
+    <string name="info_hit_window_title">ヒット判定 (難易度)</string>
+    <string name="info_hit_window_text">スイングタイミングの許容誤差を変更します。\n\n広いウィンドウ = 当てやすい。\n狭いウィンドウ = 当てにくい。\n\n範囲: 200ms (難しい) 〜 700ms (簡単)\n\n(対戦相手と同期)</string>
+    <string name="how_to_play_safety">遊び方と安全</string>
+    <string name="safety_first">安全第一</string>
+    <string name="safety_strap">• リストストラップを使用してください。</string>
+    <string name="safety_area">• プレイエリアを片付けてください。</string>
+    <string name="gameplay">ゲームプレイ</string>
+    <string name="gameplay_hold">• 画面を外側（手のひらと反対側）に向けて持ちます。</string>
+    <string name="gameplay_yellow">• 黄色 = 来るぞ（準備）。</string>
+    <string name="gameplay_green">• 緑 = スイング（バウンド後）。</string>
+    <string name="gameplay_red">• 赤 = 相手のターン。</string>
+    <string name="shot_types_risks">ショットの種類とリスク</string>
+    <string name="shot_types_desc">スイングの強さと傾きでショットが変わります:</string>
+    <string name="shot_flat">• 画面垂直 = フラット</string>
+    <string name="shot_flat_desc">  標準的なショット。安全で確実。</string>
+    <string name="shot_lob">• 画面上向き = ロブ</string>
+    <string name="shot_lob_desc">  遅く、高い弧。</string>
+    <string name="shot_lob_safe">  安全、体勢を立て直す時間がある。</string>
+    <string name="shot_smash">• 画面下向き = スマッシュ</string>
+    <string name="shot_smash_desc">  速く、攻撃的！</string>
+    <string name="shot_smash_risk">  相手のヒット判定を短くするが、</string>
+    <string name="shot_smash_net">  ネットやアウトになる確率が高い。</string>
+    <string name="use_debug_tones">デバッグ音を使用</string>
+    <string name="info_debug_tones_title">デバッグ音</string>
+    <string name="info_debug_tones_text">有効にすると、ゲームの効果音の代わりにシンプルなビープ音が鳴ります。</string>
+    <string name="debug_mode">デバッグモード</string>
+    <string name="info_debug_mode_title">デバッグモード</string>
+    <string name="info_debug_mode_text">RTT、正確なゲーム状態、生のセンサー値などの技術的な統計を表示するオーバーレイを有効にします。\n\n(ローカルのみ)</string>
+    <string name="sensor_hit_test">センサーヒットテスト</string>
+    <string name="force_fmt">強さ: %.1f</string>
+    <string name="accel_fmt">加速: X: %1$.1f, Y: %2$.1f, Z: %3$.1f</string>
+    <string name="gyro_fmt">ジャイロ: X: %1$.1f, Y: %2$.1f, Z: %3$.1f</string>
+    <string name="grav_fmt">重力: X: %1$.1f, Y: %2$.1f, Z: %3$.1f</string>
+    <string name="swing_test_prompt">スマホを振ってテスト！</string>
+    <string name="about_airrally">AirRallyについて</string>
+    <string name="version">バージョン</string>
+    <string name="credits">クレジット</string>
+    <string name="created_by">作成者: bl</string>
+    <string name="created_by_ai">AI</string>
+    <string name="created_by_r">r</string>
+    <string name="license">ライセンス</string>
+    <string name="license_name">CC BY-NC 4.0</string>
+    <string name="source_code">ソースコード</string>
+    <string name="view_github_repo">GitHubリポジトリを見る</string>
+    <string name="problems">問題がありますか？</string>
+    <string name="report_bug">バグを報告</string>
+    <string name="back">戻る</string>
+    <string name="close">閉じる</string>
+
+    <!-- Lobby -->
+    <string name="lobby_title">ロビー</string>
+    <string name="start_game">ゲーム開始</string>
+    <string name="waiting_for_opponent">対戦相手を待機中...</string>
+    <string name="waiting_for_host">ホストの開始を待機中...</string>
+    <string name="leave">退出</string>
+
+    <!-- Game Screen -->
+    <string name="you">あなた</string>
+    <string name="opponent">相手</string>
+    <string name="your_serve">あなたのサーブ</string>
+    <string name="swing_to_serve">振ってサーブ！</string>
+    <string name="opponent_serving">相手のサーブ</string>
+    <string name="point_scored">得点！</string>
+    <string name="get_ready">準備...</string>
+    <string name="hit">ヒット！</string>
+    <string name="wait">待って...</string>
+    <string name="action_feed">アクションフィード</string>
+    <string name="debug_info">デバッグ情報</string>
+    <string name="phase_fmt">フェーズ: %1$s</string>
+    <string name="arrival_fmt">到着: %1$d</string>
+    <string name="now_fmt">現在: %1$d</string>
+    <string name="delta_fmt">差分: %1$dms</string>
+    <string name="difficulty_fmt">難易度: %1$d</string>
+    <string name="flight_time_fmt">滞空時間: %1$d</string>
+    <string name="last_swing">最後のスイング:</string>
+    <string name="type_fmt">タイプ: %1$s</string>
+    <string name="grav_z_fmt">重力Z: %1$s</string>
+
+    <!-- Game Over -->
+    <string name="you_won">あなたの勝ち！</string>
+    <string name="you_lost">あなたの負け</string>
+    <string name="game_over">ゲームオーバー</string>
+    <string name="final_score">最終スコア</string>
+    <string name="score">スコア</string>
+    <string name="play_again">もう一度プレイ</string>
+    <string name="main_menu">メインメニュー</string>
+
+    <!-- Dialogs -->
+    <string name="device_incompatible">デバイス非対応</string>
+    <string name="missing_sensors_text">このゲームには特定のセンサーが必要です。お使いのデバイスには以下がありません: %1$s.\n\nアプリを終了します。</string>
+    <string name="exit">終了</string>
+    <string name="hey_listen">ちょっと聞いて！</string>
+    <string name="swing_warning">このゲームはスマホを振る必要があります。</string>
+    <string name="warning_strap">• スマホを固定するためにストラップを使用してください</string>
+    <string name="warning_surroundings">• 周囲に注意してください</string>
+    <string name="warning_hold">• 画面を外側（手のひらと反対側）に向けて持ってください</string>
+    <string name="nah">いいえ</string>
+    <string name="cool">OK</string>
+    <string name="event_you_served">サーブしました: %1$s</string>
+    <string name="event_you_hit">ヒットしました: %1$s</string>
+    <string name="event_opponent_hit">相手がヒット: %1$s</string>
+    <string name="event_ball_bounced">ボールがバウンド</string>
+    <string name="event_fault_net">✖️ フォールト (ネット) ✖️</string>
+    <string name="event_fault_out">✖️ フォールト (アウト) ✖️</string>
+    <string name="event_hit_net">✖️ ネットに当たりました！ (%1$s) ✖️</string>
+    <string name="event_hit_out">✖️ アウトになりました！ (%1$s) ✖️</string>
+    <string name="event_whiff_early">✖️ 空振り (早すぎ) ✖️</string>
+    <string name="event_miss_late">✖️ ミス (遅すぎ) ✖️</string>
+    <string name="event_miss_no_swing">✖️ ミス (スイングなし) ✖️</string>
+    <string name="event_opp_net">✔️ 相手がネット！ ✔️</string>
+    <string name="event_opp_out">✔️ 相手がアウト！ ✔️</string>
+    <string name="event_opp_whiff">✔️ 相手が空振り！ ✔️</string>
+    <string name="event_opp_miss_no_swing">✔️ 相手がミス (スイングなし) ✔️</string>
+    <string name="event_opp_miss">✔️ 相手がミス！ ✔️</string>
+    <string name="event_point_to">%1$s にポイント</string>
+    <string name="event_life_lost">❤️‍🩹 ライフ消費! ❤️‍🩹</string>
+    
+    <!-- Swing Types -->
+    <string name="swing_soft_flat">ソフト フラット</string>
+    <string name="swing_medium_flat">ミディアム フラット</string>
+    <string name="swing_hard_flat">ハード フラット</string>
+    <string name="swing_soft_lob">ソフト ロブ</string>
+    <string name="swing_medium_lob">ミディアム ロブ</string>
+    <string name="swing_hard_lob">ハード ロブ</string>
+    <string name="swing_soft_smash">ソフト スマッシュ</string>
+    <string name="swing_medium_smash">ミディアム スマッシュ</string>
+    <string name="swing_hard_smash">ハード スマッシュ</string>
+    <string name="swing_sensitivity_label">スイング感度: %1$.1f</string>
+    <string name="info_sensitivity_title">スイング感度</string>
+    <string name="info_sensitivity_text">スイングを検知するために必要な最小の力を調整します。\n\n低い = 感度が高い（反応しやすい）\n高い = 感度が低い（反応しにくい）\n\n（ローカルのみ）</string>
+    <string name="debug_settings">デバッグ設定</string>
+
+    <!-- Debug Controls -->
+    <string name="debug_controls_title">デバッグ操作</string>
+    <string name="debug_simulate_my_hit">自分のヒット\nをシミュレート</string>
+    <string name="debug_auto_play">自動プレイ</string>
+    <string name="debug_simulate_opp_hit">相手のヒット\nをシミュレート</string>
+    <string name="debug_return">戻る</string>
+
+    <!-- Stats Screen -->
+    <string name="stats_title">ゲーム統計</string>
+    <string name="stats_wins">勝利数</string>
+    <string name="stats_losses">敗北数</string>
+    <string name="stats_total_hits">総ヒット数</string>
+    <string name="stats_longest_rally">最長ラリー</string>
+    <string name="stats_shot_distribution">ショット分布</string>
+    <string name="stats_filter_all">すべて</string>
+    <string name="stats_filter_won">勝利ショット</string>
+    <string name="stats_filter_lost">敗北ショット</string>
+    <string name="stats_reset_title">統計をリセット</string>
+    <string name="stats_reset_message">すべてのゲーム統計をリセットしてもよろしいですか？この操作は元に戻せません。</string>
+    <string name="stats_reset_confirm">リセット</string>
+    <string name="stats_reset_cancel">キャンセル</string>
+
+    <!-- Heatmap Labels -->
+    <string name="heatmap_soft">ソフト</string>
+    <string name="heatmap_med">ミディアム</string>
+    <string name="heatmap_hard">ハード</string>
+    <string name="heatmap_lob">ロブ</string>
+    <string name="heatmap_flat">フラット</string>
+    <string name="heatmap_smash">スマッシュ</string>
+
+    <!-- Play With Friend -->
+    <string name="play_with_friend">友達とプレイ</string>
+    <string name="looking_for_friends">友達を探しています...</string>
+    <string name="waiting_for_friends">友達を待機中...</string>
+
+    <!-- Game Modes -->
+    <string name="game_mode_classic">クラシック</string>
+    <string name="game_mode_classic_desc">1対1\n2サーブ。11点先取。</string>
+    <string name="game_mode_rally">ラリー</string>
+    <string name="game_mode_rally_desc">協力プレイ\nボールを維持しよう！</string>
+    <string name="partner">パートナー</string>
+    <string name="waiting_for_partner">パートナーを待機中...</string>
+    
+    <!-- Game Modes Help -->
+    <string name="game_modes_title">ゲームモード</string>
+    <string name="mode_classic_title">🏓 クラシックモード（1対1）</string>
+    <string name="mode_classic_rules">• 11点先取で勝利（2点差）</string>
+    <string name="mode_classic_serve">• サーブは2点ごとに交代</string>
+    <string name="mode_classic_scoring">• 相手がミスしたら得点</string>
+    <string name="mode_rally_title">🤝 ラリーモード（協力）</string>
+    <string name="mode_rally_goal">• 協力してラリーを続けよう！</string>
+    <string name="mode_rally_lives">• 共有ライフ3つでスタート</string>
+    <string name="mode_rally_grid">• 3×3グリッドを完成させてレベルアップ</string>
+    <string name="mode_rally_scoring">• ポイント: レベル1=1pt、レベル2=3pts、レベル3=8pts...</string>
+    <string name="mode_rally_lines">• ラインを完成させてボーナスポイント</string>
+    <string name="mode_rally_xclear">• Xクリア: 両対角線=即レベルアップ！</string>
+    <string name="mode_rally_life">• レベルアップごとに追加ライフ獲得</string>
+
+    <!-- Rally Mode UI -->
+    <string name="partner_serving">パートナーのサーブ</string>
+    <string name="one_life_down">ライフ1減少</string>
+    <string name="next_up">次は...</string>
+    <string name="no_events_yet">イベントなし</string>
+    <string name="hit_window_fmt">ヒット判定: %1$d</string>
+    <string name="swing_to_serve_prompt">振ってサーブ！</string>
+    
+    <!-- Rally Mode Stats -->
+    <string name="stats_rally_high_score">ハイスコア</string>
+    <string name="stats_rally_longest_rally">最長ラリー</string>
+    <string name="stats_rally_lines_cleared">完成ライン</string>
+    <string name="stats_rally_highest_level">最高レベル</string>
+    
+    <!-- End Game Rally Mode -->
+    <string name="game_over_metric">指標</string>
+    <string name="game_over_you">あなた</string>
+    <string name="game_over_partner">パートナー</string>
+    <string name="game_over_lines_cleared">完成ライン</string>
+    <string name="game_over_grid_level">レベル</string>
+    <string name="game_over_new_high_score">新記録！</string>
+    <string name="game_over_high_score">ハイスコア</string>
+    <string name="game_over_longest_rally">最長ラリー</string>
+    
+    <!-- Exit Confirmation Dialog -->
+    <string name="exit_game_title">終了しますか？</string>
+    <string name="exit_game_message">本当に終了しますか？現在のゲームが終了します。</string>
+    <string name="exit_game_yes">はい</string>
+    <string name="exit_game_no">いいえ</string>
+
+    <!-- Scrolling Tips -->
+    <string name="tip_safety_strap">🛡️ 安全第一：リストストラップを使用！</string>
+    <string name="tip_safety_area">🛡️ スイング前にプレイエリアを確保</string>
+    <string name="tip_hold_screen">📱 画面を外向きに持つ（手のひらと反対側）</string>
+    <string name="tip_yellow_incoming">🟡 黄色 = ボールが来る、準備！</string>
+    <string name="tip_green_swing">🟢 緑 = あなたのターン、スイング！</string>
+    <string name="tip_red_wait">🔴 赤 = パートナー/相手を待つ</string>
+    <string name="tip_flat_shot">📱 画面垂直 = フラット（確実）</string>
+    <string name="tip_lob_shot">⬆️ 画面上向き = ロブ（遅い、高い弧）</string>
+    <string name="tip_smash_shot">⬇️ 画面下向き = スマッシュ（速い！）</string>
+    <string name="tip_harder_faster">💪 強く振れば速いショット</string>
+    <string name="tip_soft_more_time">🪶 ソフトスイングで時間を稼ぐ</string>
+    <string name="tip_lobs_safe">🎯 ロブは安全で体勢を整える時間ができる</string>
+    <string name="tip_smash_shrinks">⚡ スマッシュは相手のヒット判定を縮小</string>
+    <string name="tip_smash_risk">⚠️ 強いスマッシュはネットやアウトのリスク！</string>
+    <string name="tip_classic_first_11">🏓 11点先取、2点差で勝利！</string>
+    <string name="tip_classic_serve_switch">🔄 サーブは2点ごとに交代</string>
+    <string name="tip_classic_score_miss">💥 相手がミスしたら得点</string>
+    <string name="tip_classic_mix_shots">🎯 ロブとスマッシュを混ぜて相手を翻弄</string>
+    <string name="tip_rally_9_types">🎯 9種類全てのショットでレベルアップ！</string>
+    <string name="tip_rally_multi_line">✨ 2〜3ライン同時完成でボーナス！</string>
+    <string name="tip_rally_3_lines">🤔 3ライン同時...可能？</string>
+    <string name="tip_rally_x_clear">❌ Xクリア！両対角線=即レベルアップ</string>
+    <string name="tip_rally_points_scale">📈 ポイントはレベルごとに増加（1, 7, 10, 13...）</string>
+    <string name="tip_rally_extra_life">❤️ レベル完成で追加ライフ獲得！</string>
+    <!-- <string name="tip_rally_happy_numbers">🔢 ハッピーナンバー列？調べてみて！</string> -->
+    <string name="tip_rally_vertical_bonus">💡 縦ラインは横より高得点</string>
+    <string name="tip_rally_diagonal_bonus">💡 対角線が最高得点！</string>
+    <string name="tip_rally_window_shrink">⚡ ヒット判定はレベルごとに50ms縮小</string>
+    <string name="tip_coop_teamwork">🤝 協力してハイスコアを更新しよう！</string>
+    <string name="tip_coop_lobs_partner">💡 パートナーがレベルアップ中はロブを</string>
+    <string name="tip_coop_3_lives">🎮 共有ライフ3つでスタート</string>
+    <string name="tip_solo_practice">🏋️ 練習モード：テクニックを磨こう！</string>
+    <string name="tip_solo_personal_best">🏆 自己ベストに挑戦！</string>
+    <string name="tip_solo_longer_flight">⏱️ ソロは滞空時間がやや長め</string>
+    <string name="tip_fact_ball_speed">🏓 卓球ボールは時速110km以上に達する！</string>
+    <string name="tip_fact_accelerometer">📱 スマホの加速度センサーは毎秒200回更新</string>
+    <string name="tip_fact_olympic">🏓 卓球は1988年にオリンピック競技に</string>
+    <string name="tip_fact_whiff_whaff">📱 元の名前:「Whiff-Whaff」（1880年代）</string>
+    <string name="tip_fact_no_balls">🎮 このゲームに本物のボールは使いません 🤯</string>
+    <string name="tip_fact_spin_rpm">🏓 トップ選手はボールを9,000RPMで回転！</string>
+    <string name="tip_fact_longest_rally">🏓 最長ラリー記録: 8時間40分 ⏱️</string>
+    <string name="tip_fact_reaction_time">⚡ プロの反応時間は0.1秒未満</string>
+    <string name="tip_fact_calories">🏃 1時間のプレイで約270カロリー消費</string>
+    <string name="tip_fact_pong_arcade">🎮 「Pong」（1972）がゲーム産業を始動</string>
+    <string name="tip_fact_grip_safety">📱 プロのコツ：スマホを握る、投げない！😅</string>
+    <string name="tip_fact_ball_weight">⚖️ 標準の卓球ボールはわずか2.7グラム</string>
+    <string name="tip_fact_bluetooth_king">👑 Bluetoothはバイキングの王の名前</string>
+    <string name="tip_fact_gyro_vs_accel">🧭 加速度計は速度を、ジャイロは回転を測定</string>
+    <string name="tip_fact_freq_hop">📻 Bluetoothは毎秒1,600回周波数を変更</string>
+    <string name="tip_fact_mems_tech">🔬 スマホのセンサーはマイクロマシン（MEMS）</string>
+    <string name="tip_fact_packet_speed">📨 データパケットは光速で飛ぶ！</string>
+
+    <!-- Stats Screen Mode Labels -->
+    <string name="stats_rally_mode">ラリーモード</string>
+    <string name="stats_classic_mode">クラシックモード</string>
+
+    <!-- Game Params Settings -->
+    <string name="settings_controlled_by_host">一部の設定はホストが管理しています</string>
+    <string name="swing_device_to_test">デバイスを振ってテスト</string>
+    <string name="advanced">詳細設定</string>
+    <string name="swing_parameters">スイングパラメータ</string>
+    <string name="swing_type">タイプ</string>
+    <string name="swing_flight">滞空</string>
+    <string name="swing_net_percent">ネット%</string>
+    <string name="swing_out_percent">アウト%</string>
+    <string name="swing_shrink_percent">縮小%</string>
+    <string name="fine_tune_value">微調整</string>
+    <string name="current_percent">現在: %1$d%%</string>
+    <string name="done">完了</string>
+    <string name="flight_time_modifier">滞空時間倍率</string>
+    <string name="current_multiplier">現在: %1$.1fx</string>
+    <string name="shrinking_hit_window">縮小ヒット判定</string>
+    <string name="info_shrinking_window_title">縮小ヒット判定</string>
+    <string name="info_shrinking_window_text">有効にすると、ヒットごとにヒット判定が少し縮小します。\n\n（対戦相手と同期）</string>
+    <string name="info_rally_no_risk_text">ラリーモードでは協力プレイのためネット/アウトリスクは無効です。</string>
+
+    <!-- Debug Settings -->
+    <string name="soft_med_hard_thresholds">ソフト: %1$d, ミディアム: %2$d, ハード: %3$d</string>
+    <string name="open_debug_game">デバッグゲームを開く</string>
+    <string name="open_debug_end_game">デバッグ終了画面を開く</string>
+
+    <!-- Main Menu -->
+    <string name="new_avatar_unlocked">🎉 新しいアバターが解放されました！タップで確認</string>
+    <string name="play_solo_rally">ソロラリーをプレイ</string>
+
+    <!-- Game Over Screen -->
+    <string name="tier_points_format">%1$dpt</string>
+    <string name="longest_rally_hits">最長ラリー: %1$dヒット</string>
+    <string name="debug_mode_label">デバッグモード</string>
+    <string name="change_score">スコア変更</string>
+    <string name="return_label">戻る</string>
+
+    <!-- Appearance Settings -->
+    <string name="avatar">アバター</string>
+    <string name="rally_score_unlocks">ラリースコア解放</string>
+    <string name="rally_length_unlocks">ラリー長解放</string>
+    <string name="classic_wins_unlocks">クラシック勝利解放</string>
+    <string name="app_icon">アプリアイコン</string>
+    <string name="icon_modern">モダン</string>
+    <string name="icon_classic">クラシック</string>
+
+    <!-- Avatar Unlock Hints -->
+    <string name="unlock_hint_score">%1$d+点達成</string>
+    <string name="unlock_hint_rally">ラリー%1$d+</string>
+    <string name="unlock_hint_wins">%1$d+勝利</string>
+
+    <!-- Content Descriptions -->
+    <string name="cd_navigate">ナビゲート</string>
+    <string name="cd_info">情報</string>
+    <string name="cd_user_avatar">ユーザーアバター</string>
+    <string name="cd_share_game">ゲームを共有</string>
+    <string name="cd_my_avatar">マイアバター</string>
+    <string name="cd_opponent_avatar">相手アバター</string>
+    <string name="cd_partner_avatar">パートナーアバター</string>
+    <string name="cd_your_avatar">あなたのアバター</string>
+    <string name="cd_avatar">アバター</string>
+    <string name="cd_avatar_index">アバター%1$d</string>
+
+    <!-- Translated Solo Rally & New Keys -->
+    <string name="mode_solo_title">🏋️ ソロラリー (練習)</string>
+    <string name="mode_solo_practice">• 練習モード - パートナーは不要！</string>
+    <string name="mode_solo_grid">• 協力ラリーと同じ3×3グリッドとスコアリング</string>
+    <string name="mode_solo_wall">• ボールはシミュレートされた壁から跳ね返ります</string>
+    <string name="mode_solo_flight">• ソロプレイ用に飛行時間が少し長くなっています</string>
+    <string name="solo_flight_multiplier_label">ソロ飛行時間倍率: %1$.1fx</string>
+    <string name="info_solo_multiplier_title">ソロ飛行時間倍率</string>
+    <string name="info_solo_multiplier_text">ソロラリーモードでのボールの移動時間を調整します。値を高くすると、ヒット間の時間が長くなります。\n\nデフォルト: 1.3×\n範囲: 1.0× 〜 2.0×</string>
+    <string name="stats_solo_rally_mode">ソロラリーモード</string>
+    <string name="solo_flight_adder_fmt">ソロ飛行時間追加: +%1$dms</string>
+    <string name="info_swing_params_text">各スイングタイプのリスクとリワードを微調整します。\n\n飛行: 飛行時間倍率。\nネット%%: ネットに当たる確率（ポイント失点）。\nアウト%%: 範囲外に打つ確率（ポイント失点）。\n縮小%%: このショットが相手のヒットウィンドウをどれだけ縮小するか（相手にとって難しくなる）。\n\nラリーモード: パートナーが協力しているため、ネット%%とアウト%%は排除されます（0%%に設定）。\n\n注: 非常に速いショット（短い飛行時間）は、相手のヒットウィンドウをわずかに遅らせて、確実にヒットできるようにする場合があります。</string>
+    <string name="game_debug_overlay">ゲームデバッグオーバーレイ</string>
+    <string name="info_solo_flight_adder_title">ソロ飛行時間追加</string>
+    <string name="info_solo_flight_adder_text">ヒット間のボールの滞空時間を増やします。頻繁に打つため、ソロモードでは飛行時間が長くなります。\n\nデフォルト: +500ms\n範囲: +200ms 〜 +800ms</string>
+    <string name="avatar_unknown">?</string>
+
+</resources>

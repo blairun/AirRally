@@ -1,0 +1,408 @@
+<resources>
+    <string name="app_name">AirRally</string>
+    
+    <!-- Main Menu -->
+    <string name="bluetooth_permission_required">游戏需要蓝牙权限。</string>
+    <string name="connected_to">已连接到 %1$s</string>
+    <string name="unknown">未知</string>
+    <string name="redirecting_lobby">正在跳转到大厅...</string>
+    <string name="disconnect">断开连接</string>
+    <string name="host_game">创建游戏</string>
+    <string name="join_game">加入游戏</string>
+    <string name="settings">设置</string>
+    <string name="waiting_for_players">等待玩家...</string>
+    <string name="cancel">取消</string>
+    <string name="looking_for_games">正在寻找附近的游戏...</string>
+    <string name="available_games">可用游戏：</string>
+    <string name="connect_to">连接到 %1$s</string>
+    <string name="auto_connecting">%1$d秒后自动连接...</string>
+    <string name="connecting">连接中...</string>
+    <string name="error_prefix">错误：%1$s</string>
+    <string name="reset">重置</string>
+    <string name="share_game_content">来看看 AirRally - 不需要球桌的乒乓球！ https://github.com/blairun/AirRally</string>
+    
+    <!-- Taglines -->
+    <string name="tagline_1">没有球的乒乓球 👀</string>
+    <string name="tagline_2">想象中的乒乓球</string>
+    <string name="tagline_3">没桌子，没拍子，没问题。</string>
+    <string name="tagline_4">全靠手腕。</string>
+    <string name="tagline_5">别松开你的手机！</string>
+    <string name="tagline_6" formatted="false">100% 看不见，100% 真实。</string>
+    <string name="tagline_7">球是假的。</string>
+    <string name="tagline_8">这是拍子的战斗！</string>
+    <string name="tagline_9">Pongogo!</string>
+    <string name="tagline_10">像没人看一样挥动。</string>
+
+    <!-- Settings -->
+    <string name="appearance">外观</string>
+    <string name="theme">主题</string>
+    <string name="theme_system">系统</string>
+    <string name="theme_light">浅色</string>
+    <string name="theme_dark">深色</string>
+    <string name="player_name">玩家名称</string>
+    <string name="game_parameters">游戏参数</string>
+    <string name="defaults">默认值</string>
+    <string name="flight_time_label">飞行时间：%1$d ms (%2$s)</string>
+    <string name="difficulty_hard">困难</string>
+    <string name="difficulty_medium">中等</string>
+    <string name="difficulty_easy">简单</string>
+    <string name="info_flight_time_title">飞行时间</string>
+    <string name="info_flight_time_text">控制球在空中停留的默认时间。（挥动力量和手机倾斜度会增加或减少此时间。）\n\n500-600ms：困难（快）\n700-900ms：中等\n1000-1200ms：简单（慢）\n\n（与对手同步）</string>
+    <string name="hit_window_label">击球窗口：%1$d ms (%2$s)</string>
+    <string name="info_hit_window_title">击球窗口（难度）</string>
+    <string name="info_hit_window_text">更改挥动时机的误差范围。\n\n窗口越大 = 越容易击中。\n窗口越小 = 越难击中。\n\n范围：200ms（困难）到 700ms（简单）\n\n（与对手同步）</string>
+    <string name="how_to_play_safety">玩法与安全</string>
+    <string name="safety_first">安全第一</string>
+    <string name="safety_strap">• 使用腕带。</string>
+    <string name="safety_area">• 清理游戏区域。</string>
+    <string name="gameplay">游戏玩法</string>
+    <string name="gameplay_hold">• 手机屏幕朝外（背对掌心）握持。</string>
+    <string name="gameplay_yellow">• 黄色表示球来了（准备）。</string>
+    <string name="gameplay_green">• 绿色表示挥动（弹起后）。</string>
+    <string name="gameplay_red">• 红色表示对手的回合。</string>
+    <string name="shot_types_risks">击球类型与风险</string>
+    <string name="shot_types_desc">挥动力量和倾斜度会改变你的击球：</string>
+    <string name="shot_flat">• 屏幕垂直 = 平击</string>
+    <string name="shot_flat_desc">  标准击球。安全可靠。</string>
+    <string name="shot_lob">• 屏幕朝上 = 高吊球</string>
+    <string name="shot_lob_desc">  慢速，高弧线。</string>
+    <string name="shot_lob_safe">  安全，给你时间恢复。</string>
+    <string name="shot_smash">• 屏幕朝下 = 扣杀</string>
+    <string name="shot_smash_desc">  快速且具有攻击性！</string>
+    <string name="shot_smash_risk">  缩短对手的击球窗口，但是</string>
+    <string name="shot_smash_net">  更容易触网或出界。</string>
+    <string name="use_debug_tones">使用调试音效</string>
+    <string name="info_debug_tones_title">调试音效</string>
+    <string name="info_debug_tones_text">如果启用，将播放简单的哔哔声代替游戏音效。</string>
+    <string name="debug_mode">调试模式</string>
+    <string name="info_debug_mode_title">调试模式</string>
+    <string name="info_debug_mode_text">启用游戏屏幕上的覆盖层，显示 RTT、精确游戏状态和原始传感器值等技术统计信息。\n\n（仅限本地）</string>
+    <string name="sensor_hit_test">传感器击球测试</string>
+    <string name="force_fmt">力量：%.1f</string>
+    <string name="accel_fmt">加速：X: %1$.1f, Y: %2$.1f, Z: %3$.1f</string>
+    <string name="gyro_fmt">陀螺仪：X: %1$.1f, Y: %2$.1f, Z: %3$.1f</string>
+    <string name="grav_fmt">重力：X: %1$.1f, Y: %2$.1f, Z: %3$.1f</string>
+    <string name="swing_test_prompt">挥动手机进行测试！</string>
+    <string name="about_airrally">关于 AirRally</string>
+    <string name="version">版本</string>
+    <string name="credits">制作人员</string>
+    <string name="created_by">创建者：bl</string>
+    <string name="created_by_ai">AI</string>
+    <string name="created_by_r">r</string>
+    <string name="license">许可证</string>
+    <string name="license_name">CC BY-NC 4.0</string>
+    <string name="source_code">源代码</string>
+    <string name="view_github_repo">查看 GitHub 仓库</string>
+    <string name="problems">遇到问题？</string>
+    <string name="report_bug">报告 Bug</string>
+    <string name="back">返回</string>
+    <string name="close">关闭</string>
+
+    <!-- Lobby -->
+    <string name="lobby_title">大厅</string>
+    <string name="start_game">开始游戏</string>
+    <string name="waiting_for_opponent">等待对手...</string>
+    <string name="waiting_for_host">等待房主开始...</string>
+    <string name="leave">离开</string>
+
+    <!-- Game Screen -->
+    <string name="you">你</string>
+    <string name="opponent">对手</string>
+    <string name="your_serve">你的发球</string>
+    <string name="swing_to_serve">挥动发球！</string>
+    <string name="opponent_serving">对手发球</string>
+    <string name="point_scored">得分</string>
+    <string name="get_ready">准备...</string>
+    <string name="hit">击中！</string>
+    <string name="wait">等待...</string>
+    <string name="action_feed">动作反馈</string>
+    <string name="debug_info">调试信息</string>
+    <string name="phase_fmt">阶段：%1$s</string>
+    <string name="arrival_fmt">到达：%1$d</string>
+    <string name="now_fmt">现在：%1$d</string>
+    <string name="delta_fmt">差值：%1$dms</string>
+    <string name="difficulty_fmt">难度：%1$d</string>
+    <string name="flight_time_fmt">飞行时间：%1$d</string>
+    <string name="last_swing">上次挥动：</string>
+    <string name="type_fmt">类型：%1$s</string>
+    <string name="grav_z_fmt">重力Z：%1$s</string>
+
+    <!-- Game Over -->
+    <string name="you_won">你赢了！</string>
+    <string name="you_lost">你输了</string>
+    <string name="game_over">游戏结束</string>
+    <string name="final_score">最终得分</string>
+    <string name="score">得分</string>
+    <string name="play_again">再玩一次</string>
+    <string name="main_menu">主菜单</string>
+
+    <!-- Dialogs -->
+    <string name="device_incompatible">设备不兼容</string>
+    <string name="missing_sensors_text">此游戏需要特定传感器。你的设备缺少：%1$s。\n\n应用将关闭。</string>
+    <string name="exit">退出</string>
+    <string name="hey_listen">听着！</string>
+    <string name="swing_warning">此游戏需要你挥动手机。</string>
+    <string name="warning_strap">• 使用腕带固定手机</string>
+    <string name="warning_surroundings">• 注意周围环境</string>
+    <string name="warning_hold">• 手机屏幕朝外（背对掌心）握持</string>
+    <string name="nah">不</string>
+    <string name="cool">好的</string>
+    <string name="event_you_served">你发球：%1$s</string>
+    <string name="event_you_hit">你击中：%1$s</string>
+    <string name="event_opponent_hit">对手击中：%1$s</string>
+    <string name="event_ball_bounced">球弹起了</string>
+    <string name="event_fault_net">✖️ 失误（触网） ✖️</string>
+    <string name="event_fault_out">✖️ 失误（出界） ✖️</string>
+    <string name="event_hit_net">✖️ 你触网了！ (%1$s) ✖️</string>
+    <string name="event_hit_out">✖️ 你出界了！ (%1$s) ✖️</string>
+    <string name="event_whiff_early">✖️ 挥空（太早） ✖️</string>
+    <string name="event_miss_late">✖️ 错过（太晚） ✖️</string>
+    <string name="event_miss_no_swing">✖️ 错过（未挥动） ✖️</string>
+    <string name="event_opp_net">✔️ 对手触网！ ✔️</string>
+    <string name="event_opp_out">✔️ 对手出界！ ✔️</string>
+    <string name="event_opp_whiff">✔️ 对手挥空！ ✔️</string>
+    <string name="event_opp_miss_no_swing">✔️ 对手错过（未挥动） ✔️</string>
+    <string name="event_opp_miss">✔️ 对手错过！ ✔️</string>
+    <string name="event_point_to">%1$s 得分</string>
+    <string name="event_life_lost">❤️‍🩹 生命损失! ❤️‍🩹</string>
+    
+    <!-- Swing Types -->
+    <string name="swing_soft_flat">轻平击</string>
+    <string name="swing_medium_flat">中平击</string>
+    <string name="swing_hard_flat">重平击</string>
+    <string name="swing_soft_lob">轻高吊</string>
+    <string name="swing_medium_lob">中高吊</string>
+    <string name="swing_hard_lob">重高吊</string>
+    <string name="swing_soft_smash">轻扣杀</string>
+    <string name="swing_medium_smash">中扣杀</string>
+    <string name="swing_hard_smash">重扣杀</string>
+    <string name="swing_sensitivity_label">挥杆灵敏度: %1$.1f</string>
+    <string name="info_sensitivity_title">挥杆灵敏度</string>
+    <string name="info_sensitivity_text">调整注册挥杆所需的最小力度。\n\n较低 = 更灵敏（更容易触发）\n较高 = 不太灵敏（较难触发）\n\n（仅限本地）</string>
+    <string name="debug_settings">调试设置</string>
+
+    <!-- Debug Controls -->
+    <string name="debug_controls_title">调试控制</string>
+    <string name="debug_simulate_my_hit">模拟\n我的击球</string>
+    <string name="debug_auto_play">自动播放</string>
+    <string name="debug_simulate_opp_hit">模拟\n对手击球</string>
+    <string name="debug_return">返回</string>
+
+    <!-- Stats Screen -->
+    <string name="stats_title">游戏统计</string>
+    <string name="stats_wins">胜利</string>
+    <string name="stats_losses">失败</string>
+    <string name="stats_total_hits">总击球数</string>
+    <string name="stats_longest_rally">最长回合</string>
+    <string name="stats_shot_distribution">击球分布</string>
+    <string name="stats_filter_all">全部</string>
+    <string name="stats_filter_won">制胜球</string>
+    <string name="stats_filter_lost">失误球</string>
+    <string name="stats_reset_title">重置统计</string>
+    <string name="stats_reset_message">您确定要重置所有游戏统计数据吗？此操作无法撤销。</string>
+    <string name="stats_reset_confirm">重置</string>
+    <string name="stats_reset_cancel">取消</string>
+
+    <!-- Heatmap Labels -->
+    <string name="heatmap_soft">轻</string>
+    <string name="heatmap_med">中</string>
+    <string name="heatmap_hard">重</string>
+    <string name="heatmap_lob">高吊</string>
+    <string name="heatmap_flat">平击</string>
+    <string name="heatmap_smash">扣杀</string>
+
+    <!-- Play With Friend -->
+    <string name="play_with_friend">与好友游戏</string>
+    <string name="looking_for_friends">正在寻找好友...</string>
+    <string name="waiting_for_friends">等待好友...</string>
+
+    <!-- Game Modes -->
+    <string name="game_mode_classic">经典模式</string>
+    <string name="game_mode_classic_desc">1对1\n2次发球。先到11分。</string>
+    <string name="game_mode_rally">拉力模式</string>
+    <string name="game_mode_rally_desc">合作模式\n保持球的运动！</string>
+    <string name="partner">搭档</string>
+    <string name="waiting_for_partner">等待搭档...</string>
+    
+    <!-- Game Modes Help -->
+    <string name="game_modes_title">游戏模式</string>
+    <string name="mode_classic_title">🏓 经典模式 (1对1)</string>
+    <string name="mode_classic_rules">• 先到11分获胜（需领先2分）</string>
+    <string name="mode_classic_serve">• 每2分换发</string>
+    <string name="mode_classic_scoring">• 对手失误时得分</string>
+    <string name="mode_rally_title">🤝 拉力模式（合作）</string>
+    <string name="mode_rally_goal">• 一起努力保持拉力！</string>
+    <string name="mode_rally_lives">• 开始时共享3条命</string>
+    <string name="mode_rally_grid">• 完成3×3网格升级</string>
+    <string name="mode_rally_scoring">• 得分：等级1 = 1分，等级2 = 3分，等级3 = 6分...</string>
+    <string name="mode_rally_lines">• 完成行获得奖励分</string>
+    <string name="mode_rally_xclear">• X清除：两条对角线 = 立即升级！</string>
+    <string name="mode_rally_life">• 每升一级获得额外生命</string>
+
+    <!-- Rally Mode UI -->
+    <string name="partner_serving">搭档发球</string>
+    <string name="one_life_down">失去一条命</string>
+    <string name="next_up">接下来...</string>
+    <string name="no_events_yet">暂无事件</string>
+    <string name="hit_window_fmt">击球窗口：%1$d</string>
+    <string name="swing_to_serve_prompt">挥动发球！</string>
+    
+    <!-- Rally Mode Stats -->
+    <string name="stats_rally_high_score">最高分</string>
+    <string name="stats_rally_longest_rally">最长拉力</string>
+    <string name="stats_rally_lines_cleared">完成行数</string>
+    <string name="stats_rally_highest_level">最高等级</string>
+    
+    <!-- End Game Rally Mode -->
+    <string name="game_over_metric">指标</string>
+    <string name="game_over_you">你</string>
+    <string name="game_over_partner">搭档</string>
+    <string name="game_over_lines_cleared">完成行数</string>
+    <string name="game_over_grid_level">等级</string>
+    <string name="game_over_new_high_score">新纪录！</string>
+    <string name="game_over_high_score">最高分</string>
+    <string name="game_over_longest_rally">最长拉力</string>
+    
+    <!-- Exit Confirmation Dialog -->
+    <string name="exit_game_title">退出？</string>
+    <string name="exit_game_message">确定要退出吗？这将结束当前游戏。</string>
+    <string name="exit_game_yes">是</string>
+    <string name="exit_game_no">算了</string>
+
+    <!-- Scrolling Tips -->
+    <string name="tip_safety_strap">🛡️ 安全第一：使用腕带！</string>
+    <string name="tip_safety_area">🛡️ 挥动前清理游戏区域</string>
+    <string name="tip_hold_screen">📱 屏幕朝外握持，远离手掌</string>
+    <string name="tip_yellow_incoming">🟡 黄色 = 球来了，准备！</string>
+    <string name="tip_green_swing">🟢 绿色 = 轮到你，挥动！</string>
+    <string name="tip_red_wait">🔴 红色 = 等待搭档/对手</string>
+    <string name="tip_flat_shot">📱 屏幕垂直 = 平击（可靠）</string>
+    <string name="tip_lob_shot">⬆️ 屏幕向上 = 高吊球（慢，高弧线）</string>
+    <string name="tip_smash_shot">⬇️ 屏幕向下 = 扣杀（快！）</string>
+    <string name="tip_harder_faster">💪 挥动越猛，击球越快</string>
+    <string name="tip_soft_more_time">🪶 轻击给你更多时间</string>
+    <string name="tip_lobs_safe">🎯 高吊球安全且给时间恢复</string>
+    <string name="tip_smash_shrinks">⚡ 扣杀缩短对手击球窗口</string>
+    <string name="tip_smash_risk">⚠️ 强力扣杀有触网或出界风险！</string>
+    <string name="tip_classic_first_11">🏓 先到11分，领先2分获胜！</string>
+    <string name="tip_classic_serve_switch">🔄 每2分换发</string>
+    <string name="tip_classic_score_miss">💥 对手失误时得分</string>
+    <string name="tip_classic_mix_shots">🎯 混合使用高吊和扣杀来迷惑对手</string>
+    <string name="tip_rally_9_types">🎯 击中全部9种击球类型升级！</string>
+    <string name="tip_rally_multi_line">✨ 一次完成2或3行获得奖励！</string>
+    <string name="tip_rally_3_lines">🤔 3行同时...可能吗？</string>
+    <string name="tip_rally_x_clear">❌ X清除！两条对角线 = 立即升级</string>
+    <string name="tip_rally_points_scale">📈 分数按等级增长（1、7、10、13...）</string>
+    <string name="tip_rally_extra_life">❤️ 完成等级获得额外生命！</string>
+    <!-- <string name="tip_rally_happy_numbers">🔢 快乐数列？去查查！</string> -->
+    <string name="tip_rally_vertical_bonus">💡 纵向行比横向行得分更高</string>
+    <string name="tip_rally_diagonal_bonus">💡 对角线得分最高！</string>
+    <string name="tip_rally_window_shrink">⚡ 每级窗口缩小50毫秒</string>
+    <string name="tip_coop_teamwork">🤝 一起努力打破你的纪录！</string>
+    <string name="tip_coop_lobs_partner">💡 搭档升级时试试高吊球</string>
+    <string name="tip_coop_3_lives">🎮 开始时共享3条命</string>
+    <string name="tip_solo_practice">🏋️ 练习模式：完善你的技术！</string>
+    <string name="tip_solo_personal_best">🏆 挑战你的个人最佳！</string>
+    <string name="tip_solo_longer_flight">⏱️ 单人模式飞行时间略长</string>
+    <string name="tip_fact_ball_speed">🏓 乒乓球可达110+ 公里/小时！</string>
+    <string name="tip_fact_accelerometer">📱 手机加速度计每秒更新200次</string>
+    <string name="tip_fact_olympic">🏓 乒乓球于1988年成为奥运项目</string>
+    <string name="tip_fact_whiff_whaff">📱 原名："Whiff-Whaff"（1880年代）</string>
+    <string name="tip_fact_no_balls">🎮 这个游戏不用真球 🤯</string>
+    <string name="tip_fact_spin_rpm">🏓 顶级选手让球旋转达9000转/分钟！</string>
+    <string name="tip_fact_longest_rally">🏓 最长拉力纪录：8小时40分钟 ⏱️</string>
+    <string name="tip_fact_reaction_time">⚡ 职业反应时间低于0.1秒</string>
+    <string name="tip_fact_calories">🏃 玩一小时消耗约270卡路里</string>
+    <string name="tip_fact_pong_arcade">🎮 "Pong"（1972）帮助开启了游戏产业</string>
+    <string name="tip_fact_grip_safety">📱 专业提示：握住手机，别扔！😅</string>
+    <string name="tip_fact_ball_weight">⚖️ 标准乒乓球仅重2.7克</string>
+    <string name="tip_fact_bluetooth_king">👑 蓝牙以维京国王命名</string>
+    <string name="tip_fact_gyro_vs_accel">🧭 加速度计测速度；陀螺仪测旋转</string>
+    <string name="tip_fact_freq_hop">📻 蓝牙每秒跳频1600次</string>
+    <string name="tip_fact_mems_tech">🔬 手机传感器是微型机器（MEMS）</string>
+    <string name="tip_fact_packet_speed">📨 数据包以光速飞行！</string>
+
+    <!-- Stats Screen Mode Labels -->
+    <string name="stats_rally_mode">拉力模式</string>
+    <string name="stats_classic_mode">经典模式</string>
+
+    <!-- Game Params Settings -->
+    <string name="settings_controlled_by_host">部分设置由房主控制</string>
+    <string name="swing_device_to_test">挥动设备进行测试</string>
+    <string name="advanced">高级</string>
+    <string name="swing_parameters">挥动参数</string>
+    <string name="swing_type">类型</string>
+    <string name="swing_flight">飞行</string>
+    <string name="swing_net_percent">触网%</string>
+    <string name="swing_out_percent">出界%</string>
+    <string name="swing_shrink_percent">缩小%</string>
+    <string name="fine_tune_value">微调</string>
+    <string name="current_percent">当前：%1$d%%</string>
+    <string name="done">完成</string>
+    <string name="flight_time_modifier">飞行时间倍数</string>
+    <string name="current_multiplier">当前：%1$.1fx</string>
+    <string name="shrinking_hit_window">缩小击球窗口</string>
+    <string name="info_shrinking_window_title">缩小击球窗口</string>
+    <string name="info_shrinking_window_text">如启用，每次击球后窗口略微缩小。\n\n（与对手同步）</string>
+    <string name="info_rally_no_risk_text">在拉力模式中，因为玩家合作，所以消除触网/出界风险。</string>
+
+    <!-- Debug Settings -->
+    <string name="soft_med_hard_thresholds">轻：%1$d，中：%2$d，重：%3$d</string>
+    <string name="open_debug_game">打开调试游戏</string>
+    <string name="open_debug_end_game">打开调试结束画面</string>
+
+    <!-- Main Menu -->
+    <string name="new_avatar_unlocked">🎉 新头像已解锁！点击查看</string>
+    <string name="play_solo_rally">单人拉力</string>
+
+    <!-- Game Over Screen -->
+    <string name="tier_points_format">%1$d分</string>
+    <string name="longest_rally_hits">最长拉力：%1$d次击球</string>
+    <string name="debug_mode_label">调试模式</string>
+    <string name="change_score">更改分数</string>
+    <string name="return_label">返回</string>
+
+    <!-- Appearance Settings -->
+    <string name="avatar">头像</string>
+    <string name="rally_score_unlocks">拉力得分解锁</string>
+    <string name="rally_length_unlocks">拉力长度解锁</string>
+    <string name="classic_wins_unlocks">经典胜利解锁</string>
+    <string name="app_icon">应用图标</string>
+    <string name="icon_modern">现代</string>
+    <string name="icon_classic">经典</string>
+
+    <!-- Avatar Unlock Hints -->
+    <string name="unlock_hint_score">达到%1$d+分</string>
+    <string name="unlock_hint_rally">拉力%1$d+</string>
+    <string name="unlock_hint_wins">赢得%1$d+场</string>
+
+    <!-- Content Descriptions -->
+    <string name="cd_navigate">导航</string>
+    <string name="cd_info">信息</string>
+    <string name="cd_user_avatar">用户头像</string>
+    <string name="cd_share_game">分享游戏</string>
+    <string name="cd_my_avatar">我的头像</string>
+    <string name="cd_opponent_avatar">对手头像</string>
+    <string name="cd_partner_avatar">搭档头像</string>
+    <string name="cd_your_avatar">你的头像</string>
+    <string name="cd_avatar">头像</string>
+    <string name="cd_avatar_index">头像%1$d</string>
+
+    <!-- Translated Solo Rally & New Keys -->
+    <string name="mode_solo_title">🏋️ 单人拉力 (练习)</string>
+    <string name="mode_solo_practice">• 练习模式 - 不需要伙伴！</string>
+    <string name="mode_solo_grid">• 与合作拉力相同的3×3网格和计分</string>
+    <string name="mode_solo_wall">• 球从模拟墙壁反弹</string>
+    <string name="mode_solo_flight">• 单人游戏稍微更长的飞行时间</string>
+    <string name="solo_flight_multiplier_label">单人飞行时间倍率: %1$.1fx</string>
+    <string name="info_solo_multiplier_title">单人飞行时间倍率</string>
+    <string name="info_solo_multiplier_text">调整球在单人拉力模式下的飞行时间。值越高，击球间隔时间越长。\n\n默认: 1.3×\n范围: 1.0× 到 2.0×</string>
+    <string name="stats_solo_rally_mode">单人拉力模式</string>
+    <string name="solo_flight_adder_fmt">单人飞行时间加成: +%1$dms</string>
+    <string name="info_swing_params_text">微调每种挥拍类型的风险和回报。\n\n飞行: 飞行时间倍率。\n触网%%: 触网几率（失分）。\n出界%%: 击球出界几率（失分）。\n收缩%%: 此击球使对手的击球窗口收缩多少（使其更难击球）。\n\n拉力模式: 触网%%和出界%%被消除（设为0%%），因为伙伴在合作。\n\n注意: 非常快的击球（低飞行时间）可能会稍微推迟对手的击球窗口，以确保仍然可以击球。</string>
+    <string name="game_debug_overlay">游戏调试叠加层</string>
+    <string name="info_solo_flight_adder_title">单人飞行时间加成</string>
+    <string name="info_solo_flight_adder_text">增加球在击球之间在空中的时间。单人模式的飞行时间更长，因为你击球更频繁。\n\n默认: +500ms\n范围: +200ms 到 +800ms</string>
+    <string name="avatar_unknown">?</string>
+
+</resources>
