@@ -1,0 +1,11 @@
+<resources>
+    <color name="purple_200">#BB83FA</color>
+    <color name="purple_500">#7342aa</color>
+    <color name="purple_700">#400089</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <!-- <color name="ic_launcher_background_new">#4c157a</color> -->
+    <color name="ic_launcher_background_new">#7342aa</color>
+</resources>

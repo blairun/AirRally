@@ -1,0 +1,9 @@
+<!-- Wraps the foreground icon with padding to replace unsafe <inset> -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:drawable="@drawable/ic_launcher_foreground_raw"
+        android:top="16dp"
+        android:bottom="16dp"
+        android:left="16dp"
+        android:right="16dp" />
+</layer-list>

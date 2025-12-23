@@ -1,0 +1,630 @@
+<resources>
+    <string name="app_name">AirRally</string>
+    
+    <!-- ==================== MAIN MENU ==================== -->
+    <string name="bluetooth_permission_required">게임을 플레이하려면 블루투스 권한이 필요합니다.</string>
+    <string name="connected_to">%1$s에 연결됨</string>
+    <string name="unknown">알 수 없음</string>
+    <string name="redirecting_lobby">로비로 이동 중...</string>
+    <string name="disconnect">연결 끊기</string>
+    <string name="host_game">게임 호스트</string>
+    <string name="join_game">게임 참가</string>
+    <string name="play_with_friend">친구와 플레이</string>
+    <string name="looking_for_friends">친구 찾는 중...</string>
+    <string name="waiting_for_friends">친구 대기 중...</string>
+    <string name="settings">설정</string>
+    <string name="waiting_for_players">플레이어 대기 중...</string>
+    <string name="cancel">취소</string>
+    <string name="looking_for_games">주변 게임 찾는 중...</string>
+    <string name="available_games">참가 가능한 게임:</string>
+    <string name="connect_to">%1$s에 연결</string>
+    <string name="auto_connecting">%1$d초 후 자동 연결...</string>
+    <string name="connecting">연결 중...</string>
+    <string name="error_prefix">오류: %1$s</string>
+    <string name="reset">초기화</string>
+    <string name="share_game_content">AirRally를 확인해보세요 - 탁구대 없는 탁구! https://github.com/blairun/AirRally</string>
+    <string name="play_solo_rally">솔로 랠리 플레이</string>
+    <string name="new_avatar_unlocked">🎉 새 아바타 해제됨! 탭하여 확인</string>
+    <string name="new_ring_unlocked">🎉 새 배경 해제됨! 탭하여 확인</string>
+    <string name="new_unlocks_both">🎉 새 아바타 및 배경 해제됨! 탭하여 확인</string>
+
+    <!-- Taglines -->
+    <string name="tagline_1">공 없는 탁구 👀</string>
+    <string name="tagline_2">상상 속의 탁구</string>
+    <string name="tagline_3">탁구대도, 라켓도 필요 없습니다.</string>
+    <string name="tagline_4">모든 것은 손목에 달려 있습니다.</string>
+    <string name="tagline_5">휴대폰을 놓치지 마세요!</string>
+    <string name="tagline_6" formatted="false">100% 보이지 않지만, 100% 리얼합니다.</string>
+    <string name="tagline_7">공은 거짓말입니다.</string>
+    <string name="tagline_8">라켓 배틀입니다!</string>
+    <string name="tagline_9">퐁고고!</string>
+    <string name="tagline_10">아무도 보지 않는 것처럼 스윙하세요.</string>
+
+    <!-- ==================== LOBBY ==================== -->
+    <string name="lobby_title">로비</string>
+    <string name="start_game">게임 시작</string>
+    <string name="waiting_for_opponent">상대방 대기 중...</string>
+    <string name="waiting_for_host">호스트 시작 대기 중...</string>
+    <string name="leave">나가기</string>
+
+    <!-- ==================== GAME MODES ==================== -->
+    <string name="game_modes_title">게임 모드</string>
+    <string name="game_mode_classic">클래식</string>
+    <string name="game_mode_classic_desc">1대1\n2서브. 11점 선취.</string>
+    <string name="game_mode_rally">랠리</string>
+    <string name="game_mode_rally_desc">협동\n공을 유지하세요!</string>
+    <string name="partner">파트너</string>
+    <string name="waiting_for_partner">파트너 대기 중...</string>
+    <string name="vs_text">VS</string>
+
+    <!-- ==================== GAME SCREEN ==================== -->
+    <string name="you">나</string>
+    <string name="opponent">상대</string>
+    <string name="your_serve">나의 서브</string>
+    <string name="swing_to_serve">휘둘러서 서브!</string>
+    <string name="swing_to_serve_prompt">휘둘러서 서브!</string>
+    <string name="opponent_serving">상대방 서브</string>
+    <string name="partner_serving">파트너 서브</string>
+    <string name="point_scored">득점</string>
+    <string name="one_life_down">생명 1 감소</string>
+    <string name="get_ready">준비...</string>
+    <string name="next_up">다음...</string>
+    <string name="hit">히트!</string>
+    <string name="wait">대기...</string>
+    <string name="action_feed">액션 피드</string>
+    <string name="no_events_yet">이벤트 없음</string>
+    <string name="volume_toast">🔊 최상의 경험을 위해 볼륨을 높이세요!</string>
+
+    <!-- Power Outage UI -->
+    <string name="power_outage_title">⚡ 정전 ⚡</string>
+    <string name="power_outage_hit_different">%1$d개의 다른 샷을 치세요</string>
+    <string name="power_outage_progress">%1$d / %2$d</string>
+
+    <!-- Debug Info Overlay -->
+    <string name="debug_info">디버그 정보</string>
+    <string name="phase_fmt">단계: %1$s</string>
+    <string name="arrival_fmt">도착: %1$d</string>
+    <string name="now_fmt">현재: %1$d</string>
+    <string name="delta_fmt">델타: %1$dms</string>
+    <string name="difficulty_fmt">난이도: %1$d</string>
+    <string name="flight_time_fmt">비행시간: %1$d</string>
+    <string name="hit_window_fmt">타격판정: %1$d</string>
+    <string name="last_swing">마지막 스윙:</string>
+    <string name="type_fmt">유형: %1$s</string>
+    <string name="grav_z_fmt">중력Z: %1$s</string>
+
+    <!-- Action Feed Events -->
+    <string name="event_you_served">서브함: %1$s</string>
+    <string name="event_you_hit">타격함: %1$s</string>
+    <string name="event_opponent_hit">상대방 타격: %1$s</string>
+    <string name="event_partner_hit">파트너 타격: %1$s</string>
+    <string name="event_ball_bounced">공 바운드됨</string>
+    <string name="event_fault_net">✖️ 폴트 (네트) ✖️</string>
+    <string name="event_fault_out">✖️ 폴트 (아웃) ✖️</string>
+    <string name="event_hit_net">✖️ 네트에 걸렸습니다! (%1$s) ✖️</string>
+    <string name="event_hit_out">✖️ 아웃되었습니다! (%1$s) ✖️</string>
+    <string name="event_whiff_early">✖️ 헛스윙 (너무 빠름) ✖️</string>
+    <string name="event_miss_late">✖️ 미스 (너무 늦음) ✖️</string>
+    <string name="event_miss_no_swing">✖️ 미스 (스윙 없음) ✖️</string>
+    <string name="event_opp_net">✔️ 상대방 네트! ✔️</string>
+    <string name="event_opp_out">✔️ 상대방 아웃! ✔️</string>
+    <string name="event_opp_whiff">✔️ 상대방 헛스윙! ✔️</string>
+    <string name="event_opp_miss_no_swing">✔️ 상대방 미스 (스윙 없음) ✔️</string>
+    <string name="event_opp_miss">✔️ 상대방 미스! ✔️</string>
+    <string name="event_point_to">%1$s 득점</string>
+    <string name="event_life_lost">❤️‍🩹 생명 소실! ❤️‍🩹</string>
+
+    <!-- ==================== SWING TYPES ==================== -->
+    <string name="swing_soft_flat">소프트 플랫</string>
+    <string name="swing_medium_flat">미디엄 플랫</string>
+    <string name="swing_hard_flat">하드 플랫</string>
+    <string name="swing_soft_lob">소프트 로브</string>
+    <string name="swing_medium_lob">미디엄 로브</string>
+    <string name="swing_hard_lob">하드 로브</string>
+    <string name="swing_soft_smash">소프트 스파이크</string>
+    <string name="swing_medium_smash">미디엄 스파이크</string>
+    <string name="swing_hard_smash">하드 스파이크</string>
+
+    <!-- ==================== GAME OVER ==================== -->
+    <string name="you_won">승리!</string>
+    <string name="you_lost">패배</string>
+    <string name="game_over">게임 오버</string>
+    <string name="final_score">최종 점수</string>
+    <string name="score">점수</string>
+    <string name="play_again">다시 하기</string>
+    <string name="main_menu">메인 메뉴</string>
+    <string name="game_over_metric">지표</string>
+    <string name="game_over_you">나</string>
+    <string name="game_over_partner">파트너</string>
+    <string name="game_over_lines_cleared">완성 라인</string>
+    <string name="game_over_grid_level">레벨</string>
+    <string name="game_over_new_high_score">신기록!</string>
+    <string name="game_over_high_score">최고 점수</string>
+    <string name="game_over_longest_rally">최장 랠리</string>
+    <string name="tier_points_format">%1$dpt</string>
+    <string name="longest_rally_hits">최장 랠리: %1$d 타격</string>
+    <string name="debug_mode_label">디버그 모드</string>
+    <string name="change_score">점수 변경</string>
+    <string name="return_label">돌아가기</string>
+
+    <!-- ==================== STATS SCREEN ==================== -->
+    <string name="stats_title">게임 통계</string>
+    <string name="stats_wins">승리</string>
+    <string name="stats_losses">패배</string>
+    <string name="stats_total_hits">총 타격 수</string>
+    <string name="stats_longest_rally">최장 랠리</string>
+    <string name="stats_rally_high_score">최고 점수</string>
+    <string name="stats_rally_longest_rally">최장 랠리</string>
+    <string name="stats_rally_lines_cleared">완성 라인</string>
+    <string name="stats_rally_highest_level">최고 레벨</string>
+    <string name="stats_shot_distribution">샷 분포</string>
+    <string name="stats_filter_all">전체</string>
+    <string name="stats_filter_won">승리 샷</string>
+    <string name="stats_filter_lost">패배 샷</string>
+    <string name="stats_reset_title">통계 초기화</string>
+    <string name="stats_reset_message">모든 게임 통계를 초기화하시겠습니까? 이 작업은 취소할 수 없습니다.</string>
+    <string name="stats_reset_confirm">초기화</string>
+    <string name="stats_reset_cancel">취소</string>
+    <string name="stats_rally_mode">랠리 모드</string>
+    <string name="stats_solo_rally_mode">솔로 랠리 모드</string>
+    <string name="stats_classic_mode">클래식 모드</string>
+    <string name="stats_next_unlock">다음 해제</string>
+
+    <!-- Heatmap Labels -->
+    <string name="heatmap_soft">소프트</string>
+    <string name="heatmap_med">미디엄</string>
+    <string name="heatmap_hard">하드</string>
+    <string name="heatmap_lob">로브</string>
+    <string name="heatmap_flat">플랫</string>
+    <string name="heatmap_smash">스파이크</string>
+
+    <!-- ==================== DIALOGS ==================== -->
+    <string name="device_incompatible">장치 호환되지 않음</string>
+    <string name="missing_sensors_text">이 게임은 특정 센서가 필요합니다. 장치에 다음이 없습니다: %1$s.\n\n앱이 종료됩니다.</string>
+    <string name="exit">종료</string>
+    <string name="hey_listen">잠깐만요!</string>
+    <string name="swing_warning">이 게임은 휴대폰을 휘둘러야 합니다.</string>
+    <string name="warning_strap">• 휴대폰을 고정하기 위해 스트랩을 사용하세요</string>
+    <string name="warning_surroundings">• 주변 환경을 주의하세요</string>
+    <string name="warning_hold">• 화면이 바깥쪽(손바닥 반대쪽)을 향하도록 잡으세요</string>
+    <string name="nah">아니요</string>
+    <string name="cool">좋아요</string>
+    
+    <!-- Exit Confirmation Dialog -->
+    <string name="exit_game_title">종료?</string>
+    <string name="exit_game_message">정말 종료하시겠습니까? 현재 게임이 종료됩니다.</string>
+    <string name="exit_game_yes">예</string>
+    <string name="exit_game_no">아니요</string>
+
+    <!-- Common Dialog Buttons -->
+    <string name="back">뒤로</string>
+    <string name="close">닫기</string>
+    <string name="done">완료</string>
+    <string name="accept">수락</string>
+    <string name="start">시작</string>
+    <string name="next">다음</string>
+    <string name="defaults">기본값</string>
+    <string name="advanced">고급</string>
+    <string name="coming_soon">곧 출시</string>
+
+    <!-- ==================== SETTINGS - APPEARANCE ==================== -->
+    <string name="appearance">외관</string>
+    <string name="theme">테마</string>
+    <string name="theme_system">시스템</string>
+    <string name="theme_light">라이트</string>
+    <string name="theme_dark">다크</string>
+    <string name="player_name">플레이어 이름</string>
+    <string name="avatar">아바타</string>
+    <string name="avatar_unknown">?</string>
+    <string name="rally_score_unlocks">랠리 점수 해제</string>
+    <string name="rally_lines_unlocks">랠리 라인 해제</string>
+    <string name="solo_lines_unlocks">솔로 라인 해제</string>
+    <string name="rally_length_unlocks">랠리 길이 해제</string>
+    <string name="classic_wins_unlocks">클래식 승리 해제</string>
+    <string name="app_icon">앱 아이콘</string>
+    <string name="icon_modern">모던</string>
+    <string name="icon_classic">클래식</string>
+    <string name="icon_change_warning">(아이콘을 변경하면 앱이 종료됩니다)</string>
+
+    <!-- Background Ring -->
+    <string name="background_ring">배경 링</string>
+    <string name="ring_none">없음</string>
+    <string name="ring_rally_score_unlocks">랠리 점수 해제</string>
+    <string name="ring_solo_score_unlocks">솔로 점수 해제</string>
+    <string name="ring_long_press_hint">(길게 눌러 보기)</string>
+
+    <!-- Avatar Unlock Hints -->
+    <string name="unlock_hint_score">%1$d+ 점수 달성</string>
+    <string name="unlock_hint_rally">랠리 %1$d+</string>
+    <string name="unlock_hint_wins">%1$d+ 승리</string>
+
+    <!-- ==================== SETTINGS - GAME PARAMETERS ==================== -->
+    <string name="game_parameters">게임 매개변수</string>
+    <string name="settings_controlled_by_host">일부 설정은 호스트가 관리합니다</string>
+    <string name="settings_synced_from_host">일부 설정은 호스트에서 동기화되었습니다 (임계값은 로컬로 유지됨)</string>
+    <string name="swing_device_to_test">테스트용 기기 스윙</string>
+    
+    <!-- Game Params Tab Names -->
+    <string name="params_tab_main">메인</string>
+    <string name="params_tab_accessibility">접근성</string>
+    <string name="params_tab_advanced">고급</string>
+
+    <!-- Flight Time -->
+    <string name="flight_time_label">비행 시간: %1$d ms (%2$s)</string>
+    <string name="difficulty_hard">어려움</string>
+    <string name="difficulty_medium">보통</string>
+    <string name="difficulty_easy">쉬움</string>
+    <string name="info_flight_time_title">비행 시간</string>
+    <string name="info_flight_time_text">공이 공중에 머무는 기본 시간을 제어합니다. (스윙 강도와 휴대폰 기울기에 따라 이 시간이 증가하거나 감소합니다.)\n\n500-600ms: 어려움 (빠름)\n700-900ms: 보통\n1000-1200ms: 쉬움 (느림)\n\n(상대방과 동기화됨)</string>
+    <string name="flight_time_modifier">비행 시간 배율</string>
+    <string name="current_multiplier">현재: %1$.1fx</string>
+
+    <!-- Hit Window -->
+    <string name="hit_window_label">타격 판정: %1$d ms (%2$s)</string>
+    <string name="info_hit_window_title">타격 판정 (난이도)</string>
+    <string name="info_hit_window_text">스윙 타이밍의 오차 범위를 변경합니다.\n\n더 큰 창 = 맞추기 쉬움.\n더 작은 창 = 맞추기 어려움.\n\n범위: 200ms (어려움) ~ 700ms (쉬움)\n\n(상대방과 동기화됨)</string>
+    <string name="shrinking_hit_window">축소 타격 판정</string>
+    <string name="info_shrinking_window_title">축소 타격 판정</string>
+    <string name="info_shrinking_window_text">활성화하면 매 타격마다 판정이 약간 축소됩니다.\n\n(상대와 동기화)</string>
+    <string name="info_rally_no_risk_text">랠리 모드에서는 협동 플레이이므로 네트/아웃 위험이 제거됩니다.</string>
+
+    <!-- Swing Sensitivity & Thresholds -->
+    <string name="swing_sensitivity_label">스윙 감도: %1$.1f</string>
+    <string name="info_sensitivity_title">스윙 감도</string>
+    <string name="info_sensitivity_text">스윙을 감지하는 데 필요한 최소 힘을 조정합니다.\n\n낮음 = 더 민감함 (트리거하기 쉬움)\n높음 = 덜 민감함 (트리거하기 어려움)\n\n(로컬 전용)</string>
+    <string name="swing_thresholds_label">스윙 임계값</string>
+    <string name="info_thresholds_title">스윙 임계값</string>
+    <string name="info_thresholds_text">각 샷 강도에 필요한 최소 스윙 힘을 설정합니다.\n\n임계값은 서로 최소 8단위 간격을 유지해야 합니다.\n\n• 소프트: 스윙을 등록하는 최소 힘\n• 미디엄: 미디엄 샷에 필요한 힘\n• 하드: 하드 샷에 필요한 힘\n\n(로컬 전용 - 장치 간 동기화되지 않음)</string>
+    <string name="slider_soft_fmt">소프트 %1$d</string>
+    <string name="slider_med_fmt">미디엄 %1$d</string>
+    <string name="slider_hard_fmt">하드 %1$d</string>
+
+    <!-- Swing Parameters Table -->
+    <string name="swing_parameters">스윙 매개변수</string>
+    <string name="swing_type">유형</string>
+    <string name="swing_flight">비행</string>
+    <string name="swing_net_percent">네트%</string>
+    <string name="swing_out_percent">아웃%</string>
+    <string name="swing_shrink_percent">축소%</string>
+    <string name="fine_tune_value">미세 조정</string>
+    <string name="current_percent">현재: %1$d%%</string>
+    <string name="info_swing_params_text">각 스윙 유형에 대한 위험과 보상을 미세 조정합니다。\n\n비행: 비행 시간 배수。\n네트%%: 네트에 맞을 확률 (실점)。\n아웃%%: 범위를 벗어날 확률 (실점)。\n축소%%: 이 샷이 상대방의 타격 창을 얼마나 줄이는지 (상대방에게 더 어렵게 만듦)。\n\n랠리 모드: 파트너가 협력하므로 네트%% 및 아웃%%이 제거됩니다 (0%%로 설정)。\n\n참고: 매우 빠른 샷 (낮은 비행 시간)은 타격 가능하도록 상대방의 타격 창을 약간 뒤로 이동시킬 수 있습니다。</string>
+
+    <!-- Solo Rally Settings -->
+    <string name="solo_flight_multiplier_label">솔로 비행 시간 배수: %1$.1fx</string>
+    <string name="info_solo_multiplier_title">솔로 비행 시간 배수</string>
+    <string name="info_solo_multiplier_text">솔로 랠리 모드에서 공이 이동하는 시간을 조절합니다. 값이 높을수록 타격 간의 시간이 더 길어집니다.\n\n기본값: 1.3×\n범위: 1.0× ~ 2.0×</string>
+    <string name="solo_flight_adder_fmt">솔로 비행 시간 추가: +%1$dms</string>
+    <string name="info_solo_flight_adder_title">솔로 비행 시간 추가</string>
+    <string name="info_solo_flight_adder_text">타격 사이의 공이 공중에 머무는 시간을 늘립니다. 더 자주 타격하므로 솔로 모드의 비행 시간이 더 깁니다。\n\n기본값: +500ms\n범위: +200ms ~ +800ms</string>
+
+    <!-- ==================== SETTINGS - ACCESSIBILITY ==================== -->
+    <string name="accessibility">접근성</string>
+    <string name="tap_to_hit_mode">탭하여 타격 모드</string>
+    <string name="info_tap_to_hit_title">탭하여 타격 모드</string>
+    <string name="info_tap_to_hit_text">랠리 모드에서 터치 제어를 활성화합니다:\n\n• 셀을 탭하여 해당 스윙 유형 타격 (스핀 없음)\n• 셀을 스와이프하여 스핀 추가:\n  ⬆️ 탑 스핀\n  ⬇️ 백 스핀\n  ⬅️/➡️ 사이드 스핀\n  ↗️↖️ 복합 스핀\n\n접근성이나 정밀한 샷 선택에 좋습니다.</string>
+    <string name="color_blind_mode">색약 모드</string>
+    <string name="enhanced_audio_cues">향상된 오디오 신호</string>
+    <string name="haptic_intensity">햅틱 강도</string>
+    <string name="spin_shots_label">스핀 샷</string>
+    <string name="info_spin_shots_title">스핀 샷</string>
+    <string name="info_spin_shots_text">샷에 스핀을 적용하면 타이밍에 영향을 줍니다:\n\n• 탑 스핀: −10% 비행 시간, −10% 타격 판정\n• 백 스핀: +10% 비행 시간, −5% 타격 판정\n• 사이드 스핀 (좌/우): ±5% 비행 시간, ±5% 타격 판정 (랜덤)\n\n복합 스핀은 효과가 곱해집니다. 예를 들어, 우상단 스핀은 탑 스핀 효과와 랜덤 사이드 스핀 수정자를 결합합니다.</string>
+
+    <!-- ==================== SETTINGS - DEBUG ==================== -->
+    <string name="debug_settings">디버그 설정</string>
+    <string name="use_debug_tones">디버그 톤 사용</string>
+    <string name="info_debug_tones_title">디버그 톤</string>
+    <string name="info_debug_tones_text">활성화하면 게임 효과음 대신 간단한 비프음이 재생됩니다.</string>
+    <string name="debug_mode">디버그 모드</string>
+    <string name="info_debug_mode_title">디버그 모드</string>
+    <string name="info_debug_mode_text">RTT, 정확한 게임 상태, 원시 센서 값과 같은 기술 통계를 보여주는 오버레이를 활성화합니다.\n\n(로컬 전용)</string>
+    <string name="game_debug_overlay">게임 디버그 오버레이</string>
+    <string name="sensor_hit_test">센서 타격 테스트</string>
+    <string name="force_fmt">강도: %.1f</string>
+    <string name="accel_fmt">가속도: X: %1$.1f, Y: %2$.1f, Z: %3$.1f</string>
+    <string name="gyro_fmt">자이로: X: %1$.1f, Y: %2$.1f, Z: %3$.1f</string>
+    <string name="grav_fmt">중력: X: %1$.1f, Y: %2$.1f, Z: %3$.1f</string>
+    <string name="swing_test_prompt">휴대폰을 휘둘러 테스트하세요!</string>
+    <string name="soft_med_hard_thresholds">소프트: %1$d, 미디엄: %2$d, 하드: %3$d</string>
+    <string name="open_debug_game">디버그 게임 열기</string>
+    <string name="open_debug_end_game">디버그 종료 화면 열기</string>
+    <string name="debug_controls_title">디버그 제어</string>
+    <string name="debug_simulate_my_hit">내 타격\n시뮬레이션</string>
+    <string name="debug_auto_play">자동 플레이</string>
+    <string name="debug_simulate_opp_hit">상대 타격\n시뮬레이션</string>
+    <string name="debug_return">돌아가기</string>
+
+    <!-- ==================== SETTINGS - ABOUT ==================== -->
+    <string name="about_airrally">AirRally 정보</string>
+    <string name="version">버전</string>
+    <string name="credits">크레딧</string>
+    <string name="created_by">제작: bl</string>
+    <string name="created_by_ai">AI</string>
+    <string name="created_by_r">r</string>
+    <string name="license">라이선스</string>
+    <string name="license_name">CC BY-NC 4.0</string>
+    <string name="source_code">소스 코드</string>
+    <string name="view_github_repo">GitHub 리포지토리 보기</string>
+    <string name="problems">문제가 있나요?</string>
+    <string name="report_bug">버그 신고</string>
+
+    <!-- ==================== CALIBRATION ==================== -->
+    <string name="calibrate">보정</string>
+    <string name="calibration_title">스윙 보정</string>
+    <string name="calibration_instructions">각 강도 레벨에서 휴대폰을 3번 휘두르세요.\n\n소프트 스윙부터 시작하여, 미디엄, 하드 순서로 진행합니다.</string>
+    <string name="calibration_swing_soft">소프트</string>
+    <string name="calibration_swing_medium">미디엄</string>
+    <string name="calibration_swing_hard">하드</string>
+    <string name="calibration_swing_progress">스윙 %1$d / 3</string>
+    <string name="calibration_calculating">계산 중…</string>
+    <string name="calibration_success">보정 완료!</string>
+    <string name="calibration_new_thresholds">새 임계값:\n\n소프트: %.1f\n미디엄: %.1f\n하드: %.1f</string>
+    <string name="calibration_failed">보정 실패</string>
+    <string name="calibration_failed_overlap">스윙 강도가 너무 많이 겹칩니다. 레벨 간에는 최소 8단위가 필요합니다.\n\n현재 설정은 변경되지 않습니다.</string>
+
+    <!-- ==================== BONUS MECHANICS ==================== -->
+    <string name="bonus_mechanics">보너스 메카닉</string>
+    <string name="bonus_spin_multiplier">스핀 배율</string>
+    <string name="bonus_copy_cat">카피캣</string>
+    <string name="bonus_special_squares">특수 칸</string>
+    <string name="bonus_power_outage">정전</string>
+
+    <!-- Bonus Info Popups -->
+    <string name="info_bonus_mechanics_title">보너스 메카닉</string>
+    <string name="info_bonus_mechanics_text">보너스 메카닉은 랠리 모드에 특별한 득점 기회를 추가합니다. 게임플레이를 단순화하거나 특정 기술에 집중하려면 개별 메카닉을 비활성화하세요.\n\n(파트너와 동기화됨)</string>
+    <string name="info_bonus_spin_title">💫 스핀 배율</string>
+    <string name="info_bonus_spin_text">다양한 스핀 기술(탑, 백, 좌, 우 및 조합)을 사용하여 점수 배율을 높이세요. 각 고유 스핀은 배율에 +0.1을 추가합니다 (최대 +0.5).\n\n아바타가 회전하는 동안 5가지 고유 스핀 유형을 달성하여 무한 스핀을 잠금 해제하세요!</string>
+    <string name="info_bonus_copy_cat_title">😺 카피캣</string>
+    <string name="info_bonus_copy_cat_text">협동 모드: 파트너의 샷 유형을 복사하여 지속적인 배율을 쌓으세요. 9연속 샷 시퀀스를 완료하면 추가 생명을 얻습니다!\n\n솔로 모드: CPU가 생성한 목표 시퀀스(🎯)를 따라 배율을 높이고 추가 생명을 획득하세요.</string>
+    <string name="info_bonus_special_squares_title">특수 칸</string>
+    <string name="info_bonus_special_squares_text">레벨업 시 특수 칸이 생성됩니다:\n\n🪙 골드: 3배 포인트. 보너스 배율을 위해 이 칸으로 라인을 지우세요!\n🍌 바나나 껍질: 히트 시 점수가 차감되고 골드 배율이 0.1 감소합니다.\n💥 지뢰: 랠리를 즉시 종료하고 스핀 보너스가 있다면 중지시킵니다!\n🛡️ 방패: 페널티를 건드리지 않고 그리드를 지우면 보호를 얻습니다.</string>
+    <string name="info_bonus_power_outage_title">🔌 정전</string>
+    <string name="info_bonus_power_outage_text">같은 칸을 10번 치면 정전이 발생합니다! 칸의 🔌 경고를 주의하세요.\n\n전력을 복구하려면: 연속으로 5개의 다른 칸을 치세요. 성공하면 +50ms 타격 판정 보너스를 받습니다!</string>
+
+    <!-- Rally Bonus & Grid Upgrades (info-only) -->
+    <string name="rally_bonus_label">랠리 보너스</string>
+    <string name="info_rally_bonus_title">🏓 랠리 보너스</string>
+    <string name="info_rally_bonus_text">랠리 중에 점수 배율이 증가합니다:\n\n• 모멘텀: 10회 타격마다 +0.1 (최대 +0.5)\n• 스핀 보너스: 고유 스핀 유형마다 +0.1 (최대 +0.5)\n• 카피캣: 달성한 티어마다 +0.1 (최대 +0.5)\n• 골드 라인: 골드 라인 클리어마다 +0.1 (최대 +0.5)\n\n최대 총 배율: 3.5배</string>
+    <string name="grid_upgrades_label">그리드 업그레이드</string>
+    <string name="info_grid_upgrades_title">🔢 그리드 업그레이드</string>
+    <string name="info_grid_upgrades_text">3×3 샷 그리드를 완성하여 레벨업:\n\n• 가로, 세로 또는 대각선 라인을 지워 셀을 완료하고 보너스 점수를 획득하세요.\n• 세로 라인은 가로보다 점수가 높습니다\n• 대각선 라인은 점수가 가장 높습니다!\n• 양 대각선을 모두 완료(X-Clear)하면 즉시 티어 업그레이드\n• 각 티어 업그레이드는 +1 추가 생명을 부여합니다\n• 타격 판정은 티어당 -50ms 축소됩니다 (최소: 300ms)</string>
+
+    <!-- ==================== HELP SCREEN ==================== -->
+    <string name="how_to_play_safety">게임 방법 및 안전</string>
+    <string name="help_tab_general">일반</string>
+    <string name="help_tab_rally">랠리</string>
+    <string name="help_tab_solo">솔로</string>
+    <string name="help_tab_classic">클래식</string>
+
+    <!-- General Help -->
+    <string name="safety_first">안전 제일</string>
+    <string name="safety_strap">• 손목 스트랩을 사용하세요.</string>
+    <string name="safety_area">• 플레이 공간을 비우세요.</string>
+    <string name="gameplay">게임플레이</string>
+    <string name="gameplay_hold">• 화면이 바깥쪽(손바닥 반대쪽)을 향하도록 잡으세요.</string>
+    <string name="gameplay_yellow">• 노란색은 공이 오고 있음(준비)을 의미합니다.</string>
+    <string name="gameplay_green">• 녹색은 스윙(바운드 후)을 의미합니다.</string>
+    <string name="gameplay_red">• 빨간색은 상대방의 차례를 의미합니다.</string>
+    <string name="shot_types_risks">샷 유형 및 위험</string>
+    <string name="shot_types_desc">스윙 강도와 휴대폰 기울기에 따라 샷이 변경됩니다:</string>
+    <string name="shot_flat">• 화면 수직 = 플랫 샷</string>
+    <string name="shot_flat_desc">  표준 샷. 안전하고 신뢰할 수 있습니다.</string>
+    <string name="shot_lob">• 화면 위쪽 = 로브</string>
+    <string name="shot_lob_desc">  느리고 높은 아치.</string>
+    <string name="shot_lob_safe">  안전하며, 회복할 시간을 줍니다.</string>
+    <string name="shot_smash">• 화면 아래쪽 = 스파이크</string>
+    <string name="shot_smash_desc">  빠르고 공격적!</string>
+    <string name="shot_smash_risk">  상대방의 타격 판정을 줄이지만,</string>
+    <string name="shot_smash_net">  네트에 걸리거나 아웃될 확률이 높습니다.</string>
+
+    <!-- Classic Mode Help -->
+    <string name="mode_classic_title">🏓 클래식 모드 (1대1)</string>
+    <string name="mode_classic_rules">• 11점 선취 승리 (2점 차)</string>
+    <string name="mode_classic_serve">• 서브는 2점마다 교대</string>
+    <string name="mode_classic_scoring">• 상대가 미스하면 득점</string>
+
+    <!-- Rally Mode Help -->
+    <string name="mode_rally_title">🤝 랠리 모드 (협동)</string>
+    <string name="mode_rally_goal">• 함께 랠리를 유지하세요!</string>
+    <string name="mode_rally_lives">• 공유 생명 3개로 시작</string>
+    <string name="mode_rally_grid">• 3×3 그리드 완성으로 레벨업</string>
+    <string name="mode_rally_xclear">• X-Clear: 양 대각선 = 즉시 레벨업!</string>
+    <string name="mode_rally_life">• 레벨업마다 추가 생명 획득</string>
+    <string name="help_scoring_leveling">점수 &amp; 레벨링</string>
+    <string name="help_specials">스페셜</string>
+    <string name="help_spin_shots">• 스핀 샷: 다양한 스핀 💫 을 사용하여 점수 배율을 높이세요.</string>
+    <string name="help_copy_cat">• 카피캣: 파트너의 샷을 따라하여 점수 배율을 높이세요! 🐱</string>
+    <string name="help_penalty_squares">• 페널티 칸: 바나나 껍질 🍌 (점수 &amp; 골드 손실)과 지뢰 💥 (생명 손실 &amp; 스핀 중단)를 조심하세요! 이 칸들을 피해서 그리드를 지우면 방패를 얻습니다.</string>
+    <string name="help_golden_squares">• 골드 칸: 골드 🪙 칸은 3배 점수입니다! 라인을 지우고 더 많은 점수를 얻어 배율을 높이세요!</string>
+    <string name="help_power_outage">• 정전: 같은 칸을 10번 치면 불이 꺼집니다! 🔌 5개의 다른 칸을 쳐서 전력을 복구하고 타격 판정 보너스를 얻으세요. 💡</string>
+
+    <!-- Solo Rally Mode Help -->
+    <string name="mode_solo_title">🏋️ 솔로 랠리 (연습)</string>
+    <string name="mode_solo_practice">• 연습 모드 - 파트너가 필요 없습니다!</string>
+    <string name="mode_solo_grid">• 협동 랠리와 동일한 3×3 그리드 및 점수 계산</string>
+    <string name="mode_solo_wall">• 공이 시뮬레이션된 벽에서 튀어 나옵니다</string>
+    <string name="mode_solo_flight">• 솔로 플레이를 위해 비행 시간이 약간 더 깁니다</string>
+    <string name="help_bonuses_specials">보너스 &amp; 스페셜</string>
+    <string name="help_solo_bonuses_intro">솔로 모드는 협동 랠리와 동일한 보너스 및 스페셜 기능을 제공합니다:</string>
+    <string name="help_solo_spin">• 스핀 샷</string>
+    <string name="help_solo_copy_cat">• 카피캣 (CPU 시퀀스 따라하기)</string>
+    <string name="help_solo_special">• 특수 칸</string>
+    <string name="help_solo_outage">• 정전</string>
+
+    <!-- ==================== TUTORIAL ==================== -->
+    <string name="tutorial_button">튜토리얼</string>
+    <string name="tutorial_banner_title">AirRally에 오신 것을 환영합니다!</string>
+    <string name="tutorial_banner_subtitle">30초 만에 배우는 게임 방법.</string>
+    <string name="tutorial_banner_go">시작하기</string>
+    <string name="tutorial_banner_dismiss">괜찮습니다</string>
+    
+    <string name="tutorial_welcome_title">AirRally에 오신 것을 환영합니다!</string>
+    <string name="tutorial_welcome_desc">30초 만에 배우는 게임 방법</string>
+    
+    <string name="tutorial_hold_title">휴대폰 잡기</string>
+    <string name="tutorial_hold_desc">화면이 손바닥 반대쪽을 향하게</string>
+    <string name="tutorial_hold_swing">휘둘러서 시작!</string>
+    
+    <!-- Tutorial Swings -->
+    <string name="tutorial_swing_soft">부드러운 플랫 스윙</string>
+    <string name="tutorial_swing_medium">중간 플랫 스윙</string>
+    <string name="tutorial_swing_hard">강한 플랫 스윙</string>
+    <string name="tutorial_swing_lob">중간 로브</string>
+    <string name="tutorial_swing_smash">중간 스파이크</string>
+    <string name="tutorial_swing_progress">스윙 %1$d / %2$d</string>
+    
+    <!-- Tutorial Grid Labels -->
+    <string name="tutorial_grid_lob">로브</string>
+    <string name="tutorial_grid_flat">플랫</string>
+    <string name="tutorial_grid_smash">스파이크</string>
+    <string name="tutorial_grid_soft">소프트</string>
+    <string name="tutorial_grid_med">중간</string>
+    <string name="tutorial_grid_hard">강함</string>
+    
+    <!-- Tutorial Feedback -->
+    <string name="tutorial_try_again_both">다시 시도, %1$s 및 %2$s</string>
+    <string name="tutorial_try_again_single">다시 시도, %1$s</string>
+    <string name="tutorial_try_again">다시 시도하세요!</string>
+    
+    <!-- Tutorial Progress -->
+    <string name="tutorial_line_cleared">라인 클리어!</string>
+    <string name="tutorial_line_bonus">라인을 지우면 추가 점수 획득</string>
+    <string name="tutorial_multiline">더블 라인!</string>
+    <string name="tutorial_multiline_desc">한 번에 2줄 이상 지우면 더 많은 점수</string>
+    
+    <!-- Tutorial Bonus Info -->
+    <string name="tutorial_bonus_title">보너스 메카닉</string>
+    <string name="tutorial_spin_title">스핀 샷</string>
+    <string name="tutorial_spin_desc">스윙할 때 손목을 비트세요</string>
+    <string name="tutorial_squares_title">특수 칸</string>
+    <string name="tutorial_squares_desc">🪙 3배 점수   🍌 페널티   💥 위험</string>
+    <string name="tutorial_copycat_title">카피캣</string>
+    <string name="tutorial_copycat_desc">목표 시퀀스를 맞추세요</string>
+    <string name="tutorial_streak_title">연속 배율</string>
+    <string name="tutorial_streak_desc">계속 쳐서 점수를 높이세요!</string>
+    <string name="tutorial_outage_title">정전</string>
+    <string name="tutorial_outage_desc">같은 칸 10번 = 정전. 다양하게 치세요!</string>
+    
+    <!-- Tutorial Completion -->
+    <string name="tutorial_calibration_title">준비 완료!</string>
+    <string name="tutorial_calibration_desc">기본 설정은 대부분의 플레이어에게 잘 맞습니다. 샷이 이상하게 느껴지면 설정 → 게임 매개변수에서 보정을 시도하세요.</string>
+    <string name="tutorial_complete_title">준비되었습니다!</string>
+    <string name="tutorial_complete_play">지금 플레이</string>
+    <string name="tutorial_retry">튜토리얼 다시하기</string>
+    <string name="tutorial_main_menu">메인 메뉴</string>
+    <string name="tutorial_grid_upgrades_title">🔢 그리드 업그레이드</string>
+    <string name="tutorial_grid_upgrades_desc">9개의 칸을 모두 지워 그리드를 레벨업하고 추가 생명을 얻으세요!</string>
+    <string name="tutorial_bonuses_title">✨ 보너스</string>
+    <string name="tutorial_bonuses_desc">특별 이벤트와 점수 배율이 존재합니다. 게임 내 아바타 옆에 있는 6개의 칩을 탭하여 각각에 대해 알아보세요.</string>
+    <string name="tutorial_chips_hint">게임 내 아바타 옆에 있는 6개의 칩을 탭하여 각각에 대해 알아보세요.</string>
+
+    <!-- ==================== SCROLLING TIPS ==================== -->
+    
+    <!-- Safety & Controls (ALL modes) -->
+    <string name="tip_safety_strap">🛡️ 안전 제일: 손목 스트랩 사용!</string>
+    <string name="tip_safety_area">🛡️ 스윙 전 플레이 공간 확보</string>
+    <string name="tip_hold_screen">📱 화면을 바깥쪽으로 (손바닥 반대)</string>
+    <string name="tip_yellow_incoming">🟡 노란색 = 공 오는 중, 준비!</string>
+    <string name="tip_green_swing">🟢 녹색 = 당신 차례, 스윙!</string>
+    <string name="tip_red_wait">🔴 빨간색 = 파트너/상대 대기</string>
+    <string name="tip_volume_up">🔊 볼륨을 높여 모든 샷 소리를 들으세요</string>
+    <string name="tip_screen_rotation">📲 화면을 세로 모드로 고정하세요</string>
+    <string name="tip_hit_window">⌛ 랠리가 길어질수록 "타격 판정"이 줄어듭니다</string>
+
+    <!-- Shot Types (ALL modes) -->
+    <string name="tip_flat_shot">📱 화면 수직 = 플랫 샷 (안정적)</string>
+    <string name="tip_lob_shot">⬆️ 화면 위로 = 로브 (느림, 높은 궤적)</string>
+    <string name="tip_smash_shot">⬇️ 화면 아래로 = 스파이크 (빠름!)</string>
+    <string name="tip_harder_faster">💪 강하게 휘두르면 빠른 샷</string>
+    <string name="tip_soft_more_time">🪶 부드러운 스윙은 시간을 벌어줌</string>
+    <string name="tip_lobs_safe">🎯 로브는 안전하고 회복 시간 제공</string>
+
+    <!-- Shot Types (CLASSIC only) -->
+    <string name="tip_smash_shrinks">⚡ 스파이크는 상대 타격 판정 축소</string>
+    <string name="tip_smash_risk">⚠️ 강한 스파이크는 네트/아웃 위험!</string>
+
+    <!-- Classic Mode Rules -->
+    <string name="tip_classic_first_11">🏓 11점 선취, 2점 차로 승리!</string>
+    <string name="tip_classic_serve_switch">🔄 서브는 2점마다 교대</string>
+    <string name="tip_classic_score_miss">💥 상대가 미스하면 득점</string>
+    <string name="tip_classic_mix_shots">🎯 로브와 스파이크를 섞어 혼란시키세요</string>
+    
+    <!-- Rally Mode (Co-op + Solo) -->
+    <string name="tip_rally_9_types">🎯 9가지 샷 모두 치면 레벨업!</string>
+    <string name="tip_rally_multi_line">✨ 2~3라인 동시 완성으로 보너스!</string>
+    <string name="tip_rally_3_lines">🤔 3라인 동시... 가능할까?</string>
+    <string name="tip_rally_x_clear">❌ X-Clears! 양 대각선 = 즉시 레벨업</string>
+    <string name="tip_rally_points_scale">📈 점수는 레벨마다 증가 (1, 7, 10, 13...)</string>
+    <string name="tip_rally_extra_life">❤️ 레벨 완료로 추가 생명 획득!</string>
+    <string name="tip_rally_triangular_numbers">🔢 삼각수 수열? 찾아보세요!</string>
+    <string name="tip_rally_vertical_bonus">💡 세로 라인이 가로보다 점수 높음</string>
+    <string name="tip_rally_diagonal_bonus">💡 대각선이 가장 점수 높음!</string>
+    <string name="tip_rally_window_shrink">⚡ 레벨당 판정이 50ms 축소</string>
+
+    <!-- Rally Co-op Only -->
+    <string name="tip_coop_teamwork">🤝 함께 최고 점수를 갱신하세요!</string>
+    <string name="tip_coop_lobs_partner">💡 파트너 레벨업 중 로브 시도</string>
+    <string name="tip_coop_3_lives">🎮 공유 생명 3개로 시작</string>
+
+    <!-- Bonus Mechanics Tips -->
+    <string name="tip_rally_bonus_spin_mix">💫 스핀(탑, 백, 사이드)을 섞어 배율을 높이세요!</string>
+    <string name="tip_rally_bonus_spin_keep_going">💫 계속 스핀하세요! 멈추면 스핀 보너스가 초기화됩니다.</string>
+    <string name="tip_rally_bonus_spin_infinite">💫 5가지 독특한 스핀 유형을 달성하면 남은 게임 동안 무한 스핀 배율 잠금 해제!</string>
+    <string name="tip_rally_bonus_copy_cat">🐱 카피캣: 파트너의 샷 종류를 따라해 보너스 점수를 얻으세요!</string>
+    <string name="tip_rally_bonus_copy_streak">🐱 카피캣 연속 기록을 세워 영구 배율을 얻으세요!</string>
+    <string name="tip_rally_bonus_golden_points">🪙 골드 칸은 맞히면 3배 점수!</string>
+    <string name="tip_rally_bonus_golden_lines">🪙 골드 칸으로 라인을 지우면 엄청난 점수 상승!</string>
+    <string name="tip_rally_bonus_banana">🍌 발밑 조심! 바나나 껍질은 맞힐 때마다 점수와 골드 배율을 깎습니다.</string>
+    <string name="tip_rally_bonus_landmine">💥 위험! 지뢰는 랠리를 즉시 종료시킵니다.</string>
+    <string name="tip_rally_bonus_shield_earn">🛡️ 페널티 칸이 포함된 그리드를 깔끔하게 지워 방패를 얻으세요!</string>
+    <string name="tip_rally_bonus_shield_save">🛡️ 방패는 한 번의 실수를 막아줍니다. 생명의 은인!</string>
+    <string name="tip_rally_bonus_outage_warning">🔌 경고를 주시하세요! 같은 셀을 10번 맞히면 정전이 발생합니다!</string>
+    <string name="tip_rally_bonus_outage_recover">💡 정전 중에는 5개의 다른 셀을 맞혀 전력을 복구하고 보너스 시간을 얻으세요!</string>
+
+    <!-- Solo Rally Only -->
+    <string name="tip_solo_practice">🏋️ 연습 모드: 기술을 연마하세요!</string>
+    <string name="tip_solo_personal_best">🏆 개인 최고 기록에 도전하세요!</string>
+    <string name="tip_solo_longer_flight">⏱️ 솔로는 비행 시간이 약간 더 깁니다</string>
+    <string name="tip_solo_wall_bounce">🧱 벽이 샷을 되돌려줍니다 - 파트너가 필요 없어요!</string>
+    <string name="tip_solo_rhythm">🎵 리듬을 찾으세요: 타격-벽-바운드-타격!</string>
+    <string name="tip_solo_no_waiting">⚡ 파트너를 기다릴 필요 없이 바로 스윙을 시작하세요!</string>
+    <string name="tip_solo_all_swings">🎯 9가지 스윙 유형을 모두 마스터하여 점수를 극대화하세요</string>
+    <string name="tip_solo_warmup">🔥 협동 매치 전 워밍업에 아주 좋습니다!</string>
+
+    <!-- Fun Facts (ALL modes) -->
+    <string name="tip_fact_ball_speed">🏓 탁구공은 시속 110km+ 도달 가능!</string>
+    <string name="tip_fact_accelerometer">📱 휴대폰 가속도계는 초당 200회 업데이트</string>
+    <string name="tip_fact_olympic">🏓 탁구는 1988년 올림픽 종목이 됨</string>
+    <string name="tip_fact_whiff_whaff">📱 원래 이름: \"Whiff-Whaff\" (1880년대)</string>
+    <string name="tip_fact_no_balls">🎮 이 게임은 진짜 공을 사용하지 않아요 🤯</string>
+    <string name="tip_fact_spin_rpm">🏓 최고 선수들은 공을 9,000RPM으로 회전!</string>
+    <string name="tip_fact_longest_rally">🏓 최장 랠리 기록: 8시간 40분 ⏱️</string>
+    <string name="tip_fact_reaction_time">⚡ 프로 반응 시간은 0.1초 미만</string>
+    <string name="tip_fact_calories">🏃 1시간 플레이로 약 270 칼로리 소모</string>
+    <string name="tip_fact_pong_arcade">🎮 \"Pong\" (1972)이 게임 산업을 시작</string>
+    <string name="tip_fact_grip_safety">📱 프로 팁: 휴대폰을 잡으세요, 던지지 마세요! 😅</string>
+    <string name="tip_fact_ball_weight">⚖️ 표준 탁구공은 2.7그램밖에 안 됨</string>
+    <string name="tip_fact_bluetooth_king">👑 블루투스는 바이킹 왕의 이름</string>
+    <string name="tip_fact_gyro_vs_accel">🧭 가속도계는 속도, 자이로는 회전 측정</string>
+    <string name="tip_fact_freq_hop">📻 블루투스는 초당 1,600회 주파수 변경</string>
+    <string name="tip_fact_mems_tech">🔬 휴대폰 센서는 마이크로 머신 (MEMS)</string>
+    <string name="tip_fact_packet_speed">📨 데이터 패킷은 빛의 속도로 이동!</string>
+
+    <!-- ==================== CONTENT DESCRIPTIONS ==================== -->
+    <string name="cd_navigate">탐색</string>
+    <string name="cd_info">정보</string>
+    <string name="cd_user_avatar">사용자 아바타</string>
+    <string name="cd_share_game">게임 공유</string>
+    <string name="cd_my_avatar">내 아바타</string>
+    <string name="cd_my_ring">내 링</string>
+    <string name="cd_opponent_avatar">상대 아바타</string>
+    <string name="cd_opponent_ring">상대 링</string>
+    <string name="cd_partner_avatar">파트너 아바타</string>
+    <string name="cd_partner_ring">파트너 링</string>
+    <string name="cd_your_avatar">당신의 아바타</string>
+    <string name="cd_avatar">아바타</string>
+    <string name="cd_avatar_index">아바타 %1$d</string>
+    <string name="cd_background_ring">배경 링</string>
+    <string name="cd_player_avatar">플레이어 아바타</string>
+    <string name="cd_streak_multiplier">연속 배율</string>
+</resources>
