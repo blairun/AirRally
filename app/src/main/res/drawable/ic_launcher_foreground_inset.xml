@@ -1,0 +1,10 @@
+<!-- Wraps the foreground icon with padding to replace unsafe <inset> -->
+<!-- 12dp padding balances launcher mask requirements with icon visibility -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:drawable="@drawable/ic_launcher_foreground_raw"
+        android:top="14dp"
+        android:bottom="14dp"
+        android:left="14dp"
+        android:right="14dp" />
+</layer-list>

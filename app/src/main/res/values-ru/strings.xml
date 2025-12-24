@@ -1,0 +1,627 @@
+<resources>
+    <string name="app_name">AirRally</string>
+    
+    <!-- ==================== MAIN MENU ==================== -->
+    <string name="bluetooth_permission_required">Для игры требуются разрешения Bluetooth.</string>
+    <string name="connected_to">Подключено к %1$s</string>
+    <string name="unknown">Неизвестно</string>
+    <string name="redirecting_lobby">Перенаправление в лобби...</string>
+    <string name="disconnect">ОТКЛЮЧИТЬСЯ</string>
+    <string name="host_game">СОЗДАТЬ ИГРУ</string>
+    <string name="join_game">ПРИСОЕДИНИТЬСЯ</string>
+    <string name="play_with_friend">ИГРАТЬ С ДРУГОМ</string>
+    <string name="looking_for_friends">Поиск друзей...</string>
+    <string name="waiting_for_friends">Ожидание друзей...</string>
+    <string name="settings">НАСТРОЙКИ</string>
+    <string name="waiting_for_players">Ожидание игроков...</string>
+    <string name="cancel">ОТМЕНА</string>
+    <string name="looking_for_games">Поиск игр поблизости...</string>
+    <string name="available_games">Доступные игры:</string>
+    <string name="connect_to">Подключиться к %1$s</string>
+    <string name="auto_connecting">Автоподключение через %1$dс...</string>
+    <string name="connecting">Подключение...</string>
+    <string name="error_prefix">Ошибка: %1$s</string>
+    <string name="reset">Сброс</string>
+    <string name="share_game_content">Зацените AirRally - Пинг-понг без стола! https://github.com/blairun/AirRally</string>
+    <string name="play_solo_rally">ИГРАТЬ СОЛО РАЛЛИ</string>
+    <string name="new_avatar_unlocked">🎉 Новый аватар разблокирован! Нажми для просмотра</string>
+    <string name="new_ring_unlocked">🎉 Новый фон разблокирован! Нажми для просмотра</string>
+    <string name="new_unlocks_both">🎉 Новый аватар и фон разблокированы! Нажми для просмотра</string>
+
+    <!-- Taglines -->
+    <string name="tagline_1">Пинг-понг без мячей 👀</string>
+    <string name="tagline_2">Воображаемый пинг-понг</string>
+    <string name="tagline_3">Нет стола, нет ракетки, нет проблем.</string>
+    <string name="tagline_4">Всё дело в запястье.</string>
+    <string name="tagline_5">Не выпускай телефон из рук!</string>
+    <string name="tagline_6" formatted="false">100% невидимый, 100% реальный.</string>
+    <string name="tagline_7">Мяч - это ложь.</string>
+    <string name="tagline_8">Битва ракеток!</string>
+    <string name="tagline_9">Понгого!</string>
+    <string name="tagline_10">Маши так, будто никто не смотрит.</string>
+
+    <!-- ==================== LOBBY ==================== -->
+    <string name="lobby_title">ЛОББИ</string>
+    <string name="start_game">НАЧАТЬ ИГРУ</string>
+    <string name="waiting_for_opponent">ОЖИДАНИЕ ПРОТИВНИКА...</string>
+    <string name="waiting_for_host">Ожидание хоста...</string>
+    <string name="leave">ВЫЙТИ</string>
+
+    <!-- ==================== GAME MODES ==================== -->
+    <string name="game_modes_title">Режимы Игры</string>
+    <string name="game_mode_classic">КЛАССИКА</string>
+    <string name="game_mode_classic_desc">1 на 1\n2 Подачи. Первый до 11.</string>
+    <string name="game_mode_rally">РАЛЛИ</string>
+    <string name="game_mode_rally_desc">Кооп\nДержите мяч в игре!</string>
+    <string name="partner">ПАРТНЁР</string>
+    <string name="waiting_for_partner">Ожидание партнёра...</string>
+    <string name="vs_text">VS</string>
+
+    <!-- ==================== GAME SCREEN ==================== -->
+    <string name="you">ВЫ</string>
+    <string name="opponent">ПРОТИВНИК</string>
+    <string name="your_serve">ВАША ПОДАЧА</string>
+    <string name="swing_to_serve">Взмахните для подачи!</string>
+    <string name="swing_to_serve_prompt">ВЗМАХНИТЕ ДЛЯ ПОДАЧИ!</string>
+    <string name="opponent_serving">ПОДАЧА ПРОТИВНИКА</string>
+    <string name="partner_serving">ПОДАЧА ПАРТНЁРА</string>
+    <string name="point_scored">ОЧКО</string>
+    <string name="one_life_down">ОДНА ЖИЗНЬ ПОТЕРЯНА</string>
+    <string name="get_ready">Приготовьтесь...</string>
+    <string name="next_up">Далее...</string>
+    <string name="hit">УДАР!</string>
+    <string name="wait">ЖДИТЕ...</string>
+    <string name="action_feed">ЛЕНТА СОБЫТИЙ</string>
+    <string name="no_events_yet">Пока нет событий</string>
+    <string name="volume_toast">🔊 Прибавьте громкость для полного погружения!</string>
+
+    <!-- Power Outage UI -->
+    <string name="power_outage_title">⚡ ОТКЛЮЧЕНИЕ ЭНЕРГИИ ⚡</string>
+    <string name="power_outage_hit_different">Выполните %1$d разных ударов</string>
+    <string name="power_outage_progress">%1$d / %2$d</string>
+
+    <!-- Debug Info Overlay -->
+    <string name="debug_info">ИНФО ОТЛАДКИ</string>
+    <string name="phase_fmt">Фаза: %1$s</string>
+    <string name="arrival_fmt">Прибытие: %1$d</string>
+    <string name="now_fmt">Сейчас: %1$d</string>
+    <string name="delta_fmt">Дельта: %1$dмс</string>
+    <string name="difficulty_fmt">Сложность: %1$d</string>
+    <string name="flight_time_fmt">ВремяПолета: %1$d</string>
+    <string name="hit_window_fmt">ОкноУдара: %1$d</string>
+    <string name="last_swing">ПОСЛЕДНИЙ ВЗМАХ:</string>
+    <string name="type_fmt">Тип: %1$s</string>
+    <string name="grav_z_fmt">ГравZ: %1$s</string>
+
+    <!-- Action Feed Events -->
+    <string name="event_you_served">Вы подали: %1$s</string>
+    <string name="event_you_hit">Вы ударили: %1$s</string>
+    <string name="event_opponent_hit">Противник ударил: %1$s</string>
+    <string name="event_partner_hit">Партнёр ударил: %1$s</string>
+    <string name="event_ball_bounced">Мяч отскочил</string>
+    <string name="event_fault_net">✖️ Ошибка (Сетка) ✖️</string>
+    <string name="event_fault_out">✖️ Ошибка (Аут) ✖️</string>
+    <string name="event_hit_net">✖️ Вы попали в сетку! (%1$s) ✖️</string>
+    <string name="event_hit_out">✖️ Вы попали в аут! (%1$s) ✖️</string>
+    <string name="event_whiff_early">✖️ Промах (Слишком рано) ✖️</string>
+    <string name="event_miss_late">✖️ Промах (Слишком поздно) ✖️</string>
+    <string name="event_miss_no_swing">✖️ Промах (Нет замаха) ✖️</string>
+    <string name="event_opp_net">✔️ Противник в сетку! ✔️</string>
+    <string name="event_opp_out">✔️ Противник в аут! ✔️</string>
+    <string name="event_opp_whiff">✔️ Противник промахнулся! ✔️</string>
+    <string name="event_opp_miss_no_swing">✔️ Противник промахнулся (Нет замаха) ✔️</string>
+    <string name="event_opp_miss">✔️ Противник промахнулся! ✔️</string>
+    <string name="event_point_to">Очко %1$s</string>
+    <string name="event_life_lost">❤️‍🩹 Жизнь потеряна! ❤️‍🩹</string>
+
+    <!-- ==================== SWING TYPES ==================== -->
+    <string name="swing_soft_flat">МЯГКИЙ ПЛОСКИЙ</string>
+    <string name="swing_medium_flat">СРЕДНИЙ ПЛОСКИЙ</string>
+    <string name="swing_hard_flat">СИЛЬНЫЙ ПЛОСКИЙ</string>
+    <string name="swing_soft_lob">МЯГКАЯ СВЕЧА</string>
+    <string name="swing_medium_lob">СРЕДНЯЯ СВЕЧА</string>
+    <string name="swing_hard_lob">СИЛЬНАЯ СВЕЧА</string>
+    <string name="swing_soft_smash">МЯГКОЕ ГАШЕНИЕ</string>
+    <string name="swing_medium_smash">СРЕДНЕЕ ГАШЕНИЕ</string>
+    <string name="swing_hard_smash">СИЛЬНОЕ ГАШЕНИЕ</string>
+
+    <!-- ==================== GAME OVER ==================== -->
+    <string name="you_won">ВЫ ПОБЕДИЛИ!</string>
+    <string name="you_lost">ВЫ ПРОИГРАЛИ</string>
+    <string name="game_over">ИГРА ОКОНЧЕНА</string>
+    <string name="final_score">Итоговый счет</string>
+    <string name="score">Счет</string>
+    <string name="play_again">ИГРАТЬ СНОВА</string>
+    <string name="main_menu">ГЛАВНОЕ МЕНЮ</string>
+    <string name="game_over_metric">Метрика</string>
+    <string name="game_over_you">Вы</string>
+    <string name="game_over_partner">Партнёр</string>
+    <string name="game_over_lines_cleared">Завершено Линий</string>
+    <string name="game_over_grid_level">Уровень</string>
+    <string name="game_over_new_high_score">Новый Рекорд!</string>
+    <string name="game_over_high_score">Лучший Счёт</string>
+    <string name="game_over_longest_rally">Самое Длинное Ралли</string>
+    <string name="tier_points_format">%1$dоч</string>
+    <string name="longest_rally_hits">Самое Длинное Ралли: %1$d ударов</string>
+    <string name="debug_mode_label">РЕЖИМ ОТЛАДКИ</string>
+    <string name="change_score">Изменить Счёт</string>
+    <string name="return_label">Назад</string>
+
+    <!-- ==================== STATS SCREEN ==================== -->
+    <string name="stats_title">Статистика Игры</string>
+    <string name="stats_wins">Победы</string>
+    <string name="stats_losses">Поражения</string>
+    <string name="stats_total_hits">Всего Ударов</string>
+    <string name="stats_longest_rally">Самый Длинный Розыгрыш</string>
+    <string name="stats_rally_high_score">Лучший Счёт</string>
+    <string name="stats_rally_longest_rally">Самое Длинное Ралли</string>
+    <string name="stats_rally_lines_cleared">Завершено Линий</string>
+    <string name="stats_rally_highest_level">Макс. Уровень</string>
+    <string name="stats_shot_distribution">Распределение Ударов</string>
+    <string name="stats_filter_all">Все</string>
+    <string name="stats_filter_won">Выигрышные удары</string>
+    <string name="stats_filter_lost">Проигрышные удары</string>
+    <string name="stats_reset_title">Сброс Статистики</string>
+    <string name="stats_reset_message">Вы уверены, что хотите сбросить всю статистику игры? Это действие нельзя отменить.</string>
+    <string name="stats_reset_confirm">Сбросить</string>
+    <string name="stats_reset_cancel">Отмена</string>
+    <string name="stats_rally_mode">Режим Ралли</string>
+    <string name="stats_solo_rally_mode">Режим Одиночного Ралли</string>
+    <string name="stats_classic_mode">Классический Режим</string>
+    <string name="stats_next_unlock">след. разблокировка</string>
+
+    <!-- Heatmap Labels -->
+    <string name="heatmap_soft">МЯГКО</string>
+    <string name="heatmap_med">СРЕДНЕ</string>
+    <string name="heatmap_hard">СИЛЬНО</string>
+    <string name="heatmap_lob">СВЕЧА</string>
+    <string name="heatmap_flat">ПЛОСКО</string>
+    <string name="heatmap_smash">ГАШЕНИЕ</string>
+
+    <!-- ==================== DIALOGS ==================== -->
+    <string name="device_incompatible">Устройство несовместимо</string>
+    <string name="missing_sensors_text">Для этой игры требуются специальные датчики. На вашем устройстве отсутствуют: %1$s.\n\nПриложение будет закрыто.</string>
+    <string name="exit">Выход</string>
+    <string name="hey_listen">Эй, послушай!</string>
+    <string name="swing_warning">В этой игре нужно махать телефоном.</string>
+    <string name="warning_strap">• Используйте ремешок для фиксации телефона</string>
+    <string name="warning_surroundings">• Следите за окружением</string>
+    <string name="warning_hold">• Держите телефон экраном НАРУЖУ (от ладони)</string>
+    <string name="nah">Неа</string>
+    <string name="cool">Круто</string>
+    
+    <!-- Exit Confirmation Dialog -->
+    <string name="exit_game_title">Выйти?</string>
+    <string name="exit_game_message">Вы уверены, что хотите выйти? Это завершит текущую игру.</string>
+    <string name="exit_game_yes">Да</string>
+    <string name="exit_game_no">Не важно</string>
+
+    <!-- Common Dialog Buttons -->
+    <string name="back">Назад</string>
+    <string name="close">Закрыть</string>
+    <string name="done">Готово</string>
+    <string name="accept">Принять</string>
+    <string name="start">Начать</string>
+    <string name="next">Далее</string>
+    <string name="defaults">По умолчанию</string>
+    <string name="advanced">Дополнительно</string>
+    <string name="coming_soon">Скоро</string>
+
+    <!-- ==================== SETTINGS - APPEARANCE ==================== -->
+    <string name="appearance">Внешний вид</string>
+    <string name="theme">Тема</string>
+    <string name="theme_system">Системная</string>
+    <string name="theme_light">Светлая</string>
+    <string name="theme_dark">Тёмная</string>
+    <string name="player_name">Имя игрока</string>
+    <string name="avatar">Аватар</string>
+    <string name="avatar_unknown">?</string>
+    <string name="rally_score_unlocks">Разблокировки Очков Ралли</string>
+    <string name="rally_lines_unlocks">Разблокировки Линий Ралли</string>
+    <string name="solo_lines_unlocks">Разблокировки Линий Соло</string>
+    <string name="rally_length_unlocks">Разблокировки Длины Ралли</string>
+    <string name="classic_wins_unlocks">Разблокировки Побед Классики</string>
+    <string name="app_icon">Иконка Приложения</string>
+    <string name="icon_modern">Современная</string>
+    <string name="icon_classic">Классическая</string>
+    <string name="icon_change_warning">(смена иконки закроет приложение)</string>
+
+    <!-- Background Ring -->
+    <string name="background_ring">Фоновое кольцо</string>
+    <string name="ring_none">Нет</string>
+    <string name="ring_rally_score_unlocks">Разблокировки Очков Ралли</string>
+    <string name="ring_solo_score_unlocks">Разблокировки Очков Соло</string>
+    <string name="ring_long_press_hint">(долгое нажатие для просмотра)</string>
+
+    <!-- Avatar Unlock Hints -->
+    <string name="unlock_hint_score">Набери %1$d+ очков</string>
+    <string name="unlock_hint_rally">Ралли %1$d+</string>
+    <string name="unlock_hint_wins">Выиграй %1$d+ игр</string>
+
+    <!-- ==================== SETTINGS - GAME PARAMETERS ==================== -->
+    <string name="game_parameters">Параметры игры</string>
+    <string name="settings_controlled_by_host">Некоторые настройки контролирует Хост</string>
+    <string name="settings_synced_from_host">Некоторые настройки синхронизируются с хостом (пороги остаются локальными)</string>
+    <string name="swing_device_to_test">Взмахните устройством для теста</string>
+    
+    <!-- Game Params Tab Names -->
+    <string name="params_tab_main">Основные</string>
+    <string name="params_tab_accessibility">Доступность</string>
+    <string name="params_tab_advanced">Дополнительно</string>
+
+    <!-- Flight Time -->
+    <string name="flight_time_label">Время полета: %1$d мс (%2$s)</string>
+    <string name="difficulty_hard">Сложно</string>
+    <string name="difficulty_medium">Средне</string>
+    <string name="difficulty_easy">Легко</string>
+    <string name="info_flight_time_title">Время полета</string>
+    <string name="info_flight_time_text">Контролирует время, которое мяч находится в воздухе. (Сила замаха и наклон телефона увеличивают или уменьшают это время.)\n\n500-600мс: Сложно (Быстро)\n700-900мс: Средне\n1000-1200мс: Легко (Медленно)\n\n(Синхронизировано с противником)</string>
+    <string name="flight_time_modifier">Множитель Времени Полёта</string>
+    <string name="current_multiplier">Текущее: %1$.1fx</string>
+
+    <!-- Hit Window -->
+    <string name="hit_window_label">Окно удара: %1$d мс (%2$s)</string>
+    <string name="info_hit_window_title">Окно удара (Сложность)</string>
+    <string name="info_hit_window_text">Изменяет допустимую погрешность времени замаха.\n\nБольше окно = Легче попасть.\nМеньше окно = Сложнее попасть.\n\nДиапазон: 200мс (Сложно) до 700мс (Легко)\n\n(Синхронизировано с противником)</string>
+    <string name="shrinking_hit_window">Сжимающееся Окно Удара</string>
+    <string name="info_shrinking_window_title">Сжимающееся Окно Удара</string>
+    <string name="info_shrinking_window_text">Если включено, окно удара немного сжимается с каждым ударом.\n\n(Синхронизировано с противником)</string>
+    <string name="info_rally_no_risk_text">В режиме Ралли риски сетки/аута убраны, т.к. игроки сотрудничают.</string>
+
+    <!-- Swing Sensitivity & Thresholds -->
+    <string name="swing_sensitivity_label">Чувствительность взмаха: %1$.1f</string>
+    <string name="info_sensitivity_title">Чувствительность взмаха</string>
+    <string name="info_sensitivity_text">Регулирует минимальную силу, необходимую для регистрации взмаха.\n\nНиже = Более чувствительно (Легче активировать)\nВыше = Менее чувствительно (Сложнее активировать)\n\n(Только локально)</string>
+    <string name="swing_thresholds_label">Пороги Взмаха</string>
+    <string name="info_thresholds_title">Пороги Взмаха</string>
+    <string name="info_thresholds_text">Установите минимальную силу взмаха для каждой интенсивности удара.\n\nПороги должны отличаться минимум на 8 единиц.\n\n• Мягко: Мин. сила для регистрации взмаха\n• Средне: Сила для средних ударов\n• Сильно: Сила для сильных ударов\n\n(Только локально - не синхронизируется)</string>
+    <string name="slider_soft_fmt">Мягко %1$d</string>
+    <string name="slider_med_fmt">Средне %1$d</string>
+    <string name="slider_hard_fmt">Сильно %1$d</string>
+
+    <!-- Swing Parameters Table -->
+    <string name="swing_parameters">Параметры Взмаха</string>
+    <string name="swing_type">Тип</string>
+    <string name="swing_flight">Полёт</string>
+    <string name="swing_net_percent">Сетка%</string>
+    <string name="swing_out_percent">Аут%</string>
+    <string name="swing_shrink_percent">Сжатие%</string>
+    <string name="fine_tune_value">Тонкая Настройка</string>
+    <string name="current_percent">Текущее: %1$d%%</string>
+    <string name="info_swing_params_text">Настройте риск и вознаграждение для каждого типа удара.\n\nПолет: Множитель времени полета.\nСетка%%: Шанс попасть в сетку (потеря очка).\nАут%%: Шанс ударить за пределы (потеря очка).\nСжатие%%: Насколько этот удар сжимает окно удара противника (усложняя ему задачу).\n\nРежим Ралли: Сетка%% и Аут%% исключены (установлены на 0%%), так как партнеры сотрудничают.\n\nПримечание: Очень быстрые удары (Низкое Время Полета) могут немного сдвинуть окно удара противника, чтобы обеспечить возможность удара.</string>
+
+    <!-- Solo Rally Settings -->
+    <string name="solo_flight_multiplier_label">Множитель Времени Полета Соло: %1$.1fx</string>
+    <string name="info_solo_multiplier_title">Множитель Времени Полета Соло</string>
+    <string name="info_solo_multiplier_text">Регулирует, насколько дольше летит мяч в режиме Одиночного Ралли. Более высокие значения дают больше времени между ударами.\n\nПо умолчанию: 1.3×\nДиапазон: 1.0× до 2.0×</string>
+    <string name="solo_flight_adder_fmt">Добавка Времени Полета Соло: +%1$dms</string>
+    <string name="info_solo_flight_adder_title">Добавка Времени Полета Соло</string>
+    <string name="info_solo_flight_adder_text">Увеличивает время нахождения мяча в воздухе между ударами. Более длительное время полета для одиночного режима, так как вы бьете чаще.\n\nПо умолчанию: +500ms\nДиапазон: +200ms до +800ms</string>
+
+    <!-- ==================== SETTINGS - ACCESSIBILITY ==================== -->
+    <string name="accessibility">Доступность</string>
+    <string name="tap_to_hit_mode">Режим "Нажми для удара"</string>
+    <string name="info_tap_to_hit_title">Режим "Нажми для удара"</string>
+    <string name="info_tap_to_hit_text">Включает сенсорное управление в режимах Ралли:\n\n• НАЖМИТЕ на клетку для совершения Удара (без вращения)\n• СВАЙПНИТЕ по клетке для добавления Вращения:\n  ⬆️ Верхнее вращение\n  ⬇️ Нижнее вращение\n  ⬅️/➡️ Боковое вращение\n  ↗️↖️ Комбинированное вращение\n\nОтлично подходит для доступности или точного выбора удара.</string>
+    <string name="color_blind_mode">Режим для дальтоников</string>
+    <string name="enhanced_audio_cues">Улучшенные звуковые сигналы</string>
+    <string name="haptic_intensity">Сила вибрации</string>
+    <string name="spin_shots_label">Крученые удары</string>
+    <string name="info_spin_shots_title">Крученые удары</string>
+    <string name="info_spin_shots_text">Применение вращения к вашим ударам влияет на тайминг:\n\n• Верхнее вращение: −10% время полета, −10% окно удара\n• Нижнее вращение: +10% время полета, −5% окно удара\n• Боковое вращение (лево/право): ±5% время полета, ±5% окно удара (случайно)\n\nКомбинированные вращения суммируются мультипликативно. Например, верхнее-правое вращение сочетает эффекты верхнего вращения со случайным модификатором бокового вращения.</string>
+
+    <!-- ==================== SETTINGS - DEBUG ==================== -->
+    <string name="debug_settings">Настройки отладки</string>
+    <string name="use_debug_tones">Использовать тоны отладки</string>
+    <string name="info_debug_tones_title">Тоны отладки</string>
+    <string name="info_debug_tones_text">Если включено, воспроизводит простые звуковые сигналы вместо звуковых эффектов игры.</string>
+    <string name="debug_mode">Режим отладки</string>
+    <string name="info_debug_mode_title">Режим отладки</string>
+    <string name="info_debug_mode_text">Включает оверлей на игровом экране, показывающий техническую статистику, такую как RTT, точное состояние игры и сырые данные датчиков.\n\n(Только локально)</string>
+    <string name="game_debug_overlay">Отладочный Оверлей Игры</string>
+    <string name="sensor_hit_test">Тест датчика удара</string>
+    <string name="force_fmt">Сила: %.1f</string>
+    <string name="accel_fmt">Ускор: X: %1$.1f, Y: %2$.1f, Z: %3$.1f</string>
+    <string name="gyro_fmt">Гиро: X: %1$.1f, Y: %2$.1f, Z: %3$.1f</string>
+    <string name="grav_fmt">Грав: X: %1$.1f, Y: %2$.1f, Z: %3$.1f</string>
+    <string name="swing_test_prompt">Взмахните телефоном для теста!</string>
+    <string name="soft_med_hard_thresholds">Мягко: %1$d, Средне: %2$d, Сильно: %3$d</string>
+    <string name="open_debug_game">Открыть Отладочную Игру</string>
+    <string name="open_debug_end_game">Открыть Отладочный Конец Игры</string>
+    <string name="debug_controls_title">УПРАВЛЕНИЕ ОТЛАДКОЙ</string>
+    <string name="debug_simulate_my_hit">Симуляция\nМоего Удара</string>
+    <string name="debug_auto_play">Авто-Игра</string>
+    <string name="debug_simulate_opp_hit">Симуляция\nУдара Противника</string>
+    <string name="debug_return">Назад</string>
+
+    <!-- ==================== SETTINGS - ABOUT ==================== -->
+    <string name="about_airrally">О AirRally</string>
+    <string name="version">Версия</string>
+    <string name="credits">Кредиты</string>
+    <string name="created_by">Создано bl</string>
+    <string name="created_by_ai">AI</string>
+    <string name="created_by_r">r</string>
+    <string name="license">Лицензия</string>
+    <string name="license_name">CC BY-NC 4.0</string>
+    <string name="source_code">Исходный код</string>
+    <string name="view_github_repo">GitHub репозиторий</string>
+    <string name="problems">Проблемы?</string>
+    <string name="report_bug">Сообщить об ошибке</string>
+    <string name="calibrate">Калибровка</string>
+    <string name="calibration_title">Калибровка Взмаха</string>
+    <string name="calibration_instructions">Взмахните телефоном 3 раза на каждом уровне интенсивности.\n\nНачните с МЯГКИХ взмахов, затем СРЕДНИЕ, затем СИЛЬНЫЕ.</string>
+    <string name="calibration_swing_soft">МЯГКО</string>
+    <string name="calibration_swing_medium">СРЕДНЕ</string>
+    <string name="calibration_swing_hard">СИЛЬНО</string>
+    <string name="calibration_swing_progress">Взмах %1$d из 3</string>
+    <string name="calibration_calculating">Вычисление…</string>
+    <string name="calibration_success">Калибровка Завершена!</string>
+    <string name="calibration_new_thresholds">Новые пороги:\n\nМягко: %.1f\nСредне: %.1f\nСильно: %.1f</string>
+    <string name="calibration_failed">Калибровка Не Удалсь</string>
+    <string name="calibration_failed_overlap">Интенсивность ваших взмахов слишком перекрывается. Пороги должны отличаться минимум на 8 единиц между уровнями.\n\nВаши текущие настройки останутся без изменений.</string>
+
+    <!-- ==================== BONUS MECHANICS ==================== -->
+    <string name="bonus_mechanics">Бонусные Механики</string>
+    <string name="bonus_spin_multiplier">Множитель Вращения</string>
+    <string name="bonus_copy_cat">Подражатель</string>
+    <string name="bonus_special_squares">Специальные Квадраты</string>
+    <string name="bonus_power_outage">Отключение Энергии</string>
+
+    <!-- Bonus Info Popups -->
+    <string name="info_bonus_mechanics_title">Бонусные Механики</string>
+    <string name="info_bonus_mechanics_text">Бонусные механики добавляют специальные возможности получения очков в режимах Ралли. Отключите отдельные механики, чтобы упростить игровой процесс или сосредоточиться на определенных навыках.\n\n(Синхронизировано с партнером)</string>
+    <string name="info_bonus_spin_title">💫 Множитель Вращения</string>
+    <string name="info_bonus_spin_text">Используйте различные техники вращения (верхнее, нижнее, левое, правое и комбинации), чтобы увеличить множитель очков. Каждое уникальное вращение добавляет +0.1 к вашему множителю (макс +0.5).\n\nДостигните 5 уникальных типов вращения, пока ваш аватар вращается, чтобы разблокировать бесконечное вращение!</string>
+    <string name="info_bonus_copy_cat_title">😺 Подражатель</string>
+    <string name="info_bonus_copy_cat_text">В Коопе: Копируйте типы ударов партнера, чтобы создать постоянный множитель. Завершите последовательность из 9 ударов для получения дополнительной жизни!\n\nВ Соло: Следуйте целевой последовательности, созданной CPU (🎯), чтобы увеличить множитель и заработать дополнительные жизни.</string>
+    <string name="info_bonus_special_squares_title">Специальные Квадраты</string>
+    <string name="info_bonus_special_squares_text">Специальные квадраты появляются при повышении уровня:\n\n🪙 Золотой: Стоит 3× очков. Очищайте линии с ними для бонусных множителей!\n🍌 Банановая Кожура: Вычитает очки при попадании и уменьшает золотой множитель на 0.1.\n💥 Мина: Завершает ралли и останавливает бонус вращения, если он есть!\n🛡️ Щит: Очистите сетку с нетронутыми штрафами, чтобы получить защиту.</string>
+    <string name="info_bonus_power_outage_title">🔌 Отключение Энергии</string>
+    <string name="info_bonus_power_outage_text">Попадите в одну и ту же клетку 10 раз, и свет погаснет! Следите за предупреждениями 🔌 на клетках.\n\nЧтобы восстановить энергию: Попадите в 5 разных клеток подряд. Успех дает бонус к окну удара +50мс!</string>
+
+    <!-- Rally Bonus & Grid Upgrades (info-only) -->
+    <string name="rally_bonus_label">Бонусы Ралли</string>
+    <string name="info_rally_bonus_title">🏓 Бонусы Ралли</string>
+    <string name="info_rally_bonus_text">Ваш множитель очков растет во время ралли:\n\n• Инерция: +0.1 за каждые 10 ударов (макс +0.5)\n• Бонус Вращения: +0.1 за уникальный тип вращения (макс +0.5)\n• Подражатель: +0.1 за достигнутый уровень (макс +0.5)\n• Золотые Линии: +0.1 за очистку золотой линии (макс +0.5)\n\nМаксимальный общий множитель: 3.5×</string>
+    <string name="grid_upgrades_label">Улучшения Сетки</string>
+    <string name="info_grid_upgrades_title">🔢 Улучшения Сетки</string>
+    <string name="info_grid_upgrades_text">Заполните сетку ударов 3×3, чтобы повысить уровень:\n\n• Очищайте горизонтальные, вертикальные или диагональные линии, чтобы отмечать клетки как выполненные и получать бонусные очки.\n• Вертикальные линии приносят больше очков, чем горизонтальные\n• Диагональные линии приносят больше всего!\n• Завершите обе диагонали (X-Clear) для мгновенного повышения уровня\n• Каждое повышение уровня дает +1 дополнительную жизнь\n• Окна удара сжимаются на -50мс за уровень (минимум: 300мс)</string>
+
+    <!-- ==================== HELP SCREEN ==================== -->
+    <string name="help_tab_general">Общее</string>
+    <string name="help_tab_rally">Ралли</string>
+    <string name="help_tab_solo">Соло</string>
+    <string name="help_tab_classic">Классика</string>
+
+    <!-- General Help -->
+    <string name="safety_first">Безопасность прежде всего</string>
+    <string name="safety_strap">• Используйте ремешок на запястье.</string>
+    <string name="safety_area">• Освободите игровое пространство.</string>
+    <string name="gameplay">Геймплей</string>
+    <string name="gameplay_hold">• Держите телефон экраном НАРУЖУ (от ладони).</string>
+    <string name="gameplay_yellow">• ЖЕЛТЫЙ означает Приближается (Приготовься).</string>
+    <string name="gameplay_green">• ЗЕЛЕНЫЙ означает Мах (После отскока).</string>
+    <string name="gameplay_red">• КРАСНЫЙ означает Ход противника.</string>
+    <string name="shot_types_risks">Типы ударов и Риски</string>
+    <string name="shot_types_desc">Сила замаха и наклон меняют ваш удар:</string>
+    <string name="shot_flat">• Экран Вертикально = ПЛОСКИЙ УДАР</string>
+    <string name="shot_flat_desc">  Стандартный удар. Безопасный и надежный.</string>
+    <string name="shot_lob">• Экран Вверх = СВЕЧА</string>
+    <string name="shot_lob_desc">  Медленная, высокая дуга.</string>
+    <string name="shot_lob_safe">  Безопасно, дает время восстановиться.</string>
+    <string name="shot_smash">• Экран Вниз = ГАШЕНИЕ</string>
+    <string name="shot_smash_desc">  Быстро и Агрессивно!</string>
+    <string name="shot_smash_risk">  Уменьшает окно удара противника, но</string>
+    <string name="shot_smash_net">  Выше шанс попасть в сетку или в аут.</string>
+
+    <!-- Classic Mode Help -->
+    <string name="mode_classic_title">🏓 Классический Режим (1v1)</string>
+    <string name="mode_classic_rules">• Первый до 11 очков побеждает (с разницей 2)</string>
+    <string name="mode_classic_serve">• Подача меняется каждые 2 очка</string>
+    <string name="mode_classic_scoring">• Очко, когда противник промахивается</string>
+
+    <!-- Rally Mode Help -->
+    <string name="mode_rally_title">🤝 Режим Ралли (Кооп)</string>
+    <string name="mode_rally_goal">• Работайте вместе, чтобы поддерживать ралли!</string>
+    <string name="mode_rally_lives">• Начинаете с 3 общими жизнями</string>
+    <string name="mode_rally_grid">• Заполните сетку 3×3 для повышения уровня</string>
+    <string name="mode_rally_xclear">• X-Clear: Обе диагонали = мгновенный уровень!</string>
+    <string name="mode_rally_life">• Получайте доп. жизнь с каждым уровнем</string>
+    <string name="help_scoring_leveling">Очки и Уровни</string>
+    <string name="help_specials">Специальное</string>
+    <string name="help_spin_shots">• Крученые удары: Используйте разные вращения 💫, чтобы увеличить множитель очков.</string>
+    <string name="help_copy_cat">• Подражатель: Повторяйте удары партнёра, чтобы увеличить множитель очков! 🐱</string>
+    <string name="help_penalty_squares">• Штрафные Квадраты: Остерегайтесь банановой кожуры 🍌 (теряете очки и золото!) и мин 💥 (теряете жизнь и сбиваете вращение)! Получите щит, очистив сетку, не задев эти квадраты.</string>
+    <string name="help_golden_squares">• Золотые Квадраты: Золотые 🪙 квадраты дают x3 очков! Используйте их для очистки линий, чтобы получить еще больше очков и увеличить множитель!</string>
+    <string name="help_power_outage">• Отключение Энергии: Попадите в одну и ту же клетку 10x, и свет погаснет! 🔌 Попадите в 5 разных клеток, чтобы восстановить энергию и получить дополнительное время окна удара. 💡</string>
+
+    <!-- Solo Rally Mode Help -->
+    <string name="mode_solo_title">🏋️ Одиночное Ралли (Тренировка)</string>
+    <string name="mode_solo_practice">• Режим тренировки - партнер не нужен!</string>
+    <string name="mode_solo_grid">• Та же сетка 3×3 и подсчет очков, что и в Кооп Ралли</string>
+    <string name="mode_solo_wall">• Мяч отскакивает от имитируемой стены</string>
+    <string name="mode_solo_flight">• Немного более длительное время полета для одиночной игры</string>
+    <string name="help_bonuses_specials">Бонусы и Специальное</string>
+    <string name="help_solo_bonuses_intro">В соло режиме те же бонусы и спецвозможности, что и в Кооп Ралли:</string>
+    <string name="help_solo_spin">• Крученые удары</string>
+    <string name="help_solo_copy_cat">• Подражатель (Следуйте последовательности CPU)</string>
+    <string name="help_solo_special">• Специальные Квадраты</string>
+    <string name="help_solo_outage">• Отключение Энергии</string>
+
+    <!-- ==================== TUTORIAL ==================== -->
+    <string name="tutorial_button">Обучение</string>
+    <string name="tutorial_banner_title">Добро пожаловать в AirRally!</string>
+    <string name="tutorial_banner_subtitle">Научись играть за 30 секунд.</string>
+    <string name="tutorial_banner_go">Погнали</string>
+    <string name="tutorial_banner_dismiss">Нет, спасибо</string>
+    
+    <string name="tutorial_welcome_title">Добро пожаловать в AirRally!</string>
+    <string name="tutorial_welcome_desc">Научись играть за 30 секунд</string>
+    
+    <string name="tutorial_hold_title">Держи телефон</string>
+    <string name="tutorial_hold_desc">Экраном от ладони</string>
+    <string name="tutorial_hold_swing">Взмахни, чтобы начать!</string>
+    
+    <!-- Tutorial Swings -->
+    <string name="tutorial_swing_soft">Мягкий плоский взмах</string>
+    <string name="tutorial_swing_medium">Средний плоский взмах</string>
+    <string name="tutorial_swing_hard">Сильный плоский взмах</string>
+    <string name="tutorial_swing_lob">Средняя Свеча</string>
+    <string name="tutorial_swing_smash">Среднее Гашение</string>
+    <string name="tutorial_swing_progress">Взмах %1$d из %2$d</string>
+    
+    <!-- Tutorial Grid Labels -->
+    <string name="tutorial_grid_lob">Свеча</string>
+    <string name="tutorial_grid_flat">Плоско</string>
+    <string name="tutorial_grid_smash">Гашение</string>
+    <string name="tutorial_grid_soft">Мягко</string>
+    <string name="tutorial_grid_med">Средне</string>
+    <string name="tutorial_grid_hard">Сильно</string>
+    
+    <!-- Tutorial Feedback -->
+    <string name="tutorial_try_again_both">Попробуй снова, %1$s и %2$s</string>
+    <string name="tutorial_try_again_single">Попробуй снова, %1$s</string>
+    <string name="tutorial_try_again">Попробуй снова!</string>
+    
+    <!-- Tutorial Progress -->
+    <string name="tutorial_line_cleared">Линия Очищена!</string>
+    <string name="tutorial_line_bonus">Очистка линий даёт доп. очки</string>
+    <string name="tutorial_multiline">Двойная Линия!</string>
+    <string name="tutorial_multiline_desc">Очисти 2+ линии сразу для ещё больших очков</string>
+    
+    <!-- Tutorial Bonus Info -->
+    <string name="tutorial_bonus_title">Бонусные Механики</string>
+    <string name="tutorial_spin_title">Крученые Удары</string>
+    <string name="tutorial_spin_desc">Поворачивай кисть при взмахе</string>
+    <string name="tutorial_squares_title">Специальные Квадраты</string>
+    <string name="tutorial_squares_desc">🪙 3x очков   🍌 штраф   💥 опасность</string>
+    <string name="tutorial_copycat_title">Подражатель</string>
+    <string name="tutorial_copycat_desc">Повторяй целевую последовательность</string>
+    <string name="tutorial_streak_title">Множитель Серии</string>
+    <string name="tutorial_streak_desc">Продолжай попадать для роста очков!</string>
+    <string name="tutorial_outage_title">Отключение Энергии</string>
+    <string name="tutorial_outage_desc">10x в одну клетку = тьма. Разнообразь удары!</string>
+    
+    <!-- Tutorial Completion -->
+    <string name="tutorial_calibration_title">Почти готово!</string>
+    <string name="tutorial_calibration_desc">Настройки по умолчанию подходят большинству. Если удары кажутся странными, попробуй калибровку в Настройки → Параметры Игры.</string>
+    <string name="tutorial_complete_title">Ты Готов!</string>
+    <string name="tutorial_complete_play">Играть Сейчас</string>
+    <string name="tutorial_retry">Повторить Обучение</string>
+    <string name="tutorial_main_menu">Главное Меню</string>
+    <string name="tutorial_grid_upgrades_title">🔢 Улучшения Сетки</string>
+    <string name="tutorial_grid_upgrades_desc">Очисти все 9 квадратов, чтобы повысить уровень сетки и получить доп. жизнь!</string>
+    <string name="tutorial_bonuses_title">✨ Бонусы</string>
+    <string name="tutorial_bonuses_desc">Существуют спецсобытия и множители очков. Нажми на 6 фишек рядом с аватаром в игре, чтобы узнать о каждой.</string>
+    <string name="tutorial_chips_hint">Нажми на 6 фишек рядом с аватаром в игре, чтобы узнать о каждой.</string>
+
+    <!-- ==================== SCROLLING TIPS ==================== -->
+    
+    <!-- Safety & Controls (ALL modes) -->
+    <string name="tip_safety_strap">🛡️ Безопасность прежде всего: Используй ремешок!</string>
+    <string name="tip_safety_area">🛡️ Освободи игровую зону перед взмахом</string>
+    <string name="tip_hold_screen">📱 Держи экран НАРУЖУ, от ладони</string>
+    <string name="tip_yellow_incoming">🟡 ЖЁЛТЫЙ = Мяч летит, приготовься!</string>
+    <string name="tip_green_swing">🟢 ЗЕЛЁНЫЙ = Твоя очередь, маши!</string>
+    <string name="tip_red_wait">🔴 КРАСНЫЙ = Жди партнёра/противника</string>
+    <string name="tip_volume_up">🔊 Прибавь громкость, чтобы слышать каждый удар</string>
+    <string name="tip_screen_rotation">📲 Заблокируй экран в портретном режиме</string>
+    <string name="tip_hit_window">⌛ "Окно удара" сжимается, чем дольше ралли</string>
+
+    <!-- Shot Types (ALL modes) -->
+    <string name="tip_flat_shot">📱 Экран Вертикально = ПЛОСКИЙ (надёжный)</string>
+    <string name="tip_lob_shot">⬆️ Экран Вверх = СВЕЧА (медленная, высокая)</string>
+    <string name="tip_smash_shot">⬇️ Экран Вниз = ГАШЕНИЕ (быстрое!)</string>
+    <string name="tip_harder_faster">💪 Маши сильнее для быстрых ударов</string>
+    <string name="tip_soft_more_time">🪶 Мягкие удары дают больше времени</string>
+    <string name="tip_lobs_safe">🎯 СВЕЧИ безопасны и дают время восстановиться</string>
+
+    <!-- Shot Types (CLASSIC only) -->
+    <string name="tip_smash_shrinks">⚡ ГАШЕНИЯ уменьшают окно удара противника</string>
+    <string name="tip_smash_risk">⚠️ Сильные гашения рискуют сеткой или аутом!</string>
+
+    <!-- Classic Mode Rules -->
+    <string name="tip_classic_first_11">🏓 Первый до 11, с разницей 2!</string>
+    <string name="tip_classic_serve_switch">🔄 Подача меняется каждые 2 очка</string>
+    <string name="tip_classic_score_miss">💥 Очко, когда противник промахивается</string>
+    <string name="tip_classic_mix_shots">🎯 Смешивай свечи и гашения для путаницы</string>
+    
+    <!-- Rally Mode (Co-op + Solo) -->
+    <string name="tip_rally_9_types">🎯 Ударь все 9 типов для повышения уровня!</string>
+    <string name="tip_rally_multi_line">✨ Заверши 2 или 3 линии сразу для бонуса!</string>
+    <string name="tip_rally_3_lines">🤔 3 линии сразу... возможно ли?</string>
+    <string name="tip_rally_x_clear">❌ X-Clears! Обе диагонали = мгновенный уровень</string>
+    <string name="tip_rally_points_scale">📈 Очки растут по уровням (1, 7, 10, 13...)</string>
+    <string name="tip_rally_extra_life">❤️ Заверши уровень для доп. жизни!</string>
+    <string name="tip_rally_triangular_numbers">🔢 Треугольные числа? Погугли!</string>
+    <string name="tip_rally_vertical_bonus">💡 Вертикальные линии дают больше горизонтальных</string>
+    <string name="tip_rally_diagonal_bonus">💡 Диагональные линии дают больше всего!</string>
+    <string name="tip_rally_window_shrink">⚡ Окно уменьшается на 50мс за уровень</string>
+
+    <!-- Rally Co-op Only -->
+    <string name="tip_coop_teamwork">🤝 Работай в команде для нового рекорда!</string>
+    <string name="tip_coop_lobs_partner">💡 Попробуй свечи, пока партнёр повышается</string>
+    <string name="tip_coop_3_lives">🎮 Начинаете с 3 общими жизнями</string>
+
+    <!-- Bonus Mechanics Tips -->
+    <string name="tip_rally_bonus_spin_mix">💫 Смешивай вращения (Верх, Низ, Бок) для множителя!</string>
+    <string name="tip_rally_bonus_spin_keep_going">💫 Крути дальше! Бонус сбрасывается при остановке.</string>
+    <string name="tip_rally_bonus_spin_infinite">💫 Сделай 5 уникальных вращений для БЕСКОНЕЧНОГО множителя!</string>
+    <string name="tip_rally_bonus_copy_cat">🐱 Подражатель: Повторяй удар партнёра для бонуса!</string>
+    <string name="tip_rally_bonus_copy_streak">🐱 Строй серию Подражателя для постоянного множителя!</string>
+    <string name="tip_rally_bonus_golden_points">🪙 Золотые квадраты дают 3x очков при попадании!</string>
+    <string name="tip_rally_bonus_golden_lines">🪙 Очищай линии с Золотыми квадратами для кучи очков!</string>
+    <string name="tip_rally_bonus_banana">🍌 Смотри под ноги! Бананы отнимают очки и множитель.</string>
+    <string name="tip_rally_bonus_landmine">💥 ОПАСНОСТЬ! Мины мгновенно заканчивают ралли.</string>
+    <string name="tip_rally_bonus_shield_earn">🛡️ Чисто очисти сетку с штрафами, чтобы получить Щит!</string>
+    <string name="tip_rally_bonus_shield_save">🛡️ Щит защищает от одного промаха. Спаситель!</string>
+    <string name="tip_rally_bonus_outage_warning">🔌 Следи за 🔌! 10 ударов в одну клетку = тьма!</string>
+    <string name="tip_rally_bonus_outage_recover">💡 В темноте попади в 5 разных клеток, чтобы вернуть свет!</string>
+
+    <!-- Solo Rally Only -->
+    <string name="tip_solo_practice">🏋️ Режим практики: совершенствуй технику!</string>
+    <string name="tip_solo_personal_best">🏆 Побей свой личный рекорд!</string>
+    <string name="tip_solo_longer_flight">⏱️ В соло время полёта чуть дольше</string>
+    <string name="tip_solo_wall_bounce">🧱 Стена возвращает удары — партнёр не нужен!</string>
+    <string name="tip_solo_rhythm">🎵 Найди ритм: удар-стена-отскок-удар!</string>
+    <string name="tip_solo_no_waiting">⚡ Не жди партнёра, просто начинай махать!</string>
+    <string name="tip_solo_all_swings">🎯 Освой все 9 типов ударов для макс. очков</string>
+    <string name="tip_solo_warmup">🔥 Отлично для разминки перед кооп-матчами!</string>
+
+    <!-- Fun Facts (ALL modes) -->
+    <string name="tip_fact_ball_speed">🏓 Шарики для пинг-понга могут достигать 110+ км/ч!</string>
+    <string name="tip_fact_accelerometer">📱 Акселерометр телефона обновляется 200 раз/сек</string>
+    <string name="tip_fact_olympic">🏓 Настольный теннис стал олимпийским в 1988</string>
+    <string name="tip_fact_whiff_whaff">📱 Оригинальное название: \"Whiff-Whaff\" (1880-е)</string>
+    <string name="tip_fact_no_balls">🎮 В этой игре нет настоящих мячей 🤯</string>
+    <string name="tip_fact_spin_rpm">🏓 Лучшие крутят мяч со скоростью 9 000 об/мин!</string>
+    <string name="tip_fact_longest_rally">🏓 Рекорд самого длинного ралли: 8ч 40мин ⏱️</string>
+    <string name="tip_fact_reaction_time">⚡ Реакция профи — менее 0,1 секунды</string>
+    <string name="tip_fact_calories">🏃 Час игры сжигает ~270 калорий</string>
+    <string name="tip_fact_pong_arcade">🎮 \"Pong\" (1972) помог запустить игровую индустрию</string>
+    <string name="tip_fact_grip_safety">📱 Совет: Держи телефон, не бросай! 😅</string>
+    <string name="tip_fact_ball_weight">⚖️ Стандартный шарик весит всего 2,7 грамма</string>
+    <string name="tip_fact_bluetooth_king">👑 Bluetooth назван в честь короля викингов</string>
+    <string name="tip_fact_gyro_vs_accel">🧭 Акселерометры измеряют скорость; Гироскопы — вращение</string>
+    <string name="tip_fact_freq_hop">📻 Bluetooth меняет частоту 1 600 раз/сек</string>
+    <string name="tip_fact_mems_tech">🔬 Датчики телефона — микроскопические машины (MEMS)</string>
+    <string name="tip_fact_packet_speed">📨 Пакеты данных летят со скоростью света!</string>
+
+    <!-- ==================== CONTENT DESCRIPTIONS ==================== -->
+    <string name="cd_navigate">Навигация</string>
+    <string name="cd_info">Инфо</string>
+    <string name="cd_user_avatar">Аватар Пользователя</string>
+    <string name="cd_share_game">Поделиться Игрой</string>
+    <string name="cd_my_avatar">Мой Аватар</string>
+    <string name="cd_my_ring">Мое Кольцо</string>
+    <string name="cd_opponent_avatar">Аватар Противника</string>
+    <string name="cd_opponent_ring">Кольцо Противника</string>
+    <string name="cd_partner_avatar">Аватар Партнёра</string>
+    <string name="cd_partner_ring">Кольцо Партнёра</string>
+    <string name="cd_your_avatar">Твой Аватар</string>
+    <string name="cd_avatar">Аватар</string>
+    <string name="cd_avatar_index">Аватар %1$d</string>
+    <string name="cd_background_ring">Фоновое кольцо</string>
+    <string name="cd_player_avatar">Аватар игрока</string>
+    <string name="cd_streak_multiplier">Множитель серии</string>
+</resources>
